@@ -1,0 +1,137 @@
+[
+  {
+    "id": "1",
+    "title": "Studio Type Room",
+    "description": "A cozy studio room designed for comfort and functionality. Ideal for solo travelers or couples, featuring modern amenities for a relaxing stay.",
+    "city": "Dagupan",
+    "address": "28WR+JVX, Arellano St, Downtown District, Dagupan, Pangasinan",
+    "latitude": 16.0459,
+    "longitude": 120.3450,
+    "price": 3000,
+    "availablePerson": 2,
+    "bedType": "Double Bed",
+    "imageUrl": [
+      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png",
+      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+    ],
+    "amenities": [
+      "Wifi / Internet",
+      "Air Conditioning",
+      "Refrigerator",
+      "Kitchen",
+      "Parking"
+    ]
+  },
+  {
+    "id": "2",
+    "title": "Deluxe Studio Room",
+    "description": "Spacious deluxe studio room with elegant decor and premium furnishings. Perfect for extended stays with a fully equipped kitchen and living area.",
+    "city": "Dagupan",
+    "address": "652 Pantal Rd, Downtown District, Dagupan, Pangasinan",
+    "latitude": 16.0460,
+    "longitude": 120.3452,
+    "price": 4500,
+    "availablePerson": 4,
+    "bedType": "Queen Bed",
+    "imageUrl": [
+      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png",
+      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+    ],
+    "amenities": [
+      "Wifi / Internet",
+      "Air Conditioning",
+      "Refrigerator",
+      "Kitchen",
+      "Study Hub",
+      "Rooftop Access"
+    ]
+  },
+  {
+    "id": "3",
+    "title": "Economy Studio Room",
+    "description": "An affordable studio room that offers basic amenities and a comfortable space for budget travelers. Ideal for short stays.",
+    "city": "Mangaldan",
+    "address": "MC Apartment, 395P+24G, Mangaldan, Pangasinan",
+    "latitude": 16.0461,
+    "longitude": 120.3451,
+    "price": 2000,
+    "availablePerson": 2,
+    "bedType": "Single Bed",
+    "imageUrl": [
+      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png",
+      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+    ],
+    "amenities": ["Wifi / Internet", "Shared Kitchen", "Parking"]
+  },
+  {
+    "id": "4",
+    "title": "Family Studio Room",
+    "description": "A spacious family studio room with additional sleeping arrangements. Perfect for families or groups looking for a comfortable stay.",
+    "city": "Dagupan",
+    "address": "3 Arellano St, Dagupan, 2400 Pangasinan",
+    "latitude": 16.0458,
+    "longitude": 120.3453,
+    "price": 6000,
+    "availablePerson": 6,
+    "bedType": "Double Bed + Sofa Bed",
+    "imageUrl": [
+      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png",
+      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+    ],
+    "amenities": [
+      "Wifi / Internet",
+      "Air Conditioning",
+      "Refrigerator",
+      "Kitchen",
+      "Family Room"
+    ]
+  },
+  {
+    "id": "5",
+    "title": "Luxury Studio Room",
+    "description": "An upscale studio room with high-end furnishings and stunning views. Enjoy a lavish experience with top-notch amenities.",
+    "city": "Dagupan",
+    "address": "3F, vivo service center, Benning Square Building, Arellano St, Dagupan, Pangasinan",
+    "latitude": 16.0457,
+    "longitude": 120.3454,
+    "price": 8000,
+    "availablePerson": 2,
+    "bedType": "King Bed",
+    "imageUrl": [
+      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png",
+      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+    ],
+    "amenities": [
+      "Wifi / Internet",
+      "Air Conditioning",
+      "Refrigerator",
+      "Kitchen",
+      "Rooftop Access",
+      "24/7 Security"
+    ]
+  },
+  {
+    "id": "6",
+    "title": "Condo Studio Unit",
+    "description": "A modern condo studio unit that combines comfort with style. Featuring a small kitchenette and a cozy living space, it's perfect for individuals or couples.",
+    "city": "Manaoag",
+    "address": "429 San Jacinto - Manaoag Rd, Manaoag, Pangasinan",
+    "latitude": 16.0459,
+    "longitude": 120.3455,
+    "price": 3500,
+    "availablePerson": 2,
+    "bedType": "Double Bed",
+    "imageUrl": [
+      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png",
+      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+    ],
+    "amenities": [
+      "Wifi / Internet",
+      "Air Conditioning",
+      "Refrigerator",
+      "Kitchenette",
+      "Gym Access",
+      "Parking"
+    ]
+  }
+]

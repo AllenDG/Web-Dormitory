@@ -1,0 +1,37 @@
+import {
+  TbAirConditioning,
+  TbBarbell,
+  TbBeach,
+  TbBook,
+  TbBuildingEstate,
+  TbBuildingStore,
+  TbCar,
+  TbDog,
+  TbElevator,
+  TbFridge,
+  TbHeart,
+  TbHeartHandshake,
+  TbMicrophone,
+  TbPool,
+  TbToolsKitchen,
+  TbWifi,
+} from "react-icons/tb";
+
+export const amenityIcons = {
+  "Wifi / Internet": TbWifi,
+  "Refrigerator": TbFridge,
+  "Aircom": TbAirConditioning,
+  "Kitchen": TbToolsKitchen,
+  "Parking": TbCar,
+  "Elevator": TbElevator,
+  "Study Hub": TbBook,
+  "KTV Room": TbMicrophone,
+  "Community Area": TbHeart,
+  "Swimming Pool": TbPool,
+  "Fitness Gym": TbBarbell,
+  "Meeting Room": TbHeartHandshake,
+  "Commercial Spaces": TbBuildingStore,
+  "Roof Deck": TbBeach,
+  "Recreational Area": TbBuildingEstate,
+  "Pet Friendly": TbDog
+};
