@@ -44,32 +44,32 @@ export default function AboutUsPage() {
   const teamMembers = [
     {
       id: 1,
-      name: "Alice Smith",
-      role: "Developer",
+      name: "CLAVERIA, JEDYNE B. ",
+      role: "Researcher",
       image: "https://via.placeholder.com/150", // Replace with actual image URL
     },
     {
       id: 2,
-      name: "Bob Johnson",
-      role: "Researcher",
+      name: "BADINAS, JOHN PAUL",
+      role: "Mobile Developer",
       image: "https://via.placeholder.com/150", // Replace with actual image URL
     },
     {
       id: 3,
-      name: "Charlie Brown",
-      role: "Developer",
+      name: "MANUCAN, JAMES ",
+      role: "Mobile Developer",
       image: "https://via.placeholder.com/150", // Replace with actual image URL
     },
     {
       id: 4,
-      name: "Dana White",
-      role: "Researcher",
+      name: "DE GUZMAN, ALLEN WALTER F. ",
+      role: "UI/UX | Web Developer",
       image: "https://via.placeholder.com/150", // Replace with actual image URL
     },
     {
       id: 5,
-      name: "Eve Davis",
-      role: "Developer",
+      name: "ESTRADA, JHULYAN MATTHEW T. ",
+      role: "Researcher",
       image: "https://via.placeholder.com/150", // Replace with actual image URL
     },
   ];
@@ -155,7 +155,7 @@ export default function AboutUsPage() {
       </Box>
 
       {/* mission */}
-      <Box position="relative" width="100%" h="600px" bg="#0084FF">
+      <Box position="relative" width="100%" bg="#0084FF">
         {/* Overlapping Background */}
         <Box
           top="0"
@@ -255,20 +255,21 @@ export default function AboutUsPage() {
           >
             {teamMembers.map((member) => (
               <Box key={member.id} textAlign="center">
-                <Image
-                  src={member.image}
-                  alt={member.name}
-                  borderRadius="full"
-                  boxSize="150px" // Fixed size for circular images
-                  mb={4}
-                />
-                <Text fontWeight="bold" color={textColor} textAlign="center">
-                  {member.name}
-                </Text>
-                <Text color={textColor} textAlign="center">
-                  {member.role}
-                </Text>
-              </Box>
+              <Image
+                src={member.image}
+                alt={member.name}
+                borderRadius="full"
+                boxSize="150px" // Fixed size for circular images
+                mb={4}
+                mx="auto" // This will center the image horizontally
+              />
+              <Text fontWeight="bold" color={textColor} textAlign="center">
+                {member.name}
+              </Text>
+              <Text color={textColor} textAlign="center">
+                {member.role}
+              </Text>
+            </Box>
             ))}
           </Grid>
         </Box>
