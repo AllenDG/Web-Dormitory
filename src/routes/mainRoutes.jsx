@@ -7,6 +7,7 @@ import LandingPage from "../pages/LandingPage";
 import ViewListingPage from "../pages/ViewListingPage";
 import RegisterPage from "../pages/RegisterPage";
 import PostMyPropertyPage from "../pages/PostMyPropertyPage";
+import ChatPage from "../pages/ChatPage";
 
 export const mainRoutes = [
   {
@@ -44,6 +45,11 @@ export const mainRoutes = [
       {
         path: "post-my-property",
         element: <PostMyPropertyPage />,
+      },
+
+      {
+        path: "chat-page",
+        element: <ChatPage />,
       },
     ],
   },
