@@ -1,0 +1,89 @@
+{
+    "dorms": [
+      {
+        "id": 1,
+        "name": "Sunset Dormitory",
+        "location": "123 Sunset Ave, City",
+        "price": 250,
+        "amenities": ["WiFi", "Laundry", "Kitchen"],
+        "available_rooms": 5
+      },
+      {
+        "id": 2,
+        "name": "Downtown Dorm",
+        "location": "456 Downtown St, City",
+        "price": 300,
+        "amenities": ["WiFi", "Gym", "Study Lounge"],
+        "available_rooms": 10
+      },
+      {
+        "id": 3,
+        "name": "Mountain View Dormitory",
+        "location": "789 Mountain Rd, City",
+        "price": 275,
+        "amenities": ["WiFi", "Study Room", "Free Parking"],
+        "available_rooms": 8
+      },
+      {
+        "id": 4,
+        "name": "Lakeside Dorm",
+        "location": "321 Lake St, City",
+        "price": 320,
+        "amenities": ["WiFi", "Swimming Pool", "Game Room"],
+        "available_rooms": 12
+      }
+    ],
+    "questions": [
+      {
+        "id": 1,
+        "text": "What dorms do you have available?",
+        "response": "We have Sunset Dormitory, Downtown Dorm, Mountain View Dormitory, and Lakeside Dorm available."
+      },
+      {
+        "id": 2,
+        "text": "What are the prices for the dorms?",
+        "response": "Sunset Dormitory is $250/month, Downtown Dorm is $300/month, Mountain View Dormitory is $275/month, and Lakeside Dorm is $320/month."
+      },
+      {
+        "id": 3,
+        "text": "What amenities are included?",
+        "response": "Amenities include WiFi, laundry facilities, kitchens, gyms, and study lounges."
+      },
+      {
+        "id": 4,
+        "text": "How many rooms are available?",
+        "response": "Currently, Sunset Dormitory has 5 rooms available, Downtown Dorm has 10 rooms available, Mountain View Dormitory has 8 rooms available, and Lakeside Dorm has 12 rooms available."
+      },
+      {
+        "id": 5,
+        "text": "Is there parking available?",
+        "response": "Yes, Mountain View Dormitory has free parking available."
+      },
+      {
+        "id": 6,
+        "text": "What is the nearest public transport?",
+        "response": "The nearest public transport is a bus stop located 5 minutes away from all dorms."
+      },
+      {
+        "id": 7,
+        "text": "Can I see the dorm before renting?",
+        "response": "Yes, you can schedule a visit to see the dorm before making any decisions."
+      },
+      {
+        "id": 8,
+        "text": "Are pets allowed?",
+        "response": "Pets are not allowed in any of the dormitories."
+      },
+      {
+        "id": 9,
+        "text": "What is the payment method?",
+        "response": "Payments can be made via bank transfer, credit card, or cash."
+      },
+      {
+        "id": 10,
+        "text": "Do you offer any discounts?",
+        "response": "We offer discounts for long-term stays and group bookings."
+      }
+    ]
+  }
+  
