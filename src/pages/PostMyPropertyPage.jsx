@@ -1,5 +1,7 @@
 import { Flex, useColorModeValue } from "@chakra-ui/react";
 import AddPropertyForm from "../components/forms/AddPropertyForm";
+import CreateOwnerForm from "../components/forms/CreateOwnerForm";
+import PaymentMethodForm from "../components/forms/PaymentMethodForm";
 
 export default function PostMyPropertyPage() {
   const bgColor = useColorModeValue("bg.light", "bg.dark");
@@ -12,6 +14,8 @@ export default function PostMyPropertyPage() {
       bg={bgColor}
     >
       <AddPropertyForm />
+      <CreateOwnerForm/>
+      <PaymentMethodForm/>
     </Flex>
   );
 }
