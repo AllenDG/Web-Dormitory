@@ -1,0 +1,67 @@
+[
+  {
+    "value": "eCard",
+    "label": "e-Card / UMID"
+  },
+  {
+    "value": "employeeId",
+    "label": "Employee’s ID / Office ID"
+  },
+  {
+    "value": "driversLicense",
+    "label": "Driver’s License"
+  },
+  {
+    "value": "prcId",
+    "label": "Professional Regulation Commission (PRC) ID"
+  },
+  {
+    "value": "passport",
+    "label": "Passport"
+  },
+  {
+    "value": "seniorCitizenId",
+    "label": "Senior Citizen ID"
+  },
+  {
+    "value": "sssId",
+    "label": "SSS ID"
+  },
+  {
+    "value": "comelecId",
+    "label": "COMELEC / Voter’s ID"
+  },
+  {
+    "value": "philId",
+    "label": "Philippine Identification (PhilID / ePhilID)"
+  },
+  {
+    "value": "nbiClearance",
+    "label": "NBI Clearance"
+  },
+  {
+    "value": "ibpId",
+    "label": "Integrated Bar of the Philippines (IBP) ID"
+  },
+  {
+    "value": "firearmsLicense",
+    "label": "Firearms License"
+  },
+  {
+    "value": "afpslaiId",
+    "label": "AFPSLAI ID"
+  },
+  {
+    "value": "pvaoId",
+    "label": "PVAO ID"
+  },
+  {
+    "value": "afpBeneficiaryId",
+    "label": "AFP Beneficiary ID"
+  },
+  {
+    "value": "birTin",
+    "label": "BIR (TIN)"
+  }
+ 
+]
