@@ -1,8 +1,15 @@
 import { useMemo } from "react";
+import { useSelector } from "react-redux";
 import { parsePriceRange } from "../utils/parsePriceRange";
-import rentalListings from "../data/rentalListing.json";
 
-export default function useFilteredListings(searchQuery, selectedPriceRange, selectedAmenities, selectedBedType){
+export default function useFilteredListings(
+  searchQuery,
+  selectedPriceRange,
+  selectedAmenities,
+  selectedBedType
+) {
+  const rentalListings = useSelector((state) => state.rentals.rentals);
+
   return useMemo(() => {
     return rentalListings.filter((listing) => {
       const priceBounds = selectedPriceRange
@@ -31,5 +38,4 @@ export default function useFilteredListings(searchQuery, selectedPriceRange, sel
       return amenitiesMatch && bedTypeMatch && priceMatch && searchMatch;
     });
   }, [selectedAmenities, selectedBedType, selectedPriceRange, searchQuery]);
-};
-
+}

@@ -16,24 +16,9 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { TbMessageFilled } from "react-icons/tb";
+import { chatbotResponses } from "./chatbotResponses";
 
-function chatbotResponse(userInput) {
-  const lowerCaseInput = userInput.toLowerCase();
 
-  const responses = {
-    hello: "Hi there! How can I assist you today?",
-    "how are you?":
-      "I'm just a bunch of code, but I'm doing great! How about you?",
-    "what is your name?": "I'm ChatBot 1.0, your virtual assistant.",
-    "thank you": "You're welcome! Is there anything else I can help you with?",
-    bye: "Goodbye! Have a great day!",
-  };
-
-  return (
-    responses[lowerCaseInput] ||
-    "I'm sorry, I don't understand that. Can you please ask something else?"
-  );
-}
 
 export default function ChatBot() {
   const textColor = useColorModeValue("gray.800", "whiteAlpha.900");
@@ -46,7 +31,7 @@ export default function ChatBot() {
     if (!inputValue.trim()) return; // Don't send empty messages
 
     const userMessage = { text: inputValue, sender: "user" };
-    const botResponse = { text: chatbotResponse(inputValue), sender: "bot" };
+    const botResponse = { text: chatbotResponses(inputValue), sender: "bot" };
 
     // Add the user's message and bot's response to the messages state
     setMessages([...messages, userMessage, botResponse]);
@@ -58,7 +43,7 @@ export default function ChatBot() {
       <Popover placement="top-end">
         <PopoverTrigger>
           <Button>
-            <TbMessageFilled />{" "}
+            <TbMessageFilled />
           </Button>
         </PopoverTrigger>
         <PopoverContent w="100%" maxW={400}>

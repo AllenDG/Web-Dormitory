@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useSelector } from "react-redux";
 import {
   Flex,
   Heading,
@@ -26,16 +27,17 @@ import { amenityIcons } from "../utils/amenityIcon";
 import { IoHeartOutline, IoShareOutline } from "react-icons/io5";
 import InquireForm from "../components/forms/InquireForm";
 import ScheduleAVisitForm from "../components/forms/ScheduleAVisitForm";
-import rentalListings from "../data/rentalListing.json";
+
 import Slider from "react-slick";
 
 export default function ViewListingPage() {
   const { id } = useParams();
   const bgColor = useColorModeValue("bg.light", "bg.dark");
+  const rentalListings = useSelector((state) => state.rentals.rentals);
 
   const listing = useMemo(() => {
     return rentalListings.find((item) => item.id === id);
-  }, [id]);
+  }, [rentalListings]);
 
   if (!listing) return "We couldn't this listing for you";
 

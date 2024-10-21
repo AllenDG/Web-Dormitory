@@ -1,11 +1,13 @@
 import { useMemo } from "react";
-import rentalListing from "../data/rentalListing.json";
+import { useSelector } from "react-redux";
 
 export default function usePopularLocations(topNigga = 5) {
+  const rentalListings = useSelector((state) => state.rentals.rentals);
+
   return useMemo(() => {
     const locationCount = {};
 
-    rentalListing.forEach((listing) => {
+    rentalListings.forEach((listing) => {
       const location = listing.city;
       if (location) {
         locationCount[location] = (locationCount[location] || 0) + 1;

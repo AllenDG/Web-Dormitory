@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { priceFormatter } from "../../utils/priceFormatter";
 import {
@@ -21,7 +22,6 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { amenityIcons } from "../../utils/amenityIcon";
-import rentalListings from "../../data/rentalListing.json";
 import amenities from "../../data/amenities.json";
 import usePopularLocations from "../../hooks/usePopularLocation";
 
@@ -30,6 +30,7 @@ export default function RentalsListing() {
   const bgColor = useColorModeValue("bg.light", "bg.dark");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedAmenities, setSelectedAmenities] = useState([]);
+  const rentalListings = useSelector((state) => state.rentals.rentals);
 
   const filteredListings = useMemo(() => {
     return rentalListings.filter((listing) => {
