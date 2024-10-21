@@ -4,6 +4,7 @@ import {
   Text,
   Heading,
   Image,
+  Button,
   useColorModeValue,
 } from "@chakra-ui/react";
 
@@ -68,11 +69,11 @@ export default function HowItWorksPage() {
             bg="white"
             rounded="md"
             mt={[4, 4, 0]}
-            width="250px" // set the width to create a square
-            height="250px" // set the height to create a square with added height
+            width="250px"
+            height="250px"
           >
             <Image
-              src="/path-to-browse-image.jpg" // replace with actual image path
+              src="/path-to-browse-image.jpg"
               alt="Browse Properties"
               boxSize="200px"
               objectFit="cover"
@@ -115,11 +116,11 @@ export default function HowItWorksPage() {
             bg="white"
             rounded="md"
             mt={[4, 4, 0]}
-            width="250px" // set the width to create a square
-            height="250px" // set the height to create a square with added height
+            width="250px"
+            height="250px"
           >
             <Image
-              src="/path-to-book-contact-image.jpg" // replace with actual image path
+              src="/path-to-book-contact-image.jpg"
               alt="Book or Contact"
               boxSize="200px"
               objectFit="cover"
@@ -157,11 +158,11 @@ export default function HowItWorksPage() {
             bg="white"
             rounded="md"
             mt={[4, 4, 0]}
-            width="250px" // set the width to create a square
-            height="250px" // set the height to create a square with added height
+            width="250px"
+            height="250px"
           >
             <Image
-              src="/path-to-visit-move-in-image.jpg" // replace with actual image path
+              src="/path-to-visit-move-in-image.jpg"
               alt="Visit and Move In"
               boxSize="200px"
               objectFit="cover"
@@ -169,6 +170,70 @@ export default function HowItWorksPage() {
           </Box>
         </Flex>
       </Box>
+
+      <Text
+        fontSize="4xl"
+        fontWeight="bold"
+        color="blue.600"
+        textAlign="center"
+        mt="20%"
+        mb={2}
+      >
+        Finding your perfect home is just 3 clicks away.
+      </Text>
+
+      {/* Add buttons for Renters and Owners */}
+
+      {/* Add buttons for Renters and Owners with descriptions */}
+      <Flex mt={6} mb={8} justify="center" gap={4}>
+        <Flex direction="column" align="center" gap={2}>
+          <Text
+            fontSize="lg"
+            fontWeight="semibold"
+            color="blue.600"
+            textAlign="center"
+          >
+            For Renters
+          </Text>
+          <Text fontSize="md" color={textColor} textAlign="center" maxW="300px">
+            Search for verified rentals, schedule a visit, and move-in with
+            ease.
+          </Text>
+          <Button
+            size="lg"
+            colorScheme="blue"
+            onClick={() => {
+              // Handle Renters button click
+            }}
+          >
+            Explore Rentals
+          </Button>
+        </Flex>
+
+        <Flex direction="column" align="center" gap={2}>
+          <Text
+            fontSize="lg"
+            fontWeight="semibold"
+            color="green.600"
+            textAlign="center"
+          >
+            For Owners
+          </Text>
+          <Text fontSize="md" color={textColor} textAlign="center" maxW="300px">
+            List your property, connect with renters, and manage bookings
+            seamlessly.
+          </Text>
+          <Button
+            size="lg"
+            colorScheme="green"
+            onClick={() => {
+              // Handle Owners button click
+            }}
+          >
+            List Your Property
+          </Button>
+        </Flex>
+      </Flex>
     </Flex>
   );
 }
