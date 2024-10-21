@@ -1,4 +1,5 @@
 import { Flex, useColorModeValue } from "@chakra-ui/react";
+import AddPropertyForm from "../components/forms/AddPropertyForm";
 
 export default function PostMyPropertyPage() {
   const bgColor = useColorModeValue("bg.light", "bg.dark");
@@ -9,6 +10,8 @@ export default function PostMyPropertyPage() {
       justify="center"
       align="center"
       bg={bgColor}
-    ></Flex>
+    >
+      <AddPropertyForm />
+    </Flex>
   );
 }

@@ -46,31 +46,31 @@ export default function AboutUsPage() {
       id: 1,
       name: "CLAVERIA, JEDYNE B. ",
       role: "Researcher",
-      image: "https://via.placeholder.com/150", // Replace with actual image URL
+      image: "https://via.placeholder.com/150",
     },
     {
       id: 2,
       name: "BADINAS, JOHN PAUL",
       role: "Mobile Developer",
-      image: "https://via.placeholder.com/150", // Replace with actual image URL
+      image: "https://via.placeholder.com/150",
     },
     {
       id: 3,
       name: "MANUCAN, JAMES ",
       role: "Mobile Developer",
-      image: "https://via.placeholder.com/150", // Replace with actual image URL
+      image: "https://via.placeholder.com/150",
     },
     {
       id: 4,
       name: "DE GUZMAN, ALLEN WALTER F. ",
       role: "UI/UX | Web Developer",
-      image: "https://via.placeholder.com/150", // Replace with actual image URL
+      image: "https://via.placeholder.com/150",
     },
     {
       id: 5,
       name: "ESTRADA, JHULYAN MATTHEW T. ",
       role: "Researcher",
-      image: "https://via.placeholder.com/150", // Replace with actual image URL
+      image: "https://via.placeholder.com/150",
     },
   ];
 
@@ -96,7 +96,6 @@ export default function AboutUsPage() {
         mb={12}
         width="100vw" // Full width of the viewport
         height={400}
-        bg="gray.300"
         borderRadius="md" // Border radius on the Box, not the image
         overflow="hidden" // Ensure the image doesn't overflow the container
         position="relative"

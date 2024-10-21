@@ -11,7 +11,6 @@ import {
   Stack,
   Heading,
   Text,
-  Divider,
   useColorModeValue,
   Menu,
   MenuButton,
