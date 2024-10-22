@@ -162,7 +162,7 @@ export default function FindRentalsListing({
           </Flex>
         </Flex>
 
-        <Wrap spacing="10px" align="center" justify="center">
+        <Wrap spacing="10px" align="center" h="70vh" overflowY="auto" justify="center">
           {filteredListings.length > 0 ? (
             filteredListings.map((listing) => (
               <WrapItem key={listing.id}>
@@ -174,6 +174,9 @@ export default function FindRentalsListing({
                           src={listing.imageUrl[0]}
                           alt={listing.title}
                           borderRadius="lg"
+                          objectFit="cover"
+                          w="100%"
+                          h="200px"
                         />
                         <Stack mt="6" spacing="3">
                           <Heading size="md" noOfLines={1}>
