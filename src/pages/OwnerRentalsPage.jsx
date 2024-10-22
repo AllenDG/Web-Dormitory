@@ -11,68 +11,36 @@ import {
   Th,
   Td,
   Button,
-  Select,
-  IconButton,
-  HStack,
+
   Text,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { MdMessage } from "react-icons/md"; // Import message icon
+import RentalEditForm from "../components/forms/RentalEditForm"; // Import the RentalEditForm
 
 const mockRentals = [
   {
     id: 1,
-    profile: "User1",
-    lastName: "Doe",
-    firstName: "John",
-    gender: "Male",
-    age: 30,
-    status: "Pending",
+    type: "Solo",
+    amenities: "WiFi, Air Conditioning",
+    scheduleVisit: "2024-10-25",
+    rating: 4.5,
+    status: "Available",
   },
   {
     id: 2,
-    profile: "User2",
-    lastName: "Smith",
-    firstName: "Jane",
-    gender: "Female",
-    age: 25,
-    status: "Approved",
+    type: "Double",
+    amenities: "WiFi, Kitchen",
+    scheduleVisit: "2024-10-26",
+    rating: 4.0,
+    status: "Not Available",
   },
   {
     id: 3,
-    profile: "User3",
-    lastName: "Brown",
-    firstName: "Mike",
-    gender: "Male",
-    age: 28,
-    status: "Pending",
-  },
-  {
-    id: 4,
-    profile: "User4",
-    lastName: "Taylor",
-    firstName: "Sarah",
-    gender: "Female",
-    age: 22,
-    status: "Rejected",
-  },
-  {
-    id: 5,
-    profile: "User5",
-    lastName: "Wilson",
-    firstName: "Anna",
-    gender: "Female",
-    age: 31,
-    status: "Approved",
-  },
-  {
-    id: 6,
-    profile: "User6",
-    lastName: "Moore",
-    firstName: "David",
-    gender: "Male",
-    age: 26,
-    status: "Pending",
+    type: "Studio",
+    amenities: "WiFi, Parking",
+    scheduleVisit: "2024-10-27",
+    rating: 5.0,
+    status: "Available",
   },
   // Add more mock data as needed
 ];
@@ -86,10 +54,8 @@ export default function OwnerRentalsPage() {
   const [rentals, setRentals] = useState(mockRentals);
 
   // Filter rentals based on search term
-  const filteredRentals = rentals.filter(
-    (rental) =>
-      rental.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      rental.lastName.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredRentals = rentals.filter((rental) =>
+    rental.type.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Pagination logic
@@ -100,18 +66,12 @@ export default function OwnerRentalsPage() {
     startIndex + ITEMS_PER_PAGE
   );
 
-  // Function to get the color for the option based on status
-  const getOptionColor = (status) => {
-    switch (status) {
-      case "Pending":
-        return "blue.500"; // Blue for Pending
-      case "Approved":
-        return "green.500"; // Green for Approved
-      case "Rejected":
-        return "red.500"; // Red for Rejected
-      default:
-        return "gray.500"; // Default color
-    }
+  // Function to handle saving rental edits
+  const handleSave = (editedRental) => {
+    const updatedRentals = rentals.map((rental) =>
+      rental.id === editedRental.id ? editedRental : rental
+    );
+    setRentals(updatedRentals);
   };
 
   return (
@@ -132,7 +92,7 @@ export default function OwnerRentalsPage() {
       {/* Search Filter and Pagination Controls */}
       <Flex mb={4} align="center" justify="space-between">
         <Input
-          placeholder="Search by First Name or Last Name"
+          placeholder="Search by Type"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           width="300px" // Set a fixed width for the search input
@@ -167,67 +127,24 @@ export default function OwnerRentalsPage() {
       <Table variant="striped">
         <Thead>
           <Tr>
-            <Th>Profile</Th>
-            <Th>Last Name</Th>
-            <Th>First Name</Th>
-            <Th>Gender</Th>
-            <Th>Age</Th>
-            <Th>Action</Th>
+            <Th>Type</Th>
+            <Th>Amenities</Th>
+            <Th>Schedule Visit</Th>
+            <Th>Rating</Th>
             <Th>Status</Th>
+            <Th>Edit</Th>
           </Tr>
         </Thead>
         <Tbody>
           {currentRentals.map((rental) => (
             <Tr key={rental.id}>
-              <Td>{rental.profile}</Td>
-              <Td>{rental.lastName}</Td>
-              <Td>{rental.firstName}</Td>
-              <Td>{rental.gender}</Td>
-              <Td>{rental.age}</Td>
+              <Td>{rental.type}</Td>
+              <Td>{rental.amenities}</Td>
+              <Td>{rental.scheduleVisit}</Td>
+              <Td>{rental.rating}</Td>
+              <Td>{rental.status}</Td>
               <Td>
-                <HStack>
-                  <IconButton
-                    icon={<MdMessage />}
-                    aria-label="Send Message"
-                    colorScheme="blue"
-                    onClick={() =>
-                      console.log(`Send message to ${rental.firstName}`)
-                    }
-                  />
-                </HStack>
-              </Td>
-              <Td>
-                <Select
-                  placeholder="Select Status"
-                  value={rental.status}
-                  onChange={(e) => {
-                    const newStatus = e.target.value;
-                    setRentals((prev) =>
-                      prev.map((r) =>
-                        r.id === rental.id ? { ...r, status: newStatus } : r
-                      )
-                    );
-                  }}
-                >
-                  <option
-                    style={{ color: getOptionColor("Pending") }}
-                    value="Pending"
-                  >
-                    Pending
-                  </option>
-                  <option
-                    style={{ color: getOptionColor("Approved") }}
-                    value="Approved"
-                  >
-                    Approved
-                  </option>
-                  <option
-                    style={{ color: getOptionColor("Rejected") }}
-                    value="Rejected"
-                  >
-                    Rejected
-                  </option>
-                </Select>
+                <RentalEditForm rental={rental} onSave={handleSave} />
               </Td>
             </Tr>
           ))}
