@@ -125,6 +125,9 @@ export default function RentalsListing() {
                         src={listing.imageUrl[0]}
                         alt={listing.title}
                         borderRadius="lg"
+                        objectFit="cover"
+                        w="100%"
+                        h="250px"
                       />
                       <Stack mt="6" spacing="3">
                         <Heading size="md" noOfLines={1}>

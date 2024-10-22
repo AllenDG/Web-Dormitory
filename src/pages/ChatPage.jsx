@@ -94,17 +94,19 @@ export default function ChatPage() {
 
         {/* Message Input Area */}
         <Box p={4} bg="white" borderTopWidth="1px">
-          <Flex>
-            <Input
-              placeholder="Type a message..."
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              mr={2}
-            />
-            <Button colorScheme="blue" onClick={handleSendMessage}>
-              Send
-            </Button>
-          </Flex>
+          <form onSubmit={handleSendMessage}>
+            <Flex>
+              <Input
+                placeholder="Type a message..."
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                mr={2}
+              />
+              <Button type="submit" colorScheme="blue">
+                Send
+              </Button>
+            </Flex>
+          </form>
         </Box>
       </Box>
     </Flex>
