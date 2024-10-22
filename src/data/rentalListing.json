@@ -11,8 +11,8 @@
     "availablePerson": 2,
     "bedType": "Double Bed",
     "imageUrl": [
-      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png",
-      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+      "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/img3.jpg?alt=media&token=e0298244-208b-41a0-9083-eb9a79e631ce",
+      "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/img.png?alt=media&token=6eaca621-7450-483e-9c0c-c07db6c0e15f"
     ],
     "amenities": [
       "Wifi / Internet",
@@ -34,8 +34,8 @@
     "availablePerson": 4,
     "bedType": "Queen Bed",
     "imageUrl": [
-      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png",
-      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+      "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/img4.jpg?alt=media&token=30282489-6740-4a7d-b5a7-bec6e578afda",
+      "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/img4.jpg?alt=media&token=30282489-6740-4a7d-b5a7-bec6e578afda"
     ],
     "amenities": [
       "Wifi / Internet",
@@ -58,7 +58,7 @@
     "availablePerson": 2,
     "bedType": "Single Bed",
     "imageUrl": [
-      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png",
+      "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/img5.jpg?alt=media&token=bd8bd4e9-987f-4546-be2b-c45ec5950458",
       "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
     ],
     "amenities": ["Wifi / Internet", "Shared Kitchen", "Parking"]
@@ -75,8 +75,8 @@
     "availablePerson": 6,
     "bedType": "Double Bed + Sofa Bed",
     "imageUrl": [
-      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png",
-      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+      "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/img6.jpg?alt=media&token=9c108812-6fc4-41c0-aaed-f62cdc67bd50",
+      "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/img7.jpg?alt=media&token=b3e53f2f-1521-41e1-b1a3-e03e88732271"
     ],
     "amenities": [
       "Wifi / Internet",
@@ -98,8 +98,8 @@
     "availablePerson": 2,
     "bedType": "King Bed",
     "imageUrl": [
-      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png",
-      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+      "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/img9.jpg?alt=media&token=33a434e1-f6cb-4397-a442-4257d8070c90",
+      "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/img10.jpg?alt=media&token=919a757f-39ac-4003-9af4-f979b7d9d170"
     ],
     "amenities": [
       "Wifi / Internet",
@@ -122,7 +122,7 @@
     "availablePerson": 2,
     "bedType": "Double Bed",
     "imageUrl": [
-      "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png",
+      "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/img8.jpg?alt=media&token=265c5b8a-8381-4d9e-a247-58bfd4b89a78",
       "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
     ],
     "amenities": [
