@@ -27,7 +27,7 @@ export default function PaymentMethodForm() {
           Payment Details
         </Text>
         <VStack spacing={4} align="stretch">
-          <FormControl isRequired>
+          <FormControl isRequired>~
             <FormLabel>First Name</FormLabel>
             <Input placeholder="First Name" />
           </FormControl>
