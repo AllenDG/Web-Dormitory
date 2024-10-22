@@ -33,7 +33,7 @@ export default function Sidebar() {
         borderRight="1px solid #000" // Added border line
       >
         {/* Sidebar header with collapse button */}
-        <Box mb={4}>
+        <Box mb={2}>
           <IconButton
             aria-label="Toggle Sidebar"
             icon={isCollapsed ? <FiMenu /> : <FiX />}
@@ -48,15 +48,15 @@ export default function Sidebar() {
             <h1
               style={{ color: "#0084FF", fontSize: "20px", fontWeight: "bold" }}
             >
-              {" "}
-              {/* Set bold text */}
               Dormitory
             </h1>
           )}
         </Box>
 
         {/* Sidebar links */}
-        <ul>
+        <ul style={{ padding: 0 }}>
+          {" "}
+          {/* Remove default padding */}
           {ownerSidebarRoutes.map((item) => {
             const isActive = location.pathname === item.path; // Check if the route is active
             const textColor = isActive ? "#0084FF" : "black"; // Set text color based on active state
@@ -66,7 +66,7 @@ export default function Sidebar() {
               <Link key={item.label} to={item.path}>
                 <Flex
                   gap={3}
-                  mt={0.5} // Reduced margin top to bring links closer to the logo
+                  mt={1} // Reduced margin top to bring links closer to the logo
                   alignItems="center"
                   p={2} // Padding for hover effect
                   borderRadius="md" // Rounded corners for the hover effect
@@ -85,8 +85,6 @@ export default function Sidebar() {
                     <h1
                       style={{ textDecoration: "none", fontWeight: "normal" }}
                     >
-                      {" "}
-                      {/* Removed bold */}
                       {item.label}
                     </h1>
                   )}
