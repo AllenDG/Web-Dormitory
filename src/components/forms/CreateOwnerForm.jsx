@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Formik, Field, Form } from "formik";
 import {
   Flex,
   FormControl,
@@ -6,200 +6,174 @@ import {
   Input,
   Button,
   Select,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import governmentIdTypes from "../../data/governmentId.json"; // Adjust the path as needed
+import { registerOwnerValidationSchema } from "../../utils/validationSchema";
 
-export default function CustomForm() {
-  const [formData, setFormData] = useState({
+export default function CustomForm({ handleNextStep}) {
+  const initialValues = {
     firstName: "",
     lastName: "",
     email: "",
     gender: "",
     birthdate: "",
     address: "",
-    governmentIdType: "", // New field for government ID type
-    governmentIdImage: null, // To store the uploaded government ID image
-    profileImage: null, // To store the uploaded profile image
-  });
-
-  const [error, setError] = useState("");
-
-  const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "file" ? files[0] : value, // Handle file upload
-    }));
+    governmentIdType: "",
+    governmentIdImage: null,
+    profileImage: null,
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const {
-      firstName,
-      lastName,
-      email,
-      gender,
-      birthdate,
-      address,
-      governmentIdType,
-      governmentIdImage,
-      profileImage,
-    } = formData;
-
-    if (
-      !firstName ||
-      !lastName ||
-      !email ||
-      !gender ||
-      !birthdate ||
-      !address ||
-      !governmentIdType ||
-      !governmentIdImage ||
-      !profileImage
-    ) {
-      setError("All fields are required.");
-      return;
-    }
-
-    setError("");
-    // Handle form submission logic here
-    console.log("Submitted:", formData);
+  const handleSubmit = (values) => {
+    console.log("Form Submitted:", values);
+    handleNextStep();
   };
 
   return (
-    <Flex
-      as="form"
-      direction="column"
-      width="100%"
-      maxWidth="600px"
-      margin="auto"
-      spacing={4}
+    <Formik
+      initialValues={initialValues}
+      validationSchema={registerOwnerValidationSchema}
       onSubmit={handleSubmit}
     >
-      <FormControl isRequired mb={4} isInvalid={!!error}>
-        <FormLabel>First Name</FormLabel>
-        <Input
-          name="firstName"
-          placeholder="First name"
-          size="lg"
-          variant="outline"
-          value={formData.firstName}
-          onChange={handleChange}
-        />
-      </FormControl>
+      {({ errors, touched, setFieldValue }) => (
+        <Form>
+          <Flex
+            direction="column"
+            width="100%"
+            maxWidth="600px"
+            margin="auto"
+            spacing={4}
+          >
+            <FormControl
+              isInvalid={errors.firstName && touched.firstName}
+              mb={4}
+              isRequired
+            >
+              <FormLabel>First Name</FormLabel>
+              <Field name="firstName" as={Input} placeholder="First name" />
+              <FormErrorMessage>{errors.firstName}</FormErrorMessage>
+            </FormControl>
 
-      <FormControl isRequired mb={4} isInvalid={!!error}>
-        <FormLabel>Last Name</FormLabel>
-        <Input
-          name="lastName"
-          placeholder="Last name"
-          size="lg"
-          variant="outline"
-          value={formData.lastName}
-          onChange={handleChange}
-        />
-      </FormControl>
+            <FormControl
+              isInvalid={errors.lastName && touched.lastName}
+              mb={4}
+              isRequired
+            >
+              <FormLabel>Last Name</FormLabel>
+              <Field name="lastName" as={Input} placeholder="Last name" />
+              <FormErrorMessage>{errors.lastName}</FormErrorMessage>
+            </FormControl>
 
-      <FormControl isRequired mb={4} isInvalid={!!error}>
-        <FormLabel>Email</FormLabel>
-        <Input
-          name="email"
-          placeholder="Email"
-          size="lg"
-          variant="outline"
-          value={formData.email}
-          onChange={handleChange}
-        />
-      </FormControl>
+            <FormControl
+              isInvalid={errors.email && touched.email}
+              mb={4}
+              isRequired
+            >
+              <FormLabel>Email</FormLabel>
+              <Field name="email" as={Input} placeholder="Email" />
+              <FormErrorMessage>{errors.email}</FormErrorMessage>
+            </FormControl>
 
-      <FormControl isRequired mb={4} isInvalid={!!error}>
-        <FormLabel>Gender</FormLabel>
-        <Select
-          name="gender"
-          placeholder="Select gender"
-          value={formData.gender}
-          onChange={handleChange}
-        >
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </Select>
-      </FormControl>
+            <FormControl
+              isInvalid={errors.gender && touched.gender}
+              mb={4}
+              isRequired
+            >
+              <FormLabel>Gender</FormLabel>
+              <Field as={Select} name="gender" placeholder="Select gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </Field>
+              <FormErrorMessage>{errors.gender}</FormErrorMessage>
+            </FormControl>
 
-      <FormControl isRequired mb={4} isInvalid={!!error}>
-        <FormLabel>Birthdate</FormLabel>
-        <Input
-          name="birthdate"
-          type="date"
-          size="lg"
-          variant="outline"
-          value={formData.birthdate}
-          onChange={handleChange}
-        />
-      </FormControl>
+            <FormControl
+              isInvalid={errors.birthdate && touched.birthdate}
+              mb={4}
+              isRequired
+            >
+              <FormLabel>Birthdate</FormLabel>
+              <Field name="birthdate" type="date" as={Input} />
+              <FormErrorMessage>{errors.birthdate}</FormErrorMessage>
+            </FormControl>
 
-      <FormControl isRequired mb={4} isInvalid={!!error}>
-        <FormLabel>Address</FormLabel>
-        <Input
-          name="address"
-          placeholder="Address"
-          size="lg"
-          variant="outline"
-          value={formData.address}
-          onChange={handleChange}
-        />
-      </FormControl>
+            <FormControl
+              isInvalid={errors.address && touched.address}
+              mb={4}
+              isRequired
+            >
+              <FormLabel>Address</FormLabel>
+              <Field name="address" as={Input} placeholder="Address" />
+              <FormErrorMessage>{errors.address}</FormErrorMessage>
+            </FormControl>
 
-      <FormControl isRequired mb={4} isInvalid={!!error}>
-        <FormLabel>Government ID Type</FormLabel>
-        <Select
-          name="governmentIdType"
-          placeholder="Select government ID type"
-          value={formData.governmentIdType}
-          onChange={handleChange}
-        >
-          {governmentIdTypes.map((id) => (
-            <option key={id.value} value={id.value}>
-              {id.label}
-            </option>
-          ))}
-        </Select>
-      </FormControl>
+            <FormControl
+              isInvalid={errors.governmentIdType && touched.governmentIdType}
+              mb={4}
+              isRequired
+            >
+              <FormLabel>Government ID Type</FormLabel>
+              <Field
+                as={Select}
+                name="governmentIdType"
+                placeholder="Select government ID type"
+              >
+                {governmentIdTypes.map((id) => (
+                  <option key={id.value} value={id.value}>
+                    {id.label}
+                  </option>
+                ))}
+              </Field>
+              <FormErrorMessage>{errors.governmentIdType}</FormErrorMessage>
+            </FormControl>
 
-      <FormControl isRequired mb={4} isInvalid={!!error}>
-        <FormLabel>Upload Government ID Image</FormLabel>
-        <Input
-          name="governmentIdImage"
-          type="file"
-          accept="image/*" // Accept image files only
-          size="lg"
-          variant="outline"
-          onChange={handleChange}
-        />
-      </FormControl>
+            <FormControl
+              isInvalid={errors.governmentIdImage && touched.governmentIdImage}
+              mb={4}
+              isRequired
+            >
+              <FormLabel>Upload Government ID Image</FormLabel>
+              <Input
+                name="governmentIdImage"
+                type="file"
+                accept="image/*"
+                onChange={(e) =>
+                  setFieldValue("governmentIdImage", e.currentTarget.files[0])
+                }
+              />
+              <FormErrorMessage>{errors.governmentIdImage}</FormErrorMessage>
+            </FormControl>
 
-      <FormControl isRequired mb={4} isInvalid={!!error}>
-        <FormLabel>Upload Profile Verification Image</FormLabel>
-        <Input
-          name="profileImage"
-          type="file"
-          accept="image/*" // Accept image files only
-          size="lg"
-          variant="outline"
-          onChange={handleChange}
-        />
-      </FormControl>
+            <FormControl
+              isInvalid={errors.profileImage && touched.profileImage}
+              mb={4}
+              isRequired
+            >
+              <FormLabel>Upload Profile Verification Image</FormLabel>
+              <Input
+                name="profileImage"
+                type="file"
+                accept="image/*"
+                onChange={(e) =>
+                  setFieldValue("profileImage", e.currentTarget.files[0])
+                }
+              />
+              <FormErrorMessage>{errors.profileImage}</FormErrorMessage>
+            </FormControl>
 
-      {/* Updated Button with custom color palette */}
-      <Button
-        type="submit"
-        bg="#0084FF"
-        color="white"
-        size="lg"
-        _hover={{ bg: "#005FCC" }} // Darker blue for hover effect
-      >
-        Submit
-      </Button>
-    </Flex>
+            <Button
+              type="submit"
+              bg="#0084FF"
+              color="white"
+              size="lg"
+              _hover={{ bg: "#005FCC" }}
+            >
+              Submit
+            </Button>
+          </Flex>
+        </Form>
+      )}
+    </Formik>
   );
 }
