@@ -10,6 +10,7 @@ import {
   useColorModeValue,
   Link,
 } from "@chakra-ui/react";
+import { Link as RouterLink } from "react-router-dom"; // Ensure you're using react-router for navigation
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -62,7 +63,7 @@ export default function LoginPage() {
     >
       <Box
         w="100%"
-        maxW="400px"
+        maxW="500px" // Increased card width to match RegisterPage
         bg="white"
         boxShadow="md"
         borderRadius="lg"
@@ -138,7 +139,12 @@ export default function LoginPage() {
           <Link color={secondaryColor} fontSize="sm">
             Forgot Password?
           </Link>
-          <Link color={secondaryColor} fontSize="sm">
+          <Link
+            as={RouterLink}
+            to="/register"
+            color={secondaryColor}
+            fontSize="sm"
+          >
             Sign Up
           </Link>
         </Flex>
