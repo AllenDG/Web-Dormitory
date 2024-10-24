@@ -1,74 +1,107 @@
 import {
-    Box,
-    Input,
-    Button,
-    FormControl,
-    FormLabel,
-    VStack,
-    Avatar,
-    IconButton,
-    Switch,
-  } from "@chakra-ui/react";
-  import { FaEdit } from "react-icons/fa";
-  
-  export default function EditDetailsForm() {
-    return (
-      <Box
-        w="100%"
-        maxW="600px"
-        p={6}
-        border="1px solid"
-        borderColor="gray.300"
-        borderRadius="md"
-        bg="#fff" // Card background color
-        boxShadow="lg"
-        mt={8} // Added top margin
-      >
-        <VStack spacing={4} align="flex-start">
-          {/* Edit Profile Picture */}
-          <FormControl>
-            <FormLabel>Profile Picture</FormLabel>
-            <Box display="flex" alignItems="center">
-              <Avatar size="lg" name="User" src="https://bit.ly/dan-abramov" />
-              <IconButton
-                icon={<FaEdit />}
-                aria-label="Edit Profile Picture"
-                ml={4}
-                colorScheme="blue"
-              />
-            </Box>
-          </FormControl>
-  
-          {/* Business Name */}
-          <FormControl>
-            <FormLabel>Business Name</FormLabel>
-            <Input placeholder="Enter business name" />
-          </FormControl>
-  
-          {/* First Name */}
-          <FormControl>
-            <FormLabel>First Name</FormLabel>
-            <Input placeholder="Enter first name" />
-          </FormControl>
-  
-          {/* Last Name */}
-          <FormControl>
-            <FormLabel>Last Name</FormLabel>
-            <Input placeholder="Enter last name" />
-          </FormControl>
-  
-          {/* Chat Available Toggle */}
-          <FormControl display="flex" alignItems="center">
-            <FormLabel mb="0">Chat Available</FormLabel>
-            <Switch colorScheme="blue" />
-          </FormControl>
-  
-          {/* Save Changes Button */}
-          <Button mt={4} colorScheme="blue" w="100%">
-            Save Changes
-          </Button>
-        </VStack>
-      </Box>
-    );
-  }
-  
+  Box,
+  Input,
+  Button,
+  FormControl,
+  FormLabel,
+  VStack,
+  Avatar,
+  IconButton,
+  Switch,
+  HStack,
+  Text,
+  Heading,
+} from "@chakra-ui/react";
+import { FaEdit } from "react-icons/fa";
+
+export default function EditDetailsForm() {
+  return (
+    <Box
+      w="100%"
+      maxW="600px"
+      p={8}
+      borderRadius="lg"
+      bg="#fff" // Light gray background
+      boxShadow="lg"
+      mx="auto" // Center the box horizontally
+      mt={12} // Top margin for spacing
+    >
+      {/* Form Heading */}
+      <Heading as="h2" size="lg" textAlign="center" mb={6}>
+        Edit Your Details
+      </Heading>
+
+      <VStack spacing={6} align="flex-start">
+        {/* Edit Profile Picture */}
+        <FormControl>
+          <FormLabel>Profile Picture</FormLabel>
+          <HStack>
+            <Avatar size="lg" name="User" src="https://bit.ly/dan-abramov" />
+            <IconButton
+              icon={<FaEdit />}
+              aria-label="Edit Profile Picture"
+              size="sm"
+              colorScheme="blue"
+              variant="outline" // Outlined button for subtle effect
+              _hover={{ bg: "blue.50" }} // Light hover effect
+            />
+            <Text fontSize="sm" color="gray.600">
+              Change your profile picture
+            </Text>
+          </HStack>
+        </FormControl>
+
+        {/* Business Name */}
+        <FormControl isRequired>
+          <FormLabel>Business Name</FormLabel>
+          <Input
+            placeholder="Enter business name"
+            focusBorderColor="blue.400" // Blue highlight on focus
+          />
+        </FormControl>
+
+        {/* First Name */}
+        <FormControl isRequired>
+          <FormLabel>First Name</FormLabel>
+          <Input
+            placeholder="Enter first name"
+            focusBorderColor="blue.400" // Blue highlight on focus
+          />
+        </FormControl>
+
+        {/* Last Name */}
+        <FormControl isRequired>
+          <FormLabel>Last Name</FormLabel>
+          <Input
+            placeholder="Enter last name"
+            focusBorderColor="blue.400" // Blue highlight on focus
+          />
+        </FormControl>
+
+        {/* Chat Available Toggle */}
+        <FormControl display="flex" alignItems="center">
+          <FormLabel mb="0">Chat Availability</FormLabel>
+          <Switch
+            colorScheme="blue"
+            size="lg" // Larger switch for better interaction
+          />
+          <Text fontSize="sm" ml={3} color="gray.600">
+            Toggle to set your availability
+          </Text>
+        </FormControl>
+
+        {/* Save Changes Button */}
+        <Button
+          mt={6}
+          colorScheme="blue"
+          w="100%"
+          size="lg"
+          boxShadow="md"
+          _hover={{ boxShadow: "lg", transform: "scale(1.02)" }} // Button hover effect
+        >
+          Save Changes
+        </Button>
+      </VStack>
+    </Box>
+  );
+}
