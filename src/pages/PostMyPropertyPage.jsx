@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import {
   Flex,
   useColorModeValue,
-  Button,
   Box,
   Text,
   useToast,
@@ -55,18 +54,13 @@ export default function PostMyPropertyPage() {
     setCurrentStep((prev) => (prev < 3 ? prev + 1 : prev)); // Limit to 3 steps
   };
 
-  // Function to handle previous step
-  const handlePreviousStep = () => {
-    setCurrentStep((prev) => (prev > 1 ? prev - 1 : prev)); // Limit to step 1
-  };
-
   // Render component based on the current step
   const renderStepComponent = () => {
     switch (currentStep) {
       case 1:
-        return <CreateOwnerForm validateForm={validateForm} />;
+        return <CreateOwnerForm validateForm={validateForm} handleNextStep={handleNextStep}/>;
       case 2:
-        return <PaymentMethodForm />;
+        return <PaymentMethodForm  handleNextStep={handleNextStep} />;
       case 3:
         return (
           <Text fontSize="2xl" color="green.400">
@@ -161,27 +155,7 @@ export default function PostMyPropertyPage() {
           size="sm"
           mt={6}
         />
-
-        {/* Navigation buttons */}
-        <Flex mt={8} justify="space-between">
-          <Button
-            onClick={handlePreviousStep}
-            isDisabled={currentStep === 1}
-            bg="gray.200"
-            _hover={{ bg: "gray.300" }}
-          >
-            Previous
-          </Button>
-          <Button
-            onClick={handleNextStep}
-            isDisabled={currentStep === 3}
-            bg="blue.500"
-            color="white"
-            _hover={{ bg: "blue.600" }}
-          >
-            {currentStep === 2 ? "Start" : "Next"}
-          </Button>
-        </Flex>
+       
       </Box>
     </Flex>
   );
