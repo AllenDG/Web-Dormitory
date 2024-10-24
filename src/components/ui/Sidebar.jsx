@@ -1,15 +1,23 @@
 import { useState } from "react";
-import { Flex, Button, Box, IconButton } from "@chakra-ui/react";
+import {
+  Flex,
+  Button,
+  IconButton,
+  Text,
+  useColorModeValue,
+  VStack,
+} from "@chakra-ui/react";
 import { ownerSidebarRoutes } from "../../routes/ownerSidebarRoutes";
 import { Link, useLocation } from "react-router-dom";
-import { FiMenu, FiX, FiLogOut } from "react-icons/fi"; // Icons for toggling and logout
+import { FiMenu, FiX, FiLogOut } from "react-icons/fi";
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation(); // Get the current location
+  const bgColor = useColorModeValue("gray.50", "gray.800"); // Light/Dark mode support
+  const textColor = useColorModeValue("gray.700", "white");
 
   const handleLogout = () => {
-    // Add your logout logic here
     console.log("Logged out");
   };
 
@@ -18,89 +26,89 @@ export default function Sidebar() {
   };
 
   return (
-    <Flex>
+    <Flex minH="100vh" bg={bgColor} color={textColor}>
       {/* Sidebar container */}
       <Flex
         direction="column"
-        minH="100vh"
         justifyContent="space-between"
-        bg="#f4f4f4" // Updated background color
-        color="black" // Updated text color for contrast
+        bg="#fff"
         p={4}
-        width={isCollapsed ? "80px" : "250px"} // Toggle width
-        transition="width 0.3s"
+        width={isCollapsed ? "80px" : "220px"} // Slightly reduced width for a minimalist feel
+        transition="width 0.3s ease-in-out"
         overflow="hidden"
-        borderRight="1px solid #000" // Added border line
+        borderRight="1px solid"
+        borderColor={useColorModeValue("gray.200", "gray.700")}
       >
         {/* Sidebar header with collapse button */}
-        <Box mb={2}>
+        <Flex align="center">
           <IconButton
             aria-label="Toggle Sidebar"
             icon={isCollapsed ? <FiMenu /> : <FiX />}
             onClick={toggleSidebar}
-            mb={2} // Adjusted margin bottom
-            bg="#0084FF" // Set background color of the button
-            color="white" // Set icon color to white for contrast
-            _hover={{ bg: "#0071cc" }} // Darker shade on hover
+            bg="blue.500"
+            color="white"
+            _hover={{ bg: "blue.400" }}
             size="sm"
           />
           {!isCollapsed && (
-            <h1
-              style={{ color: "#0084FF", fontSize: "20px", fontWeight: "bold" }}
+            <Text
+              ml={3} // Margin for spacing between logo and button
+              color="blue.500"
+              fontSize="lg"
+              fontWeight="bold"
             >
               Dormitory
-            </h1>
+            </Text>
           )}
-        </Box>
+        </Flex>
 
         {/* Sidebar links */}
-        <ul style={{ padding: 0 }}>
-          {" "}
-          {/* Remove default padding */}
+        <VStack as="nav" spacing={1} align="stretch">
           {ownerSidebarRoutes.map((item) => {
-            const isActive = location.pathname === item.path; // Check if the route is active
-            const textColor = isActive ? "#0084FF" : "black"; // Set text color based on active state
-            const iconColor = isActive ? "#0084FF" : "black"; // Set icon color based on active state
+            const isActive = location.pathname === item.path;
+            const activeStyles = {
+              bg: "blue.100",
+              color: "blue.500",
+              borderLeft: "4px solid blue.500",
+            };
 
             return (
               <Link key={item.label} to={item.path}>
                 <Flex
-                  gap={3}
-                  mt={1} // Reduced margin top to bring links closer to the logo
                   alignItems="center"
-                  p={2} // Padding for hover effect
-                  borderRadius="md" // Rounded corners for the hover effect
+                  p={3}
+                  borderRadius="md"
+                  transition="background-color 0.2s ease-in-out"
+                  bg={isActive ? "blue.100" : "transparent"}
                   _hover={{
-                    bg: "#cfe8ff", // Light blue background on hover
-                    color: "#0084FF", // Change text color on hover
-                  }} // Hover effect
-                  style={{
-                    textDecoration: "none", // Remove underline from text
-                    color: textColor,
+                    bg: "blue.50",
+                    color: "blue.500",
                   }}
+                  {...(isActive ? activeStyles : null)}
                 >
-                  <item.icon size={30} color={iconColor} />{" "}
-                  {/* Set icon color based on active state */}
+                  <item.icon
+                    size={20} // Slightly smaller icon for a minimalist look
+                    color={isActive ? "blue.500" : textColor}
+                  />
                   {!isCollapsed && (
-                    <h1
-                      style={{ textDecoration: "none", fontWeight: "normal" }}
-                    >
+                    <Text fontWeight="medium" ml={2}>
                       {item.label}
-                    </h1>
+                    </Text>
                   )}
                 </Flex>
               </Link>
             );
           })}
-        </ul>
+        </VStack>
 
         {/* Logout button */}
         <Button
           colorScheme="red"
           onClick={handleLogout}
-          mt={4}
+          mt={6}
+          size="md"
           width="100%"
-          leftIcon={isCollapsed ? <FiLogOut /> : null} // Add icon when collapsed
+          leftIcon={<FiLogOut />}
         >
           {!isCollapsed && "Logout"}
         </Button>

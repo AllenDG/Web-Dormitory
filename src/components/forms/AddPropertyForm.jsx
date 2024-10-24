@@ -1,4 +1,18 @@
-import "../../assets/css/AddPropertyForm.css";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Flex,
+  FormControl,
+  FormLabel,
+  Input,
+  Select,
+  Stack,
+  Text,
+  Textarea,
+  VStack,
+  Icon,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { createRental } from "../../features/rentals/rentalSlice";
@@ -28,7 +42,7 @@ export default function AddPropertyForm() {
   const handleSubmit = (values, { resetForm }) => {
     const parsedValues = {
       ...values,
-      id: generateUniqueId(), 
+      id: generateUniqueId(),
       latitude: parseFloat(values.latitude),
       longitude: parseFloat(values.longitude),
       price: parseFloat(values.price),
@@ -64,164 +78,145 @@ export default function AddPropertyForm() {
   };
 
   if (!isLoaded) {
-    return <div>Loading...</div>;
+    return <Text>Loading...</Text>;
   }
 
   return (
-    <Formik
-      initialValues={propertyInitialValues}
-      validationSchema={propertyValidationSchema}
-      onSubmit={handleSubmit}
+    <Box
+      w="60%"
+      mx="auto"
+      my="6"
+      p="6"
+      boxShadow="lg"
+      bg="white"
+      borderRadius="md"
     >
-      {({ setFieldValue, values }) => (
-        <Form className="form-container">
-          <div className="flex flex-col space-y-4">
-            {[
-              "title",
-              "description",
-              "city",
-              "price",
-              "availablePerson",
-            ].map((field) => (
-              <div className="form-group" key={field}>
-                <label htmlFor={field} className="label">
-                  {field.charAt(0).toUpperCase() + field.slice(1)}
-                </label>
-                <Field className="input" name={field} />
-                <ErrorMessage
-                  name={field}
-                  component="div"
-                  className="error-message"
-                />
-              </div>
-            ))}
-
-            <div className="form-group">
-              <label htmlFor="bedType" className="label">
-                Bed Type
-              </label>
-              <Field as="select" name="bedType" className="input">
-                <option value="">Select a bed type</option>
-                {bedTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </Field>
-              <ErrorMessage
-                name="bedType"
-                component="div"
-                className="error-message"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="imageUrl" className="label">
-                Image URLs
-              </label>
-              {values.imageUrl.map((imageUrl, index) => (
-                <div key={index} className="flex items-center space-x-2">
+      <Formik
+        initialValues={propertyInitialValues}
+        validationSchema={propertyValidationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ setFieldValue, values }) => (
+          <Form>
+            <VStack spacing={5} align="stretch">
+              {[
+                { name: "title", label: "Title" },
+                {
+                  name: "description",
+                  label: "Description",
+                  type: "textarea",
+                },
+                { name: "city", label: "City" },
+                { name: "price", label: "Price" },
+                { name: "availablePerson", label: "Available Person" },
+              ].map((field) => (
+                <FormControl key={field.name}>
+                  <FormLabel>{field.label}</FormLabel>
                   <Field
-                    className="input"
-                    name={`imageUrl[${index}]`}
-                    placeholder="Enter image URL"
+                    as={field.type === "textarea" ? Textarea : Input}
+                    name={field.name}
                   />
-                  <button
-                    type="button"
-                    onClick={() => removeImageUrl(setFieldValue, index, values)}
-                    className="remove-button"
-                  >
-                    Remove
-                  </button>
-                </div>
+                  <ErrorMessage
+                    name={field.name}
+                    component={Text}
+                    color="red.500"
+                  />
+                </FormControl>
               ))}
-              <button
-                type="button"
-                onClick={() => addImageUrl(setFieldValue, values)}
-                className="add-button"
-              >
-                Add Image URL
-              </button>
-              <ErrorMessage
-                name="imageUrl"
-                component="div"
-                className="error-message"
-              />
-            </div>
 
-            <div className="form-group">
-              <label htmlFor="address" className="label">
-                Address
-              </label>
-              <Autocomplete
-                onLoad={onLoad}
-                onPlaceChanged={() => onPlaceChanged(setFieldValue)}
-                options={{
-                  componentRestrictions: { country: "PH" },
-                  types: ["address"],
-                }}
-              >
-                <Field
-                  className="input"
-                  name="address"
-                  placeholder="Search location"
-                />
-              </Autocomplete>
-              <ErrorMessage
-                name="address"
-                component="div"
-                className="error-message"
-              />
-            </div>
+              <FormControl>
+                <FormLabel>Bed Type</FormLabel>
+                <Field as={Select} name="bedType">
+                  <option value="">Select a bed type</option>
+                  {bedTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </Field>
+                <ErrorMessage name="bedType" component={Text} color="red.500" />
+              </FormControl>
 
-            <div className="form-group">
-              <label className="label">Amenities</label>
-              <div className="amenities-container">
-                {Object.keys(amenityIcons).map((amenity) => {
-                  const Icon = amenityIcons[amenity];
-                  return (
-                    <label key={amenity} className="amenities-label">
-                      <Field
-                        type="checkbox"
-                        name="amenities"
+              <FormControl>
+                <FormLabel>Image URLs</FormLabel>
+                {values.imageUrl.map((imageUrl, index) => (
+                  <Flex key={index} alignItems="center" mb={2}>
+                    <Field
+                      as={Input}
+                      name={`imageUrl[${index}]`}
+                      placeholder="Enter image URL"
+                    />
+                    <Button
+                      ml={2}
+                      colorScheme="red"
+                      onClick={() =>
+                        removeImageUrl(setFieldValue, index, values)
+                      }
+                    >
+                      Remove
+                    </Button>
+                  </Flex>
+                ))}
+                <Button
+                  onClick={() => addImageUrl(setFieldValue, values)}
+                  colorScheme="blue"
+                >
+                  Add Image URL
+                </Button>
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>Address</FormLabel>
+                <Autocomplete
+                  onLoad={onLoad}
+                  onPlaceChanged={() => onPlaceChanged(setFieldValue)}
+                >
+                  <Field
+                    as={Input}
+                    name="address"
+                    placeholder="Search location"
+                  />
+                </Autocomplete>
+                <ErrorMessage name="address" component={Text} color="red.500" />
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>Amenities</FormLabel>
+                <Stack direction="row" wrap="wrap" spacing={4}>
+                  {Object.keys(amenityIcons).map((amenity) => {
+                    const IconComponent = amenityIcons[amenity];
+                    return (
+                      <Checkbox
+                        key={amenity}
                         value={amenity}
-                        className="checkbox"
-                        checked={values.amenities.includes(amenity)}
-                        style={{ width: 30 }}
+                        isChecked={values.amenities.includes(amenity)}
                         onChange={() => {
                           const currentAmenities = values.amenities;
-                          if (currentAmenities.includes(amenity)) {
-                            setFieldValue(
-                              "amenities",
-                              currentAmenities.filter((a) => a !== amenity)
-                            );
-                          } else {
-                            setFieldValue("amenities", [
-                              ...currentAmenities,
-                              amenity,
-                            ]);
-                          }
+                          setFieldValue(
+                            "amenities",
+                            currentAmenities.includes(amenity)
+                              ? currentAmenities.filter((a) => a !== amenity)
+                              : [...currentAmenities, amenity]
+                          );
                         }}
-                      />
-                      <Icon size={20} />
-                      <span style={{ marginLeft: 4 }}>{amenity}</span>
-                    </label>
-                  );
-                })}
-              </div>
-              <ErrorMessage
-                name="amenities"
-                component="div"
-                className="error-message"
-              />
-            </div>
+                      >
+                        <Flex alignItems="center">
+                          <Icon as={IconComponent} mr={2} />
+                          {amenity}
+                        </Flex>
+                      </Checkbox>
+                    );
+                  })}
+                </Stack>
+              </FormControl>
 
-            <button type="submit" className="button">
-              Create Rental
-            </button>
-          </div>
-        </Form>
-      )}
-    </Formik>
+              <Button type="submit" colorScheme="green" w="full">
+                Create Rental
+              </Button>
+            </VStack>
+          </Form>
+        )}
+      </Formik>
+    </Box>
   );
 }

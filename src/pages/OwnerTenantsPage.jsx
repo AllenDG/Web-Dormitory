@@ -12,6 +12,7 @@ import {
   Avatar,
   Button,
   Text,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ChatIcon } from "@chakra-ui/icons";
@@ -49,7 +50,7 @@ const tenantsData = [
 ];
 
 export default function OwnerTenantsPage() {
-  const bgColor = "#f4f4f4"; // Updated background color
+  const bgColor = useColorModeValue("gray.50", "gray.900");
   const [searchTerm, setSearchTerm] = useState("");
   const [tenants, setTenants] = useState(tenantsData);
   const [currentPage, setCurrentPage] = useState(1);

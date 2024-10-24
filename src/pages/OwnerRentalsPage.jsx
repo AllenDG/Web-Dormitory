@@ -5,14 +5,15 @@ import {
   useColorModeValue,
   Input,
   Table,
+  TableContainer,
   Thead,
   Tbody,
   Tr,
   Th,
   Td,
   Button,
-
   Text,
+  Heading,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import RentalEditForm from "../components/forms/RentalEditForm"; // Import the RentalEditForm
@@ -48,7 +49,8 @@ const mockRentals = [
 const ITEMS_PER_PAGE = 3; // Number of items to display per page
 
 export default function OwnerRentalsPage() {
-  const bgColor = useColorModeValue("bg.light", "bg.dark");
+  const bgColor = useColorModeValue("gray.50", "gray.900");
+  const cardBgColor = useColorModeValue("white", "gray.800");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [rentals, setRentals] = useState(mockRentals);
@@ -75,9 +77,12 @@ export default function OwnerRentalsPage() {
   };
 
   return (
-    <Box direction="column" minH="100vh" bgColor={bgColor} p={5}>
-      <Flex justify="space-between" mb={4}>
-        <h1>Rentals</h1>
+    <Box direction="column" minH="100vh" bgColor={bgColor} p={8}>
+      {/* Page Heading and Add Rentals Button */}
+      <Flex justify="space-between" mb={6} align="center">
+        <Heading size="lg" fontWeight="bold">
+          Manage Rentals
+        </Heading>
         <Link to="/owner/add-rentals">
           <Button
             bg="#0084FF"
@@ -90,13 +95,14 @@ export default function OwnerRentalsPage() {
       </Flex>
 
       {/* Search Filter and Pagination Controls */}
-      <Flex mb={4} align="center" justify="space-between">
+      <Flex mb={6} align="center" justify="space-between" wrap="wrap">
         <Input
-          placeholder="Search by Type"
+          placeholder="Search by Rental Type"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          width="300px" // Set a fixed width for the search input
+          width={{ base: "100%", md: "300px" }} // Responsive width
           mr={4} // Margin to the right for spacing
+          mb={{ base: 4, md: 0 }} // Add bottom margin on mobile
         />
 
         {/* Pagination Controls */}
@@ -104,7 +110,7 @@ export default function OwnerRentalsPage() {
           <Button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             isDisabled={currentPage === 1}
-            mr={2} // Margin to the right for spacing
+            mr={2}
           >
             Previous
           </Button>
@@ -116,7 +122,7 @@ export default function OwnerRentalsPage() {
               setCurrentPage((prev) => Math.min(prev + 1, totalPages))
             }
             isDisabled={currentPage === totalPages}
-            ml={2} // Margin to the left for spacing
+            ml={2}
           >
             Next
           </Button>
@@ -124,32 +130,39 @@ export default function OwnerRentalsPage() {
       </Flex>
 
       {/* Rentals Table */}
-      <Table variant="striped">
-        <Thead>
-          <Tr>
-            <Th>Type</Th>
-            <Th>Amenities</Th>
-            <Th>Schedule Visit</Th>
-            <Th>Rating</Th>
-            <Th>Status</Th>
-            <Th>Edit</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {currentRentals.map((rental) => (
-            <Tr key={rental.id}>
-              <Td>{rental.type}</Td>
-              <Td>{rental.amenities}</Td>
-              <Td>{rental.scheduleVisit}</Td>
-              <Td>{rental.rating}</Td>
-              <Td>{rental.status}</Td>
-              <Td>
-                <RentalEditForm rental={rental} onSave={handleSave} />
-              </Td>
+      <TableContainer>
+        <Table
+          variant="striped"
+          bg={cardBgColor}
+          borderRadius="md"
+          boxShadow="md"
+        >
+          <Thead>
+            <Tr>
+              <Th>Type</Th>
+              <Th>Amenities</Th>
+              <Th>Schedule Visit</Th>
+              <Th>Rating</Th>
+              <Th>Status</Th>
+              <Th>Edit</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
+          </Thead>
+          <Tbody>
+            {currentRentals.map((rental) => (
+              <Tr key={rental.id}>
+                <Td>{rental.type}</Td>
+                <Td>{rental.amenities}</Td>
+                <Td>{rental.scheduleVisit}</Td>
+                <Td>{rental.rating}</Td>
+                <Td>{rental.status}</Td>
+                <Td>
+                  <RentalEditForm rental={rental} onSave={handleSave} />
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
     </Box>
   );
 }
