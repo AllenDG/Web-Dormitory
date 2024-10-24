@@ -1,113 +1,127 @@
-import { useState } from "react"; // Import React
 import {
   Box,
   Button,
-  Checkbox,
-  FormControl,
-  FormLabel,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
   Text,
-  Stack,
-  useBreakpointValue,
-  VStack,
 } from "@chakra-ui/react";
-import { TriangleDownIcon } from "@chakra-ui/icons"; // Import the triangle icon
-
-const SubscriptionCard = ({ title, features, isSelected, onSelect }) => {
-  return (
-    <Box
-      borderWidth="1px"
-      borderRadius="md"
-      p={4}
-      bg={isSelected ? "blue.50" : "#fff"} // Change background color if selected
-      borderColor={isSelected ? "blue.500" : "gray.300"} // Change border color if selected
-      boxShadow={isSelected ? "lg" : "md"} // Change shadow effect if selected
-      w="full"
-      h="300px" // Set a fixed height for the cards
-      transition="0.2s"
-      _hover={{ boxShadow: "lg", cursor: "pointer", transform: "scale(1.02)" }} // Add scale effect on hover
-      onClick={onSelect}
-    >
-      <VStack spacing={2} align="start">
-        <Checkbox isChecked={isSelected} onChange={onSelect}>
-          <Text fontWeight="bold" fontSize="lg">
-            {title}
-          </Text>
-        </Checkbox>
-        {features.map((feature, index) => (
-          <Text
-            key={index}
-            fontSize="sm"
-            mb={2}
-            display="flex"
-            alignItems="center"
-          >
-            <TriangleDownIcon color="blue.500" boxSize={4} mr={2} />{" "}
-            {/* Triangle icon */}
-            {feature}
-          </Text>
-        ))}
-      </VStack>
-    </Box>
-  );
-};
 
 export default function ChangeSubscriptionForm() {
-  const [selectedPlan, setSelectedPlan] = useState(null); // Initialize state
-
-  const standardFeatures = [
-    "Permanent account",
-    "Basic analytics",
-    "Boost content (2 weeks)",
-    "Expire 1 month",
-  ];
-
-  const premiumFeatures = [
-    "Permanent account",
-    "Advanced analytics",
-    "Boost content (1 month)",
-    "Chatbot support",
-    "Email notification",
-  ];
-
-  const handleSelectPlan = (plan) => {
-    setSelectedPlan(plan);
-  };
-
-  // Use responsive breakpoints to adjust layout
-  const direction = useBreakpointValue({ base: "column", md: "row" });
+  // Color palette
+  const primaryColor = "#F4F4F4";
+  const secondaryColor = "#0084FF";
 
   return (
-    <Box maxW="600px" p={6} mt={8}>
-      <FormControl>
-        <FormLabel>Select Your Subscription Plan</FormLabel>
-      </FormControl>
-      <Stack spacing={4} mt={4} direction={direction}>
-        {/* Standard Plan Card */}
-        <SubscriptionCard
-          title="Standard"
-          features={standardFeatures}
-          isSelected={selectedPlan === "standard"}
-          onSelect={() => handleSelectPlan("standard")}
-        />
+    <Box
+      p={6}
+      mt={8}
+      bg={primaryColor}
+      borderRadius="md"
+      maxW="900px"
+      mx="auto"
+    >
+  
+      <Text fontSize="lg" mb={8} textAlign="center">
+        Choose the right plan for your adventure, with <b>free</b>,{" "}
+        <b>standard</b>, and <b>premium</b> options.
+      </Text>
 
-        {/* Premium Plan Card */}
-        <SubscriptionCard
-          title="Premium"
-          features={premiumFeatures}
-          isSelected={selectedPlan === "premium"}
-          onSelect={() => handleSelectPlan("premium")}
-        />
-      </Stack>
-
-      {/* Save Changes Button */}
-      <Button
-        mt={10}
-        colorScheme="blue"
-        w="20%"
-        isDisabled={!selectedPlan} // Disable button if no plan is selected
+      {/* Subscription Table */}
+      <Table
+        variant="simple"
+        size="lg"
+        bg="white"
+        borderRadius="md"
+        boxShadow="lg"
       >
-        Save Changes
-      </Button>
+        <Thead bg={secondaryColor}>
+          <Tr>
+            <Th color="white">Features</Th>
+            <Th color="white" textAlign="center">
+              Free
+            </Th>
+            <Th color="white" textAlign="center">
+              Standard
+            </Th>
+            <Th color="white" textAlign="center">
+              Premium
+            </Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {/* Permanent Account */}
+          <Tr>
+            <Td>Permanent Account</Td>
+            <Td textAlign="center">✔️</Td>
+            <Td textAlign="center">✔️</Td>
+            <Td textAlign="center">✔️</Td>
+          </Tr>
+
+          {/* Analytics */}
+          <Tr>
+            <Td>Analytics</Td>
+            <Td textAlign="center">❌</Td>
+            <Td textAlign="center">Basic Analytics</Td>
+            <Td textAlign="center">Advanced Analytics</Td>
+          </Tr>
+
+          {/* Boost Content */}
+          <Tr>
+            <Td>Boost Content</Td>
+            <Td textAlign="center">❌</Td>
+            <Td textAlign="center">Boost for 2 weeks</Td>
+            <Td textAlign="center">Boost for 1 month</Td>
+          </Tr>
+
+          {/* Expire */}
+          <Tr>
+            <Td>Account Expiry</Td>
+            <Td textAlign="center">❌</Td>
+            <Td textAlign="center">Expires in 1 month</Td>
+            <Td textAlign="center">Never Expires</Td>
+          </Tr>
+
+          {/* Chatbot */}
+          <Tr>
+            <Td>Chatbot Support</Td>
+            <Td textAlign="center">❌</Td>
+            <Td textAlign="center">❌</Td>
+            <Td textAlign="center">✔️</Td>
+          </Tr>
+
+          {/* Email Ads */}
+          <Tr>
+            <Td>Email Ads</Td>
+            <Td textAlign="center">❌</Td>
+            <Td textAlign="center">✔️</Td>
+            <Td textAlign="center">✔️</Td>
+          </Tr>
+
+          {/* Get Started Buttons */}
+          <Tr>
+            <Td></Td>
+            <Td textAlign="center">
+              <Button colorScheme="blue" w="full">
+                Get Started
+              </Button>
+            </Td>
+            <Td textAlign="center">
+              <Button colorScheme="blue" w="full">
+                Get Started
+              </Button>
+            </Td>
+            <Td textAlign="center">
+              <Button colorScheme="blue" w="full">
+                Get Started
+              </Button>
+            </Td>
+          </Tr>
+        </Tbody>
+      </Table>
     </Box>
   );
 }
