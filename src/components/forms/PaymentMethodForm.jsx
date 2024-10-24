@@ -16,6 +16,7 @@ import {
 import { paymentMethodValidationSchema } from "../../utils/validationSchema";
 import BankTransfer from "./BankTransfer"; // Import the BankTransfer component
 import GcashForm from "./GcashForm"; // Import the GcashForm component
+import PaypalForm from "./PaypalForm"; // Import the PaypalForm component
 
 const countries = [
   { name: "Philippines", code: "+63" },
@@ -40,6 +41,8 @@ export default function PaymentMethodForm({ handlenextstep }) {
     accountName: "",
     gcashNumber: "", // GCash fields
     gcashAccountName: "",
+    paypalNumber: "", // PayPal fields
+    paypalAccountName: "",
   };
 
   const handleSubmit = (values) => {
@@ -66,40 +69,6 @@ export default function PaymentMethodForm({ handlenextstep }) {
                 Payment Details
               </Text>
               <VStack spacing={4} align="stretch">
-                <Flex>
-                  <FormControl isRequired flex="0.4" mr={2}>
-                    <FormLabel>Phone Code</FormLabel>
-                    <Field
-                      as={Select}
-                      name="phoneCode"
-                      placeholder="Select Code"
-                    >
-                      {countries.map((country) => (
-                        <option key={country.code} value={country.code}>
-                          {country.name} ({country.code})
-                        </option>
-                      ))}
-                    </Field>
-                    <ErrorMessage
-                      name="phoneCode"
-                      component={FormErrorMessage}
-                    />
-                  </FormControl>
-
-                  <FormControl isRequired flex="0.6">
-                    <FormLabel>Phone Number</FormLabel>
-                    <Field
-                      as={Input}
-                      name="phoneNumber"
-                      placeholder="Phone Number"
-                    />
-                    <ErrorMessage
-                      name="phoneNumber"
-                      component={FormErrorMessage}
-                    />
-                  </FormControl>
-                </Flex>
-
                 <Flex>
                   <FormControl isRequired flex="1" mr={2}>
                     <FormLabel>City</FormLabel>
@@ -137,7 +106,7 @@ export default function PaymentMethodForm({ handlenextstep }) {
                     name="paymentMethod"
                     placeholder="Select Payment Method"
                   >
-                    {paymentMethods.map((method,index) => (
+                    {paymentMethods.map((method, index) => (
                       <option key={index} value={method}>
                         {method}
                       </option>
@@ -152,6 +121,7 @@ export default function PaymentMethodForm({ handlenextstep }) {
                 {/* Conditional rendering of forms based on payment method */}
                 {values.paymentMethod === "Bank Transfer" && <BankTransfer />}
                 {values.paymentMethod === "GCash" && <GcashForm />}
+                {values.paymentMethod === "PayPal" && <PaypalForm />}
 
                 <Text fontSize="lg" mt={4}>
                   Registration Fee: <strong>₱50</strong>
