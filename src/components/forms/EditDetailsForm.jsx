@@ -11,27 +11,30 @@ import {
   HStack,
   Text,
   Heading,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaEdit } from "react-icons/fa";
 
 export default function EditDetailsForm() {
+ 
+  const cardBgColor = useColorModeValue("white", "gray.700"); // same as dashboard
+
   return (
     <Box
       w="100%"
       maxW="600px"
       p={8}
       borderRadius="lg"
-      bg="#fff" // Light gray background
+      bg={cardBgColor} // same as dashboard card background
       boxShadow="lg"
       mx="auto" // Center the box horizontally
-      mt={12} // Top margin for spacing
     >
       {/* Form Heading */}
       <Heading as="h2" size="lg" textAlign="center" mb={6}>
         Edit Your Details
       </Heading>
 
-      <VStack spacing={6} align="flex-start">
+      <VStack spacing={6} align="flex-start" >
         {/* Edit Profile Picture */}
         <FormControl>
           <FormLabel>Profile Picture</FormLabel>

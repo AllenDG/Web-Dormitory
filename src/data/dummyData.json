@@ -1,0 +1,58 @@
+{
+  "tenantStats": [
+    {
+      "label": "Total Tenants",
+      "value": 800,
+      "icon": "FiUsers",
+      "color": "blue.500"
+    },
+    {
+      "label": "Active Tenants",
+      "value": 700,
+      "icon": "FiCheckCircle",
+      "color": "green.400"
+    },
+    {
+      "label": "Pending Applications",
+      "value": 50,
+      "icon": "FiClock",
+      "color": "orange.300"
+    },
+    {
+      "label": "Rejected Applications",
+      "value": 50,
+      "icon": "FiXCircle",
+      "color": "red.400"
+    },
+    {
+      "label": "Favorites Added",
+      "value": 200,
+      "icon": "FiHeart",
+      "color": "pink.400"
+    },
+    {
+      "label": "Visits Scheduled",
+      "value": 120,
+      "icon": "FiCalendar",
+      "color": "purple.400"
+    }
+  ],
+  "dataPie": [
+    { "name": "Approved", "value": 400 },
+    { "name": "Pending", "value": 300 },
+    { "name": "Rejected", "value": 100 }
+  ],
+  "dataBar": [
+    { "name": "Jan", "value": 2400 },
+    { "name": "Feb", "value": 2210 },
+    { "name": "Mar", "value": 2290 },
+    { "name": "Apr", "value": 2000 },
+    { "name": "May", "value": 2181 },
+    { "name": "Jun", "value": 2500 }
+  ],
+  "listingPerformance": [
+    { "name": "Apartments", "value": 450 },
+    { "name": "Condos", "value": 300 },
+    { "name": "Studio Types", "value": 150 }
+  ]
+}
