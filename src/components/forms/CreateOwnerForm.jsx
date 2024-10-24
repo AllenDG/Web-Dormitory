@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Flex,
   FormControl,
@@ -190,7 +190,14 @@ export default function CustomForm() {
         />
       </FormControl>
 
-      <Button type="submit" colorScheme="teal" size="lg">
+      {/* Updated Button with custom color palette */}
+      <Button
+        type="submit"
+        bg="#0084FF"
+        color="white"
+        size="lg"
+        _hover={{ bg: "#005FCC" }} // Darker blue for hover effect
+      >
         Submit
       </Button>
     </Flex>
