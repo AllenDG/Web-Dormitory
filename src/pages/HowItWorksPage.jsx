@@ -6,11 +6,14 @@ import {
   Image,
   Button,
   useColorModeValue,
+  Icon,
 } from "@chakra-ui/react";
+import { FaSearch, FaPhone, FaTruck } from "react-icons/fa";
 
 export default function HowItWorksPage() {
-  const bgColor = useColorModeValue("bg.light", "bg.dark");
+  const bgColor = useColorModeValue("#F4F4F4", "gray.800");
   const textColor = useColorModeValue("gray.700", "gray.300");
+  const stepColor = useColorModeValue("blue.700", "blue.400");
 
   return (
     <Flex
@@ -19,55 +22,45 @@ export default function HowItWorksPage() {
       justify="center"
       align="center"
       bg={bgColor}
-      px={4}
+      px={6}
+      py={12}
     >
       {/* "How it works" section */}
-      <Heading as="h1" size="sm" textAlign="center" color="black" mt={50}>
+      <Heading as="h1" size="xl" textAlign="center" color="black" mb={4}>
         How It Works
       </Heading>
       <Text
-        fontSize="4xl"
+        fontSize="2xl"
         fontWeight="bold"
         color="blue.600"
         textAlign="center"
-        mt={2}
-        mb="20%"
+        mb={12}
       >
         Finding your perfect home is just 3 clicks away.
       </Text>
 
       {/* Step-by-step content */}
-      <Box width="100%" maxW="800px">
+      <Box width="100%" maxW="800px" mb={10}>
         {/* Step 1: Browse */}
-        <Flex direction={["column", "column", "row"]} align="center" mb={6}>
-          <Box flex="1">
-            <Text
-              fontSize="3xl"
-              fontWeight="bold"
-              color="blue.700"
-              textAlign={["center", "center", "left"]}
-              mt={2}
-            >
-              1. Browse 🔍
+        <Flex direction={["column", "column", "row"]} align="center" mb={10}>
+          <Box flex="1" textAlign={["center", "center", "left"]}>
+            <Icon as={FaSearch} boxSize={8} color="blue.600" mb={2} />
+            <Text fontSize="2xl" fontWeight="bold" color={stepColor}>
+              1. Browse
             </Text>
-            <Text
-              fontSize="md"
-              color={textColor}
-              textAlign={["center", "center", "left"]}
-              mt={2}
-            >
-              Start by typing your ideal location. Apply filters like pets
-              allowed, with gym amenities, or explore bedspace versus
-              entire-room stays to narrow down your options.
+            <Text fontSize="md" color={textColor} mt={2} maxW="450px">
+              Start by typing your ideal location. Use filters to find options
+              like pet-friendly places, gyms, or specific room types.
             </Text>
           </Box>
           <Box
             flex="1"
             p={4}
-            ml={[0, 0, 4]}
+            ml={[0, 0, 6]}
             boxShadow="lg"
             bg="white"
-            rounded="md"
+            rounded="lg"
+            _hover={{ transform: "scale(1.05)", transition: "0.3s" }}
             mt={[4, 4, 0]}
             width="250px"
             height="250px"
@@ -77,6 +70,7 @@ export default function HowItWorksPage() {
               alt="Browse Properties"
               boxSize="200px"
               objectFit="cover"
+              rounded="md"
             />
           </Box>
         </Flex>
@@ -85,36 +79,26 @@ export default function HowItWorksPage() {
         <Flex
           direction={["column", "column", "row-reverse"]}
           align="center"
-          mb={6}
-          mt="20%"
+          mb={10}
         >
-          <Box flex="1">
-            <Text
-              fontSize="3xl"
-              fontWeight="bold"
-              color="blue.700"
-              textAlign={["center", "center", "right"]}
-              mt={2}
-            >
-              2. Book or Contact 📞
+          <Box flex="1" textAlign={["center", "center", "right"]}>
+            <Icon as={FaPhone} boxSize={8} color="green.500" mb={2} />
+            <Text fontSize="2xl" fontWeight="bold" color={stepColor}>
+              2. Book or Contact
             </Text>
-            <Text
-              fontSize="md"
-              color={textColor}
-              textAlign={["center", "center", "right"]}
-              mt={2}
-            >
-              Found your ideal home? Book it instantly or contact the owner for
-              more details and queries.
+            <Text fontSize="md" color={textColor} mt={2} maxW="450px">
+              Found your ideal home? Book it instantly or reach out to the owner
+              for more information.
             </Text>
           </Box>
           <Box
             flex="1"
             p={4}
-            mr={[0, 0, 4]}
+            mr={[0, 0, 6]}
             boxShadow="lg"
             bg="white"
-            rounded="md"
+            rounded="lg"
+            _hover={{ transform: "scale(1.05)", transition: "0.3s" }}
             mt={[4, 4, 0]}
             width="250px"
             height="250px"
@@ -124,39 +108,31 @@ export default function HowItWorksPage() {
               alt="Book or Contact"
               boxSize="200px"
               objectFit="cover"
+              rounded="md"
             />
           </Box>
         </Flex>
 
         {/* Step 3: Visit and Move In */}
-        <Flex direction={["column", "column", "row"]} align="center" mt="20%">
-          <Box flex="1">
-            <Text
-              fontSize="3xl"
-              fontWeight="bold"
-              color="blue.700"
-              textAlign={["center", "center", "left"]}
-              mt={2}
-            >
-              3. Visit and Move In 🚚
+        <Flex direction={["column", "column", "row"]} align="center">
+          <Box flex="1" textAlign={["center", "center", "left"]}>
+            <Icon as={FaTruck} boxSize={8} color="teal.600" mb={2} />
+            <Text fontSize="2xl" fontWeight="bold" color={stepColor}>
+              3. Visit and Move In
             </Text>
-            <Text
-              fontSize="md"
-              color={textColor}
-              textAlign={["center", "center", "left"]}
-              mt={2}
-            >
-              Schedule a visit, see your future home in person, and move in with
-              ease.
+            <Text fontSize="md" color={textColor} mt={2} maxW="450px">
+              Schedule a visit, get a firsthand look at your future home, and
+              settle in seamlessly.
             </Text>
           </Box>
           <Box
             flex="1"
             p={4}
-            ml={[0, 0, 4]}
+            ml={[0, 0, 6]}
             boxShadow="lg"
             bg="white"
-            rounded="md"
+            rounded="lg"
+            _hover={{ transform: "scale(1.05)", transition: "0.3s" }}
             mt={[4, 4, 0]}
             width="250px"
             height="250px"
@@ -166,42 +142,26 @@ export default function HowItWorksPage() {
               alt="Visit and Move In"
               boxSize="200px"
               objectFit="cover"
+              rounded="md"
             />
           </Box>
         </Flex>
       </Box>
 
-      <Text
-        fontSize="4xl"
-        fontWeight="bold"
-        color="blue.600"
-        textAlign="center"
-        mt="20%"
-        mb={2}
-      >
-        Finding your perfect home is just 3 clicks away.
-      </Text>
-
       {/* Add buttons for Renters and Owners */}
-
-      {/* Add buttons for Renters and Owners with descriptions */}
-      <Flex mt={6} mb={8} justify="center" gap={4}>
+      <Flex mt={10} mb={8} justify="center" gap={6}>
         <Flex direction="column" align="center" gap={2}>
-          <Text
-            fontSize="lg"
-            fontWeight="semibold"
-            color="blue.600"
-            textAlign="center"
-          >
+          <Text fontSize="lg" fontWeight="semibold" color="blue.600">
             For Renters
           </Text>
           <Text fontSize="md" color={textColor} textAlign="center" maxW="300px">
-            Search for verified rentals, schedule a visit, and move-in with
+            Search for verified rentals, schedule a visit, and move in with
             ease.
           </Text>
           <Button
             size="lg"
             colorScheme="blue"
+            _hover={{ bg: "blue.700" }}
             onClick={() => {
               // Handle Renters button click
             }}
@@ -211,21 +171,17 @@ export default function HowItWorksPage() {
         </Flex>
 
         <Flex direction="column" align="center" gap={2}>
-          <Text
-            fontSize="lg"
-            fontWeight="semibold"
-            color="green.600"
-            textAlign="center"
-          >
+          <Text fontSize="lg" fontWeight="semibold" color="green.600">
             For Owners
           </Text>
           <Text fontSize="md" color={textColor} textAlign="center" maxW="300px">
             List your property, connect with renters, and manage bookings
-            seamlessly.
+            effortlessly.
           </Text>
           <Button
             size="lg"
             colorScheme="green"
+            _hover={{ bg: "green.700" }}
             onClick={() => {
               // Handle Owners button click
             }}

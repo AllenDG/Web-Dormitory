@@ -7,12 +7,13 @@ import {
   Image,
   Grid,
   GridItem,
+  Button,
 } from "@chakra-ui/react";
 import banner from "../assets/banner.png";
 import person from "../assets/person.png";
 
 export default function AboutUsPage() {
-  const bgColor = useColorModeValue("bg.light", "bg.dark");
+  const bgColor = useColorModeValue("#F4F4F4", "gray.800");
   const textColor = useColorModeValue("gray.700", "gray.300");
 
   const cardData = [
@@ -44,7 +45,7 @@ export default function AboutUsPage() {
   const teamMembers = [
     {
       id: 1,
-      name: "CLAVERIA, JEDYNE B. ",
+      name: "CLAVERIA, JEDYNE B.",
       role: "Researcher",
       image: "https://via.placeholder.com/150",
     },
@@ -56,19 +57,19 @@ export default function AboutUsPage() {
     },
     {
       id: 3,
-      name: "MANUCAN, JAMES ",
+      name: "MANUCAN, JAMES",
       role: "Mobile Developer",
       image: "https://via.placeholder.com/150",
     },
     {
       id: 4,
-      name: "DE GUZMAN, ALLEN WALTER F. ",
+      name: "DE GUZMAN, ALLEN WALTER F.",
       role: "UI/UX | Web Developer",
       image: "https://via.placeholder.com/150",
     },
     {
       id: 5,
-      name: "ESTRADA, JHULYAN MATTHEW T. ",
+      name: "ESTRADA, JHULYAN MATTHEW T.",
       role: "Researcher",
       image: "https://via.placeholder.com/150",
     },
@@ -78,39 +79,38 @@ export default function AboutUsPage() {
     <Flex
       direction="column"
       minH="100vh"
-      justify="flex-start"
       align="center"
       bg={bgColor}
       px={6}
       py={12}
     >
       {/* Header */}
-      <Heading as="h1" size="3xl" mb={4} mt={50} color={textColor}>
+      <Heading as="h1" size="3xl" mb={4} mt={8} color="#0084FF">
         SECURE YOUR SPACE
       </Heading>
       <Text fontSize="lg" color={textColor} mb={12} textAlign="center">
         Discover a hassle-free way to find your perfect living space.
       </Text>
+
       {/* Banner Section */}
       <Box
         mb={12}
-        width="100vw" // Full width of the viewport
-        height={400}
-        borderRadius="md" // Border radius on the Box, not the image
-        overflow="hidden" // Ensure the image doesn't overflow the container
+        w="full"
+        h={400}
+        borderRadius="md"
+        overflow="hidden"
         position="relative"
-        mx={0} // No left or right margin
       >
         <Image
-          src={banner} // Placeholder banner image
+          src={banner}
           alt="Banner Image"
-          objectFit="cover" // Change to cover to prevent image cutoff
-          width="100%"
-          height="100%"
+          objectFit="cover"
+          w="100%"
+          h="100%"
         />
       </Box>
 
-      {/* What is Dormy Section */}
+      {/* What is Dormitory Section */}
       <Box
         as="section"
         w="100%"
@@ -121,13 +121,13 @@ export default function AboutUsPage() {
         <Flex
           direction={{ base: "column", md: "row" }}
           alignItems="center"
-          justifyContent="space-evenly"
+          justify="space-evenly"
         >
           <Box
             flex="1"
             textAlign={{ base: "center", md: "left" }}
             mb={{ base: 8, md: 0 }}
-            pr={{ base: 0, md: 4 }} // Right padding for larger screens
+            pr={{ base: 0, md: 4 }}
           >
             <Heading as="h1" size="3xl" mb={4} color={textColor}>
               What is Dormitory?
@@ -137,141 +137,124 @@ export default function AboutUsPage() {
               young professionals effortlessly find and secure their ideal
               dormitory or apartment.
             </Text>
+            <Button colorScheme="blue" variant="solid" size="lg">
+              Learn More
+            </Button>
           </Box>
-
-          {/* Right Side - Image */}
           <Box flex="1" textAlign="center">
             <Image
-              src={person} // Replace with your own image URL
+              src={person}
               alt="Living Space"
               borderRadius="md"
               maxW="100%"
-              height="600px" // Increased height for a larger image
-              objectFit="cover" // Ensure the image covers the entire box
+              h="600px"
+              objectFit="cover"
             />
           </Box>
         </Flex>
       </Box>
 
-      {/* mission */}
-      <Box position="relative" width="100%" bg="#0084FF">
-        {/* Overlapping Background */}
-        <Box
-          top="0"
-          left="0"
-          right="0"
-          height="50px" // Adjust the height for how much of the background shows
-          zIndex={-1} // Push the background behind the content
-        />
+      {/* Mission Section */}
+      <Box
+        position="relative"
+        width="100%"
+        bg="#0084FF"
+        py={16}
+        textAlign="center"
+        color="white"
+      >
+        <Heading as="h2" size="xl" mb={4}>
+          OUR MISSION
+        </Heading>
+        <Text fontSize="lg" mb={4}>
+          Make renting better, for everyone
+        </Text>
+        <Text fontSize="md" mb={4}>
+          We&apos;re revolutionizing the way people rent, by paving the path towards
+          a tech-enabled rental ecosystem for all.
+        </Text>
+        <Text fontSize="lg" fontWeight="bold">
+          Explore our initiatives below 👇
+        </Text>
+      </Box>
 
-        {/* Mission Section */}
-        <Box
-          p={8} // Padding for space around the text
-          textAlign="center"
-          color="white"
-          zIndex={1} // Ensure text stays on top of the background
-          mb={16} // Bottom margin to create space for the overlapping cards
+      {/* Card Grid Section */}
+      <Box display="flex" justifyContent="center" py={12} w="full">
+        <Grid
+          templateColumns={{
+            base: "1fr",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
+          }}
+          gap={6}
+          maxW="800px"
+          w="full"
         >
-          <Heading as="h2" size="xl" mb={4}>
-            OUR MISSION
-          </Heading>
-          <Text fontSize="lg" mb={4}>
-            Make renting better, for everyone
-          </Text>
-          <Text fontSize="md" mb={4}>
-            We&apos;re revolutionizing the way people rent, by paving the path
-            towards a tech-enabled rental ecosystem for all.
-          </Text>
-          <Text fontSize="lg" fontWeight="bold">
-            Explore our initiatives below 👇
-          </Text>
-        </Box>
-
-        {/* Card Grid Section */}
-        <Box width="100%" display="flex" justifyContent="center">
-          <Grid
-            templateColumns={{
-              base: "1fr",
-              sm: "repeat(2, 1fr)",
-              md: "repeat(3, 1fr)",
-            }} // Adjust columns for different screen sizes
-            gap={4} // Reduced gap between cards for a more compact view
-            mb={12}
-            maxW="800px" // Set a smaller maximum width for the grid
-            width="100%"
-            zIndex={1}
-          >
-            {cardData.map((card) => (
-              <GridItem key={card.id}>
-                <Box
-                  h="100%"
-                  p={3} // Reduced padding for a more compact look
-                  borderWidth={1}
+          {cardData.map((card) => (
+            <GridItem key={card.id}>
+              <Box
+                p={4}
+                borderWidth={1}
+                borderRadius="md"
+                bg={bgColor}
+                boxShadow="lg"
+                transition="transform 0.3s ease"
+                _hover={{ transform: "scale(1.05)" }}
+              >
+                <Image
+                  h={200}
+                  w="100%"
+                  objectFit="cover"
+                  src={card.image}
+                  alt={card.title}
                   borderRadius="md"
-                  bg={bgColor}
-                  boxShadow="md" // Slightly reduced shadow for a subtler effect
-                  transition="transform 0.3s ease"
-                  _hover={{ transform: "scale(1.05)" }} // Scale up on hover
-                >
-                  <Image
-                    h={200} // Further reduced height for the image
-                    w="100%"
-                    objectFit="cover"
-                    src={card.image}
-                    alt={card.title}
-                    borderRadius="md"
-                    mb={2} // Reduced margin below the image
-                    transition="transform 0.3s ease"
-                    _hover={{ transform: "scale(1.1)" }} // Image zoom on hover
-                  />
-                  <Heading as="h3" size="sm" mb={1} color={textColor}> {/* Reduced heading size */}
-                    {card.title}
-                  </Heading>
-                  <Text color={textColor} fontSize="sm"> {/* Reduced text size */}
-                    {card.description}
-                  </Text>
-                </Box>
-              </GridItem>
-            ))}
-          </Grid>
-        </Box>
+                  mb={4}
+                />
+                <Heading as="h3" size="md" mb={2} color={textColor}>
+                  {card.title}
+                </Heading>
+                <Text color={textColor} fontSize="sm">
+                  {card.description}
+                </Text>
+              </Box>
+            </GridItem>
+          ))}
+        </Grid>
+      </Box>
 
-        {/* Team Section */}
-        <Box w="100%" py={10} bg={bgColor}>
-          <Heading as="h2" size="xl" mb={8} color={textColor} textAlign="center">
-            Meet Our Team
-          </Heading>
-          <Grid
-            templateColumns={{
-              base: "1fr",
-              sm: "repeat(2, 1fr)",
-              md: "repeat(3, 1fr)",
-            }}
-            gap={6}
-            maxW="1200px"
-            mx="auto"
-            px={4}
-          >
-            {teamMembers.map((member) => (
-              <Box key={member.id} textAlign="center">
+      {/* Team Section */}
+      <Box w="full" py={10} bg={bgColor}>
+        <Heading as="h2" size="xl" mb={8} color={textColor} textAlign="center">
+          Meet Our Team
+        </Heading>
+        <Grid
+          templateColumns={{
+            base: "1fr",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
+          }}
+          gap={6}
+          maxW="1200px"
+          mx="auto"
+          px={4}
+        >
+          {teamMembers.map((member) => (
+            <Box key={member.id} textAlign="center">
               <Image
                 src={member.image}
                 alt={member.name}
                 borderRadius="full"
-                boxSize="150px" // Fixed size for circular images
+                boxSize="150px"
                 mb={4}
-                mx="auto" // This will center the image horizontally
+                mx="auto"
               />
-              <Text fontWeight="bold" color={textColor} textAlign="center">
+              <Text fontWeight="bold" color={textColor}>
                 {member.name}
               </Text>
-              <Text color={textColor} textAlign="center">
-                {member.role}
-              </Text>
+              <Text color={textColor}>{member.role}</Text>
             </Box>
-            ))}
-          </Grid>
-        </Box>
+          ))}
+        </Grid>
       </Box>
     </Flex>
   );
