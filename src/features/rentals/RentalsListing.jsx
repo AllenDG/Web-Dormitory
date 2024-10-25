@@ -5,7 +5,6 @@ import { priceFormatter } from "../../utils/priceFormatter";
 import {
   Wrap,
   WrapItem,
-  Center,
   Card,
   CardBody,
   Image,
@@ -20,14 +19,18 @@ import {
   LightMode,
   Input,
   VStack,
+  Button,
+  HStack,
+  Icon,
 } from "@chakra-ui/react";
+import { StarIcon } from "@chakra-ui/icons";
 import { amenityIcons } from "../../utils/amenityIcon";
 import amenities from "../../data/amenities.json";
 import usePopularLocations from "../../hooks/usePopularLocation";
 
 export default function RentalsListing() {
   const popularLocations = usePopularLocations(5);
-  const bgColor = useColorModeValue("bg.light", "bg.dark");
+  const bgColor = useColorModeValue("#F4F4F4", "gray.700");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const rentalListings = useSelector((state) => state.rentals.rentals);
@@ -62,7 +65,7 @@ export default function RentalsListing() {
         placeholder="Search for listings..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        focusBorderColor="primary.500"
+        focusBorderColor="#0084FF"
       />
 
       <LightMode>
@@ -71,8 +74,9 @@ export default function RentalsListing() {
             <WrapItem key={amenity}>
               <Tag
                 size="lg"
-                colorScheme="primary"
+                colorScheme="blue"
                 borderRadius="full"
+                cursor="pointer"
                 onClick={() => handleAmenityClick(amenity)}
                 variant={
                   selectedAmenities.includes(amenity) ? "solid" : "outline"
@@ -99,9 +103,9 @@ export default function RentalsListing() {
                 <Text
                   p={2}
                   color="white"
-                  bg="primary.500"
+                  bg="#0084FF"
                   borderRadius="md"
-                  _hover={{ bg: "primary.400" }}
+                  _hover={{ bg: "blue.600" }}
                 >
                   ({count}) {location}
                 </Text>
@@ -117,36 +121,49 @@ export default function RentalsListing() {
         {filteredListings.length > 0 ? (
           filteredListings.map((listing) => (
             <WrapItem key={listing.id}>
-              <Link to={`/listing/${listing.id}`}>
-                <Center maxW="300px" h="auto">
-                  <Card maxW="sm" bg={bgColor}>
-                    <CardBody>
-                      <Image
-                        src={listing.imageUrl[0]}
-                        alt={listing.title}
-                        borderRadius="lg"
-                        objectFit="cover"
-                        w="100%"
-                        h="250px"
-                      />
-                      <Stack mt="6" spacing="3">
-                        <Heading size="md" noOfLines={1}>
-                          {listing.title}
-                        </Heading>
-                        <Text noOfLines={2}>{listing.address}</Text>
-                        <Heading
-                          color="primary.500"
-                          as="h4"
-                          fontSize="lg"
-                          noOfLines={1}
-                        >
-                          {priceFormatter(listing.price)} monthly
-                        </Heading>
-                      </Stack>
-                    </CardBody>
-                  </Card>
-                </Center>
-              </Link>
+              <Card maxW="sm" bg={bgColor} boxShadow="lg" borderRadius="md">
+                <CardBody>
+                  <Image
+                    src={listing.imageUrl[0]}
+                    alt={listing.title}
+                    borderRadius="lg"
+                    objectFit="cover"
+                    w="100%"
+                    h="250px"
+                  />
+                  <Stack mt="4" spacing="3">
+                    <Heading size="md" noOfLines={1}>
+                      {listing.title}
+                    </Heading>
+                    <Text noOfLines={2}>{listing.address}</Text>
+                    <Heading
+                      color="#0084FF"
+                      as="h4"
+                      fontSize="lg"
+                      noOfLines={1}
+                    >
+                      {priceFormatter(listing.price)} monthly
+                    </Heading>
+                    <HStack spacing={1} align="center">
+                      {[...Array(5)].map((_, i) => (
+                        <Icon
+                          key={i}
+                          as={StarIcon}
+                          color={i < listing.rating ? "#0084FF" : "gray.300"}
+                        />
+                      ))}
+                    </HStack>
+                    <Button
+                      as={Link}
+                      to={`/listing/${listing.id}`}
+                      colorScheme="blue"
+                      variant="outline"
+                    >
+                      View
+                    </Button>
+                  </Stack>
+                </CardBody>
+              </Card>
             </WrapItem>
           ))
         ) : (
