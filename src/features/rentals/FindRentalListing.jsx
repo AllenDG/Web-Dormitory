@@ -24,7 +24,11 @@ import {
   Input,
   Grid,
   GridItem,
+  Icon,
+  Divider,
+  Badge,
 } from "@chakra-ui/react";
+import { FaFilter, FaSearch, FaHome } from "react-icons/fa"; // Import icons
 import Map from "../../components/ui/Map";
 import priceRange from "../../data/priceRange.json";
 import amenities from "../../data/amenities.json";
@@ -88,10 +92,25 @@ export default function FindRentalsListing({
             placeholder="Search for listings..."
             onChange={(e) => setSearchQuery(e.target.value)}
             focusBorderColor="primary.500"
+            rightElement={
+              <Button
+                bg="primary.500"
+                color="white"
+                _hover={{ bg: "primary.600" }}
+                onClick={() => {
+                  // Handle search button click
+                  console.log("Searching for:", searchQuery);
+                }}
+              >
+                <Icon as={FaSearch} />
+              </Button>
+            }
           />
           <Flex w="100%" flexWrap="wrap" gap="10px" justify="start">
             <Menu closeOnSelect={false}>
-              <MenuButton as={Button}>Select Price Range</MenuButton>
+              <MenuButton as={Button} leftIcon={<FaFilter />}>
+                Select Price Range
+              </MenuButton>
               <MenuList bg={bgColor}>
                 <RadioGroup
                   onChange={handlePriceChange}
@@ -115,7 +134,9 @@ export default function FindRentalsListing({
             </Menu>
 
             <Menu closeOnSelect={false} isLazy>
-              <MenuButton as={Button}>Select Amenities</MenuButton>
+              <MenuButton as={Button} leftIcon={<FaHome />}>
+                Select Amenities
+              </MenuButton>
               <MenuList bg={bgColor}>
                 {amenities.map((amenity) => (
                   <MenuItem key={amenity} bg={bgColor}>
@@ -138,7 +159,9 @@ export default function FindRentalsListing({
             </Menu>
 
             <Menu closeOnSelect={false}>
-              <MenuButton as={Button}>Select Bed Type</MenuButton>
+              <MenuButton as={Button} leftIcon={<FaHome />}>
+                Select Bed Type
+              </MenuButton>
               <MenuList bg={bgColor}>
                 {bedTypes.map((bed) => (
                   <MenuItem key={bed} bg={bgColor}>
@@ -162,13 +185,24 @@ export default function FindRentalsListing({
           </Flex>
         </Flex>
 
-        <Wrap spacing="10px" align="center" h="70vh" overflowY="auto" justify="center">
+        <Wrap
+          spacing="10px"
+          align="center"
+          h="70vh"
+          overflowY="auto"
+          justify="center"
+        >
           {filteredListings.length > 0 ? (
             filteredListings.map((listing) => (
               <WrapItem key={listing.id}>
                 <Link to={`/listing/${listing.id}`}>
                   <Center maxW={{ base: "300px", md: "250px" }} h="auto">
-                    <Card maxW="sm" bg={bgColor}>
+                    <Card
+                      maxW="sm"
+                      bg={bgColor}
+                      borderRadius="md"
+                      boxShadow="lg"
+                    >
                       <CardBody>
                         <Image
                           src={listing.imageUrl[0]}
@@ -192,6 +226,17 @@ export default function FindRentalsListing({
                             {priceFormatter(listing.price)} monthly
                           </Heading>
                         </Stack>
+                        <Divider />
+                        <Flex justify="space-between" mt={3}>
+                          <Button
+                            colorScheme="blue"
+                            size="sm"
+                            onClick={() => handleMarkerClick(listing.id)}
+                          >
+                            View Details
+                          </Button>
+                          <Badge colorScheme="green">New</Badge>
+                        </Flex>
                       </CardBody>
                     </Card>
                   </Center>
