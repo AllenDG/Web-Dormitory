@@ -6,7 +6,7 @@ export default function OwnerLayout() {
   return (
     <Flex>
       <Sidebar />
-      <Box w="100%">
+      <Box w="100%" overflow="hidden">
         <Outlet />
       </Box>
     </Flex>

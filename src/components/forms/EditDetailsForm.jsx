@@ -82,7 +82,7 @@ export default function EditDetailsForm() {
         </FormControl>
 
         {/* Chat Available Toggle */}
-        <FormControl display="flex" alignItems="center">
+        <FormControl display="flex" flexWrap="wrap" alignItems="center">
           <FormLabel mb="0">Chat Availability</FormLabel>
           <Switch
             colorScheme="blue"
