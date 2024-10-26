@@ -46,7 +46,7 @@ export default function Navbar() {
         isOpen={isOpen}
         placement='right'
         onClose={onClose}
-        finalFocusRef={btnRef}
+        finalFocusRef={btnRef}  
       
       >
         <DrawerOverlay  display={{ base: "block", md: "none" }}/>
