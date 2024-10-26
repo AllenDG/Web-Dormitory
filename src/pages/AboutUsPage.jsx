@@ -92,23 +92,7 @@ export default function AboutUsPage() {
         Discover a hassle-free way to find your perfect living space.
       </Text>
 
-      {/* Banner Section */}
-      <Box
-        mb={12}
-        w="full"
-        h={400}
-        borderRadius="md"
-        overflow="hidden"
-        position="relative"
-      >
-        <Image
-          src={banner}
-          alt="Banner Image"
-          objectFit="cover"
-          w="100%"
-          h="100%"
-        />
-      </Box>
+    
 
       {/* What is Dormitory Section */}
       <Box

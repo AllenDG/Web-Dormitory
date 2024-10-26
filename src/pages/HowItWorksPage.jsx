@@ -40,7 +40,7 @@ export default function HowItWorksPage() {
       </Text>
 
       {/* Step-by-step content */}
-      <Box width="100%" maxW="800px" mb={10}>
+      <Box mb={10} mt={50}>
         {/* Step 1: Browse */}
         <Flex direction={["column", "column", "row"]} align="center" mb={10}>
           <Box flex="1" textAlign={["center", "center", "left"]}>
@@ -62,13 +62,13 @@ export default function HowItWorksPage() {
             rounded="lg"
             _hover={{ transform: "scale(1.05)", transition: "0.3s" }}
             mt={[4, 4, 0]}
-            width="250px"
+            width="150px"
             height="250px"
           >
             <Image
-              src="/path-to-browse-image.jpg"
+              src="https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/browse.jpg?alt=media&token=ff6faafd-be81-44dc-b83a-b17262b6ed1c"
               alt="Browse Properties"
-              boxSize="200px"
+              boxSize="100%"
               objectFit="cover"
               rounded="md"
             />
@@ -80,6 +80,7 @@ export default function HowItWorksPage() {
           direction={["column", "column", "row-reverse"]}
           align="center"
           mb={10}
+          mt={10} // Adjusted margin-top for better spacing
         >
           <Box flex="1" textAlign={["center", "center", "right"]}>
             <Icon as={FaPhone} boxSize={8} color="green.500" mb={2} />
@@ -104,9 +105,9 @@ export default function HowItWorksPage() {
             height="250px"
           >
             <Image
-              src="/path-to-book-contact-image.jpg"
-              alt="Book or Contact"
-              boxSize="200px"
+              src="https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/message.jpg?alt=media&token=2d8c3bce-b4d8-429c-b9cd-4f5d0c21ba9f"
+              alt="Visit and Move In"
+              boxSize="100%"
               objectFit="cover"
               rounded="md"
             />
@@ -114,7 +115,9 @@ export default function HowItWorksPage() {
         </Flex>
 
         {/* Step 3: Visit and Move In */}
-        <Flex direction={["column", "column", "row"]} align="center">
+        <Flex direction={["column", "column", "row"]} align="center" mt={10}>
+          {" "}
+          {/* Adjusted margin-top for better spacing */}
           <Box flex="1" textAlign={["center", "center", "left"]}>
             <Icon as={FaTruck} boxSize={8} color="teal.600" mb={2} />
             <Text fontSize="2xl" fontWeight="bold" color={stepColor}>
@@ -138,9 +141,9 @@ export default function HowItWorksPage() {
             height="250px"
           >
             <Image
-              src="/path-to-visit-move-in-image.jpg"
-              alt="Visit and Move In"
-              boxSize="200px"
+              src="https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/clock.jpg?alt=media&token=af94e33c-e482-4f7a-b1d1-5eae7f823986"
+              alt="Clock"
+              boxSize="100%"
               objectFit="cover"
               rounded="md"
             />
@@ -149,7 +152,7 @@ export default function HowItWorksPage() {
       </Box>
 
       {/* Add buttons for Renters and Owners */}
-      <Flex mt={10} mb={8} justify="center" gap={6}>
+      <Flex mt={100} mb={8} justify="center" gap={6}>
         <Flex direction="column" align="center" gap={2}>
           <Text fontSize="lg" fontWeight="semibold" color="blue.600">
             For Renters
@@ -159,6 +162,7 @@ export default function HowItWorksPage() {
             ease.
           </Text>
           <Button
+            mt={4}
             size="lg"
             colorScheme="blue"
             _hover={{ bg: "blue.700" }}
@@ -179,6 +183,7 @@ export default function HowItWorksPage() {
             effortlessly.
           </Text>
           <Button
+            mt={4}
             size="lg"
             colorScheme="green"
             _hover={{ bg: "green.700" }}
