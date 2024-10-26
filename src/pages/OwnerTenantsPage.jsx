@@ -8,11 +8,13 @@ import {
   Th,
   Td,
   Select,
-  HStack,
   Avatar,
   Button,
   Text,
   useColorModeValue,
+  Flex,
+  Heading,
+  TableContainer,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ChatIcon } from "@chakra-ui/icons";
@@ -51,6 +53,7 @@ const tenantsData = [
 
 export default function OwnerTenantsPage() {
   const bgColor = useColorModeValue("gray.50", "gray.900");
+  const cardBgColor = useColorModeValue("white", "gray.800");
   const [searchTerm, setSearchTerm] = useState("");
   const [tenants, setTenants] = useState(tenantsData);
   const [currentPage, setCurrentPage] = useState(1);
@@ -85,20 +88,27 @@ export default function OwnerTenantsPage() {
   const totalPages = Math.ceil(filteredTenants.length / tenantsPerPage);
 
   return (
-    <Box direction="column" minH="100vh" bgColor={bgColor} p={6}>
-      <HStack mb={6} justify="space-between" w="100%">
-        {/* Search Filter */}
-        <HStack>
-          <Input
-            placeholder="Search by Last Name"
-            value={searchTerm}
-            onChange={handleSearch}
-            maxW="300px"
-          />
-        </HStack>
+    <Box direction="column" minH="100vh" bgColor={bgColor} p={8}>
+      {/* Page Heading and Add Rentals Button */}
+      <Flex justify="space-between" mb={6} align="center">
+        <Heading size="lg" fontWeight="bold">
+          Manage Tenants
+        </Heading>
+      </Flex>
+
+      {/* Search Filter and Pagination Controls */}
+      <Flex mb={6} align="center" justify="space-between" wrap="wrap">
+        <Input
+          placeholder="Search by Rental Type"
+          value={searchTerm}
+          onChange={handleSearch}
+          width={{ base: "100%", md: "300px" }} // Responsive width
+          mr={4} // Margin to the right for spacing
+          mb={{ base: 4, md: 0 }} // Add bottom margin on mobile
+        />
 
         {/* Pagination Controls */}
-        <HStack>
+        <Flex align="center" flexDirection={{ base: "column", sm: "row" }}>
           <Button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             isDisabled={currentPage === 1}
@@ -118,62 +128,67 @@ export default function OwnerTenantsPage() {
           >
             Next
           </Button>
-        </HStack>
-      </HStack>
+        </Flex>
+      </Flex>
 
-      {/* Tenants Table */}
-      <Table variant="simple" size="md">
-        <Thead>
-          <Tr>
-            <Th>Profile</Th>
-            <Th>Last Name</Th>
-            <Th>First Name</Th>
-            <Th>Age</Th>
-            <Th>Gender</Th>
-            <Th>Hobbies (Amenities)</Th>
-            <Th>Message</Th>
-            <Th>Status</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {currentTenants.map((tenant, index) => (
-            <Tr key={index}>
-              {/* Profile Picture */}
-              <Td>
-                <Avatar size="sm" src={tenant.profilePic} />
-              </Td>
-              <Td>{tenant.lastName}</Td>
-              <Td>{tenant.firstName}</Td>
-              <Td>{tenant.age}</Td>
-              <Td>{tenant.gender}</Td>
-              <Td>{tenant.hobbies.join(", ")}</Td>
-              <Td>
-                {/* Message Icon */}
-                <Button
-                  leftIcon={<ChatIcon />}
-                  colorScheme="blue"
-                  onClick={() => alert(`Chatting with ${tenant.firstName}`)}
-                  size="sm"
-                >
-                  Chat
-                </Button>
-              </Td>
-              <Td>
-                {/* Status Dropdown */}
-                <Select
-                  value={tenant.status}
-                  onChange={(e) => handleStatusChange(index, e.target.value)}
-                
-                >
-                  <option value="Pending">Pending</option>
-                  <option value="Approved">Approved</option>
-                  <option value="Rejected">Rejected</option>
-                </Select>
-              </Td>
+      {/* Rentals Table */}
+      <TableContainer>
+        <Table
+          variant="striped"
+          bg={cardBgColor}
+          borderRadius="md"
+          boxShadow="md"
+        >
+          <Thead>
+            <Tr>
+              <Th>Profile</Th>
+              <Th>Last Name</Th>
+              <Th>First Name</Th>
+              <Th>Age</Th>
+              <Th>Gender</Th>
+              <Th>Hobbies (Amenities)</Th>
+              <Th>Message</Th>
+              <Th>Status</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
+          </Thead>
+          <Tbody>
+            {currentTenants.map((tenant, index) => (
+              <Tr key={index}>
+                {/* Profile Picture */}
+                <Td>
+                  <Avatar size="sm" src={tenant.profilePic} />
+                </Td>
+                <Td>{tenant.lastName}</Td>
+                <Td>{tenant.firstName}</Td>
+                <Td>{tenant.age}</Td>
+                <Td>{tenant.gender}</Td>
+                <Td>{tenant.hobbies.join(", ")}</Td>
+                <Td>
+                  {/* Message Icon */}
+                  <Button
+                    leftIcon={<ChatIcon />}
+                    colorScheme="blue"
+                    onClick={() => alert(`Chatting with ${tenant.firstName}`)}
+                    size="sm"
+                  >
+                    Chat
+                  </Button>
+                </Td>
+                <Td>
+                  <Select
+                    value={tenant.status}
+                    onChange={(e) => handleStatusChange(index, e.target.value)}
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                  </Select>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
     </Box>
   );
 }

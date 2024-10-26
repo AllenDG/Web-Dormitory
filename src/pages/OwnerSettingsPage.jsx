@@ -7,6 +7,8 @@ import {
   Icon,
   useColorModeValue,
   Divider,
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { FaUserEdit, FaEnvelope, FaLock, FaDollarSign } from "react-icons/fa";
@@ -38,19 +40,27 @@ export default function OwnerSettingsPage() {
   };
 
   return (
-    <Flex direction="row" minH="100vh" bgColor={bgColor} p={4}>
+    <Grid
+      grid
+      minH="100vh"
+      templateColumns={{ md: "repeat(3, 1fr)" }}
+      bgColor={bgColor}
+      p={4}
+    >
       {/* Left-side Menu */}
-      <Box w="20%" borderRight="1px solid" borderColor="gray.300" p={4}>
-        {/* Account Settings Title */}
-        <Box mb={6}>
-          {" "}
-          {/* Added larger bottom margin */}
-          <Heading as="h1" size="md" textAlign="left" mb={5}>
-            Account Settings
-          </Heading>
-          <Divider />
-        </Box>
-
+      <GridItem
+        w="100%"
+        maxW={300}
+        borderRight="1px solid"
+        borderColor="gray.300"
+        p={4}
+      >
+        {" "}
+        {/* Added larger bottom margin */}
+        <Heading as="h1" size="md" textAlign="left" mb={5}>
+          Account Settings
+        </Heading>
+        <Divider />
         <VStack align="left" spacing={4}>
           {" "}
           {/* Reduced spacing */}
@@ -112,13 +122,13 @@ export default function OwnerSettingsPage() {
             Change Subscription
           </Button>
         </VStack>
-      </Box>
+      </GridItem>
 
       {/* Main Content Area */}
-      <Box w="80%" p={4}>
+      <GridItem minWidth={300} w="100%" p={4}>
         {/* Render Selected Form */}
         {renderForm()}
-      </Box>
-    </Flex>
+      </GridItem>
+    </Grid>
   );
 }
