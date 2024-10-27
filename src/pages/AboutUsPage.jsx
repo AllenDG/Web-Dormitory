@@ -9,7 +9,7 @@ import {
   GridItem,
   Button,
 } from "@chakra-ui/react";
-import banner from "../assets/banner.png";
+
 import person from "../assets/person.png";
 
 export default function AboutUsPage() {
@@ -19,7 +19,8 @@ export default function AboutUsPage() {
   const cardData = [
     {
       id: 1,
-      image: banner,
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/browse.jpg?alt=media&token=ff6faafd-be81-44dc-b83a-b17262b6ed1c",
       title: "Seamless User Experience",
       description:
         "Designed with simplicity in mind, our platform ensures that finding your perfect rental space is a hassle-free journey.",
@@ -27,7 +28,7 @@ export default function AboutUsPage() {
     {
       id: 2,
       image:
-        "https://static.wixstatic.com/media/ea71bb_688298c755fc420abee57b56d06031b8~mv2.png/v1/fill/w_850,h_1049,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/ea71bb_688298c755fc420abee57b56d06031b8~mv2.png",
+        "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/Cart%20list.png?alt=media&token=8d9e5a83-6d58-4c00-9dd4-9893dbc71858",
       title: "Diverse Listings at Your Fingertips",
       description:
         "Explore an extensive range of listings tailored to your needs, complete with detailed descriptions and essential amenities.",
@@ -35,7 +36,7 @@ export default function AboutUsPage() {
     {
       id: 3,
       image:
-        "https://static.wixstatic.com/media/ea71bb_688298c755fc420abee57b56d06031b8~mv2.png/v1/fill/w_850,h_1049,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/ea71bb_688298c755fc420abee57b56d06031b8~mv2.png",
+        "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/clock.jpg?alt=media&token=af94e33c-e482-4f7a-b1d1-5eae7f823986",
       title: "Peace of Mind with Secure Transactions",
       description:
         "We prioritize your security, ensuring that every transaction is protected for the safety of both renters and property owners.",
@@ -46,7 +47,7 @@ export default function AboutUsPage() {
     {
       id: 1,
       name: "CLAVERIA, JEDYNE B.",
-      role: "Researcher",
+      role: "system analyst",
       image: "https://via.placeholder.com/150",
     },
     {
@@ -70,7 +71,7 @@ export default function AboutUsPage() {
     {
       id: 5,
       name: "ESTRADA, JHULYAN MATTHEW T.",
-      role: "Researcher",
+      role: "System Analyst",
       image: "https://via.placeholder.com/150",
     },
   ];
@@ -92,7 +93,28 @@ export default function AboutUsPage() {
         Discover a hassle-free way to find your perfect living space.
       </Text>
 
-    
+      <Box
+        w="100vw"
+        mt={50}
+        minH="400px"
+        bgImage="url('https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/%E2%80%94Pngtree%E2%80%94real%20estate%20commercial%20real%20estate_1131973.jpg?alt=media&token=56696042-ee9b-4382-a6b6-08dc4f05d711')"
+        bgPosition="center"
+        bgRepeat="no-repeat"
+        bgSize="cover"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        position="relative"
+        _after={{
+          content: '""',
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          bgGradient: `linear(to-t, ${bgColor}, transparent)`,
+        }}
+      ></Box>
 
       {/* What is Dormitory Section */}
       <Box
@@ -154,8 +176,8 @@ export default function AboutUsPage() {
           Make renting better, for everyone
         </Text>
         <Text fontSize="md" mb={4}>
-          We&apos;re revolutionizing the way people rent, by paving the path towards
-          a tech-enabled rental ecosystem for all.
+          We&apos;re revolutionizing the way people rent, by paving the path
+          towards a tech-enabled rental ecosystem for all.
         </Text>
         <Text fontSize="lg" fontWeight="bold">
           Explore our initiatives below 👇
@@ -180,7 +202,7 @@ export default function AboutUsPage() {
                 p={4}
                 borderWidth={1}
                 borderRadius="md"
-                bg={bgColor}
+                bg="white"
                 boxShadow="lg"
                 transition="transform 0.3s ease"
                 _hover={{ transform: "scale(1.05)" }}
