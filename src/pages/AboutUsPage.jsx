@@ -8,9 +8,13 @@ import {
   Grid,
   GridItem,
   Button,
+  Icon,
+  Link,
 } from "@chakra-ui/react";
 
 import person from "../assets/person.png";
+import { FaLinkedin, FaGithub } from "react-icons/fa"; // Import icons
+
 
 export default function AboutUsPage() {
   const bgColor = useColorModeValue("#F4F4F4", "gray.800");
@@ -47,32 +51,47 @@ export default function AboutUsPage() {
     {
       id: 1,
       name: "CLAVERIA, JEDYNE B.",
-      role: "system analyst",
-      image: "https://via.placeholder.com/150",
+      role: "System Analyst",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/IMG_0833-removebg-preview.png?alt=media&token=7febf2d9-8677-4d3a-ac21-d4ef09eeae71",
+      linkedIn: "https://www.linkedin.com/in/jedyne-claveria/",
+      github: "https://github.com/jedyneclaveria",
     },
     {
       id: 2,
       name: "BADINAS, JOHN PAUL",
       role: "Mobile Developer",
-      image: "https://via.placeholder.com/150",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/462557179_583405904253595_4163941599779232159_n-removebg-preview.png?alt=media&token=b6a3be19-7de1-4cb7-aafa-e0a072cefdbb",
+      linkedIn: "https://www.linkedin.com/in/johnpaulbadinas/",
+      github: "https://github.com/johnpaulbadinas",
     },
     {
       id: 3,
       name: "MANUCAN, JAMES",
       role: "Mobile Developer",
-      image: "https://via.placeholder.com/150",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/357052041_224331303411163_7895467922739620112_n.jpg?alt=media&token=0a2f8710-6789-4b69-8a38-e70d38434461",
+      linkedIn: "https://www.linkedin.com/in/jamesmanucan/",
+      github: "https://github.com/jamesmanucan",
     },
     {
       id: 4,
       name: "DE GUZMAN, ALLEN WALTER F.",
       role: "UI/UX | Web Developer",
-      image: "https://via.placeholder.com/150",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/20230803_173418-removebg-preview.png?alt=media&token=6fbec00a-441e-4a5b-820e-27d0041763d2",
+      linkedIn: "https://www.linkedin.com/in/allenwalterdg/",
+      github: "https://github.com/AllenDG",
     },
     {
       id: 5,
       name: "ESTRADA, JHULYAN MATTHEW T.",
       role: "System Analyst",
-      image: "https://via.placeholder.com/150",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/test-2ac5c.appspot.com/o/368400389_152797381193823_2303613357682602586_n.jpg?alt=media&token=3a7263d5-f434-48ae-8ae8-271b5525ed5c",
+      linkedIn: "https://www.linkedin.com/in/jhulyanestrada/",
+      github: "https://github.com/jhulyanestrada",
     },
   ];
 
@@ -162,12 +181,15 @@ export default function AboutUsPage() {
 
       {/* Mission Section */}
       <Box
-        position="relative"
-        width="100%"
+        zIndex={5}
+        width="100vw" // Set width to 100vw
+        height="400px" // Add fixed height (adjust as necessary)
         bg="#0084FF"
-        py={16}
+        py={8} // You can adjust the padding as needed
         textAlign="center"
         color="white"
+        marginLeft={-4} // Use negative margin to overlap
+        marginRight={-4} // Use negative margin to overlap
       >
         <Heading as="h2" size="xl" mb={4}>
           OUR MISSION
@@ -185,7 +207,7 @@ export default function AboutUsPage() {
       </Box>
 
       {/* Card Grid Section */}
-      <Box display="flex" justifyContent="center" py={12} w="full">
+      <Box display="flex" justifyContent="center" w="full" zIndex={6} mt="-10%">
         <Grid
           templateColumns={{
             base: "1fr",
@@ -228,36 +250,40 @@ export default function AboutUsPage() {
         </Grid>
       </Box>
 
-      {/* Team Section */}
-      <Box w="full" py={10} bg={bgColor}>
+      {/* Meet Our Team Section */}
+      <Box w="full" py={10} bg={bgColor} mt="30vh">
         <Heading as="h2" size="xl" mb={8} color={textColor} textAlign="center">
           Meet Our Team
         </Heading>
         <Grid
-          templateColumns={{
-            base: "1fr",
-            sm: "repeat(2, 1fr)",
-            md: "repeat(3, 1fr)",
-          }}
+          templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
           gap={6}
           maxW="1200px"
           mx="auto"
-          px={4}
         >
           {teamMembers.map((member) => (
-            <Box key={member.id} textAlign="center">
+            <Box key={member.id} textAlign="center" p={4}>
               <Image
+                borderRadius="full"
+                h="150px" // Set a fixed height
+                w="150px" // Set a fixed width
                 src={member.image}
                 alt={member.name}
-                borderRadius="full"
-                boxSize="150px"
-                mb={4}
-                mx="auto"
+                mx="auto" // Center the image horizontally
+                objectFit="cover" // Maintain aspect ratio without stretching
               />
-              <Text fontWeight="bold" color={textColor}>
+              <Text mt={4} fontWeight="bold" color={textColor}>
                 {member.name}
               </Text>
               <Text color={textColor}>{member.role}</Text>
+              <Flex justify="center" mt={4} gap={2}>
+                <Link href={member.linkedIn} isExternal>
+                  <Icon as={FaLinkedin} boxSize={6} />
+                </Link>
+                <Link href={member.github} isExternal>
+                  <Icon as={FaGithub} boxSize={6} />
+                </Link>
+              </Flex>
             </Box>
           ))}
         </Grid>
