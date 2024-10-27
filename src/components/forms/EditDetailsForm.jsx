@@ -12,12 +12,12 @@ import {
   Text,
   Heading,
   useColorModeValue,
+  LightMode,
 } from "@chakra-ui/react";
 import { FaEdit } from "react-icons/fa";
 
 export default function EditDetailsForm() {
- 
-  const cardBgColor = useColorModeValue("white", "gray.700"); // same as dashboard
+  const bgColor = useColorModeValue("bg.light", "bg.dark");
 
   return (
     <Box
@@ -25,85 +25,82 @@ export default function EditDetailsForm() {
       maxW="600px"
       p={8}
       borderRadius="lg"
-      bg={cardBgColor} // same as dashboard card background
+      bg={bgColor}
       boxShadow="lg"
-      mx="auto" // Center the box horizontally
+      mx="auto"
     >
-      {/* Form Heading */}
       <Heading as="h2" size="lg" textAlign="center" mb={6}>
         Edit Your Details
       </Heading>
 
-      <VStack spacing={6} align="flex-start" >
-        {/* Edit Profile Picture */}
+      <VStack spacing={6} align="flex-start">
         <FormControl>
           <FormLabel>Profile Picture</FormLabel>
           <HStack>
             <Avatar size="lg" name="User" src="https://bit.ly/dan-abramov" />
-            <IconButton
-              icon={<FaEdit />}
-              aria-label="Edit Profile Picture"
-              size="sm"
-              colorScheme="blue"
-              variant="outline" // Outlined button for subtle effect
-              _hover={{ bg: "blue.50" }} // Light hover effect
-            />
+            <LightMode>
+              <IconButton
+                icon={<FaEdit />}
+                aria-label="Edit Profile Picture"
+                size="sm"
+                colorScheme="primary"
+                variant="outline"
+                _hover={{ bg: "blue.50" }}
+              />
+            </LightMode>
             <Text fontSize="sm" color="gray.600">
               Change your profile picture
             </Text>
           </HStack>
         </FormControl>
 
-        {/* Business Name */}
         <FormControl isRequired>
           <FormLabel>Business Name</FormLabel>
           <Input
             placeholder="Enter business name"
-            focusBorderColor="blue.400" // Blue highlight on focus
+            focusBorderColor="primary.500"
           />
         </FormControl>
 
-        {/* First Name */}
         <FormControl isRequired>
           <FormLabel>First Name</FormLabel>
           <Input
             placeholder="Enter first name"
-            focusBorderColor="blue.400" // Blue highlight on focus
+            focusBorderColor="primary.500" 
           />
         </FormControl>
 
-        {/* Last Name */}
         <FormControl isRequired>
           <FormLabel>Last Name</FormLabel>
           <Input
             placeholder="Enter last name"
-            focusBorderColor="blue.400" // Blue highlight on focus
+            focusBorderColor="primary.500"
           />
         </FormControl>
 
-        {/* Chat Available Toggle */}
         <FormControl display="flex" flexWrap="wrap" alignItems="center">
           <FormLabel mb="0">Chat Availability</FormLabel>
           <Switch
             colorScheme="blue"
-            size="lg" // Larger switch for better interaction
+            size="lg"
           />
           <Text fontSize="sm" ml={3} color="gray.600">
             Toggle to set your availability
           </Text>
         </FormControl>
 
-        {/* Save Changes Button */}
-        <Button
-          mt={6}
-          colorScheme="blue"
-          w="100%"
-          size="lg"
-          boxShadow="md"
-          _hover={{ boxShadow: "lg", transform: "scale(1.02)" }} // Button hover effect
-        >
-          Save Changes
-        </Button>
+        <LightMode>
+          <Button
+            mt={6}
+            colorScheme="primary"
+            w="100%"
+            size="lg"
+            boxShadow="md"
+            _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
+          >
+            Save Changes
+          </Button>
+        </LightMode>
       </VStack>
     </Box>
   );

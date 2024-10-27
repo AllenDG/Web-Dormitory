@@ -19,7 +19,7 @@ export default function PostMyPropertyPage() {
   const [isFormValid, setIsFormValid] = useState(false); // Track form validation
   const toast = useToast();
   const navigate = useNavigate(); // Initialize navigate function
-  const bgColor = useColorModeValue("#F4F4F4", "#1A202C");
+  const bgColor = useColorModeValue("bg.light", "bg.dark");
 
   // Validate form (this function can be customized with actual form validation logic)
   const validateForm = (step) => {
@@ -132,12 +132,14 @@ export default function PostMyPropertyPage() {
       justify="center"
       align="center"
       bg={bgColor}
+      
       p={8}
     >
       <Box
         w="100%"
         maxW="800px"
-        bg="white"
+        borderWidth={1}
+        bg={bgColor}
         boxShadow="lg"
         borderRadius="lg"
         p={8}

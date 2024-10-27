@@ -9,6 +9,7 @@ import {
   useToast,
   useColorModeValue,
   Link,
+  LightMode,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom"; // Ensure you're using react-router for navigation
 
@@ -21,7 +22,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const toast = useToast();
-  const bgColor = useColorModeValue("#F4F4F4", "#1A202C"); // Light and Dark mode background
+  const bgColor = useColorModeValue("bg.light", "bg.dark");
   const secondaryColor = "#0084FF"; // Your secondary color
 
   const handleRegister = () => {
@@ -78,12 +79,11 @@ export default function RegisterPage() {
       <Box
         w="100%"
         maxW="500px" // Increased maximum width
-        bg="white"
+        bg={bgColor}
         boxShadow="md"
         borderRadius="lg"
         p={10} // Increased padding
         border="1px"
-        borderColor={secondaryColor}
       >
         <Heading textAlign="center" fontSize="2xl" mb={4}>
           Register
@@ -166,16 +166,18 @@ export default function RegisterPage() {
           size="lg"
         />
 
-        <Button
-          onClick={handleRegister}
-          colorScheme="blue"
-          width="full"
-          mb={4}
-          size="lg"
-          borderRadius="md"
-        >
-          Register
-        </Button>
+        <LightMode>
+          <Button
+            onClick={handleRegister}
+            colorScheme="primary"
+            width="full"
+            mb={4}
+            size="lg"
+            borderRadius="md"
+          >
+            Register
+          </Button>
+        </LightMode>
 
         <Text textAlign="center" fontSize="sm" color="gray.500">
           Already have an account?{" "}

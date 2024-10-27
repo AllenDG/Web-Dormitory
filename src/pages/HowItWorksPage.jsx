@@ -7,12 +7,12 @@ import {
   Button,
   useColorModeValue,
   Icon,
+  LightMode,
 } from "@chakra-ui/react";
 import { FaSearch, FaPhone, FaTruck } from "react-icons/fa";
 
 export default function HowItWorksPage() {
-  const bgColor = useColorModeValue("#F4F4F4", "gray.800");
-  const textColor = useColorModeValue("gray.700", "gray.300");
+  const bgColor = useColorModeValue("bg.light", "bg.dark");
   const stepColor = useColorModeValue("blue.700", "blue.400");
 
   return (
@@ -26,7 +26,7 @@ export default function HowItWorksPage() {
       py={12}
     >
       {/* "How it works" section */}
-      <Heading as="h1" size="xl" textAlign="center" color="black" mb={4}>
+      <Heading as="h1" size="xl" textAlign="center" mb={4}>
         How It Works
       </Heading>
       <Text
@@ -48,7 +48,7 @@ export default function HowItWorksPage() {
             <Text fontSize="2xl" fontWeight="bold" color={stepColor}>
               1. Browse
             </Text>
-            <Text fontSize="md" color={textColor} mt={2} maxW="450px">
+            <Text fontSize="md" mt={2} maxW="450px">
               Start by typing your ideal location. Use filters to find options
               like pet-friendly places, gyms, or specific room types.
             </Text>
@@ -87,7 +87,7 @@ export default function HowItWorksPage() {
             <Text fontSize="2xl" fontWeight="bold" color={stepColor}>
               2. Book or Contact
             </Text>
-            <Text fontSize="md" color={textColor} mt={2} maxW="450px">
+            <Text fontSize="md" mt={2} maxW="450px">
               Found your ideal home? Book it instantly or reach out to the owner
               for more information.
             </Text>
@@ -123,7 +123,7 @@ export default function HowItWorksPage() {
             <Text fontSize="2xl" fontWeight="bold" color={stepColor}>
               3. Visit and Move In
             </Text>
-            <Text fontSize="md" color={textColor} mt={2} maxW="450px">
+            <Text fontSize="md" mt={2} maxW="450px">
               Schedule a visit, get a firsthand look at your future home, and
               settle in seamlessly.
             </Text>
@@ -157,42 +157,46 @@ export default function HowItWorksPage() {
           <Text fontSize="lg" fontWeight="semibold" color="blue.600">
             For Renters
           </Text>
-          <Text fontSize="md" color={textColor} textAlign="center" maxW="300px">
+          <Text fontSize="md" textAlign="center" maxW="300px">
             Search for verified rentals, schedule a visit, and move in with
             ease.
           </Text>
-          <Button
-            mt={4}
-            size="lg"
-            colorScheme="blue"
-            _hover={{ bg: "blue.700" }}
-            onClick={() => {
-              // Handle Renters button click
-            }}
-          >
-            Explore Rentals
-          </Button>
+          <LightMode>
+            <Button
+              mt={4}
+              size="lg"
+              colorScheme="primary"
+              _hover={{ bg: "blue.700" }}
+              onClick={() => {
+                // Handle Renters button click
+              }}
+            >
+              Explore Rentals
+            </Button>
+          </LightMode>
         </Flex>
 
         <Flex direction="column" align="center" gap={2}>
           <Text fontSize="lg" fontWeight="semibold" color="green.600">
             For Owners
           </Text>
-          <Text fontSize="md" color={textColor} textAlign="center" maxW="300px">
+          <Text fontSize="md" textAlign="center" maxW="300px">
             List your property, connect with renters, and manage bookings
             effortlessly.
           </Text>
-          <Button
-            mt={4}
-            size="lg"
-            colorScheme="green"
-            _hover={{ bg: "green.700" }}
-            onClick={() => {
-              // Handle Owners button click
-            }}
-          >
-            List Your Property
-          </Button>
+          <LightMode>
+            <Button
+              mt={4}
+              size="lg"
+              colorScheme="green"
+              _hover={{ bg: "green.700" }}
+              onClick={() => {
+                // Handle Owners button click
+              }}
+            >
+              List Your Property
+            </Button>
+          </LightMode>
         </Flex>
       </Flex>
     </Flex>

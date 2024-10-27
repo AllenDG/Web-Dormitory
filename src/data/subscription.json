@@ -1,0 +1,37 @@
+{
+  "subscriptions": [
+    {
+      "name": "Free",
+      "features": {
+        "permanentAccount": true,
+        "analytics": false,
+        "boostContent": false,
+        "accountExpiry": true,
+        "chatbotSupport": false,
+        "emailAds": false
+      }
+    },
+    {
+      "name": "Standard",
+      "features": {
+        "permanentAccount": true,
+        "analytics": "Basic Analytics",
+        "boostContent": "Boost for 2 weeks",
+        "accountExpiry": "Expires in 1 month",
+        "chatbotSupport": false,
+        "emailAds": true
+      }
+    },
+    {
+      "name": "Premium",
+      "features": {
+        "permanentAccount": true,
+        "analytics": "Advanced Analytics",
+        "boostContent": "Boost for 1 month",
+        "accountExpiry": "Never Expires",
+        "chatbotSupport": true,
+        "emailAds": true
+      }
+    }
+  ]
+}

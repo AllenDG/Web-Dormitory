@@ -15,6 +15,7 @@ import {
   PopoverArrow,
   Checkbox,
   CheckboxGroup,
+  LightMode,
 } from "@chakra-ui/react";
 
 const amenitiesOptions = [
@@ -63,12 +64,14 @@ const RentalEditForm = ({ rental, onSave }) => {
         isOpen={isOpen}
         onOpen={onOpen}
         onClose={onClose}
-        placement="top-start" // Positioning above and to the left of the button
+        placement="top-start"
       >
         <PopoverTrigger>
-          <Button colorScheme="blue" onClick={onOpen}>
-            Edit
-          </Button>
+          <LightMode>
+            <Button colorScheme="primary" onClick={onOpen}>
+              Edit
+            </Button>
+          </LightMode>
         </PopoverTrigger>
         <PopoverContent
           maxW="400px"

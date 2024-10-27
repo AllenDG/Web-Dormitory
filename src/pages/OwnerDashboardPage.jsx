@@ -31,9 +31,8 @@ import {
   FiHeart,
   FiCalendar,
 } from "react-icons/fi";
-import dummyData from "../data/dummyData.json"; // Load JSON data
+import dummyData from "../data/dummyData.json";
 
-// Icon Mapping to fix dynamic icons from JSON
 const iconMap = {
   FiUsers: FiUsers,
   FiCheckCircle: FiCheckCircle,
@@ -44,34 +43,28 @@ const iconMap = {
 };
 
 export default function OwnerDashboardPage() {
-  const bgColor = useColorModeValue("gray.50", "gray.900");
-  const cardBgColor = useColorModeValue("white", "gray.700");
+  const bgColor = useColorModeValue("bg.light", "bg.dark");
 
   return (
-    // Full Page Container
     <Flex direction="row" minH="100vh">
-      {/* Sidebar (if you have a sidebar here, it would go in this Flex container) */}
-      {/* <SidebarComponent /> */}
-
-      {/* Scrollable Dashboard Content */}
       <Box
         direction="column"
         flex="1"
         p={4}
-        overflowY="auto" // Enables vertical scrolling for dashboard content
+        overflowY="auto" 
         bgColor={bgColor}
-        maxH="100vh" // Sets the max height to the full viewport
+        maxH="100vh" 
       >
         <Text fontSize="2xl" fontWeight="bold" mb={6} textAlign="center">
           Owner Dashboard
         </Text>
 
-        {/* Tenant & User Stats Cards */}
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
           {dummyData.tenantStats.map((stat) => (
             <Box
               key={stat.label}
-              bg={cardBgColor}
+              bg={bgColor}
+              borderWidth={1}
               boxShadow="md"
               borderRadius="lg"
               p={4}
@@ -91,15 +84,13 @@ export default function OwnerDashboardPage() {
           ))}
         </SimpleGrid>
 
-        {/* Charts Section */}
         <Flex
           mt={10}
           gap={6}
           direction={{ base: "column", md: "row" }}
-          overflowX="auto" // Enables horizontal scrolling for charts section
+          overflowX="auto"
         >
-          {/* Pie Chart Box: Tenant Status */}
-          <Box bg={cardBgColor} boxShadow="md" borderRadius="lg" p={6} flex="1">
+          <Box bg={bgColor} borderWidth={1} boxShadow="md" borderRadius="lg" p={6} flex="1">
             <Text fontSize="lg" fontWeight="bold" mb={4}>
               Tenant Status
             </Text>
@@ -128,7 +119,7 @@ export default function OwnerDashboardPage() {
           </Box>
 
           {/* Line Chart Box: Monthly Sales */}
-          <Box bg={cardBgColor} boxShadow="md" borderRadius="lg" p={6} flex="1">
+          <Box bg={bgColor} borderWidth={1} boxShadow="md" borderRadius="lg" p={6} flex="1">
             <Text fontSize="lg" fontWeight="bold" mb={4}>
               Monthly Sales Data
             </Text>
@@ -145,8 +136,7 @@ export default function OwnerDashboardPage() {
           </Box>
         </Flex>
 
-        {/* New: Listing Performance Chart */}
-        <Box mt={10} bg={cardBgColor} boxShadow="md" borderRadius="lg" p={6}>
+        <Box mt={10} bg={bgColor} borderWidth={1} boxShadow="md" borderRadius="lg" p={6}>
           <Text fontSize="lg" fontWeight="bold" mb={4}>
             Listing Performance
           </Text>

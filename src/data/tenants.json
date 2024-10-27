@@ -1,0 +1,29 @@
+[
+  {
+    "lastName": "Doe",
+    "firstName": "John",
+    "age": 25,
+    "gender": "Male",
+    "hobbies": ["Wifi / Internet", "Fitness Gym"],
+    "status": "Pending",
+    "profilePic": "https://via.placeholder.com/40"
+  },
+  {
+    "lastName": "Smith",
+    "firstName": "Jane",
+    "age": 28,
+    "gender": "Female",
+    "hobbies": ["Swimming Pool", "Pet Friendly"],
+    "status": "Approved",
+    "profilePic": "https://via.placeholder.com/40"
+  },
+  {
+    "lastName": "Lee",
+    "firstName": "Kevin",
+    "age": 22,
+    "gender": "Male",
+    "hobbies": ["KTV Room", "Recreational Area"],
+    "status": "Rejected",
+    "profilePic": "https://via.placeholder.com/40"
+  }
+]

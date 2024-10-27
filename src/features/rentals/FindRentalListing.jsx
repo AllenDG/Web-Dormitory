@@ -27,6 +27,7 @@ import {
   Icon,
   Divider,
   Badge,
+  LightMode,
 } from "@chakra-ui/react";
 import { FaFilter, FaSearch, FaHome } from "react-icons/fa"; // Import icons
 import Map from "../../components/ui/Map";
@@ -190,13 +191,13 @@ export default function FindRentalsListing({
           align="center"
           h="70vh"
           overflowY="auto"
-          justify="center"
+          justify="start"
         >
           {filteredListings.length > 0 ? (
             filteredListings.map((listing) => (
               <WrapItem key={listing.id}>
                 <Link to={`/listing/${listing.id}`}>
-                  <Center maxW={{ base: "300px", md: "250px" }} h="auto">
+                  <Center maxW={{ base: "300px", md: "300px" }} h="auto">
                     <Card
                       maxW="sm"
                       bg={bgColor}
@@ -227,15 +228,23 @@ export default function FindRentalsListing({
                           </Heading>
                         </Stack>
                         <Divider />
-                        <Flex justify="space-between" mt={3}>
-                          <Button
-                            colorScheme="blue"
-                            size="sm"
-                            onClick={() => handleMarkerClick(listing.id)}
-                          >
-                            View Details
-                          </Button>
-                          <Badge colorScheme="green">New</Badge>
+                        <Flex
+                          justify="space-between"
+                          alignItems="center"
+                          mt={3}
+                        >
+                          <LightMode>
+                            <Button
+                              colorScheme="primary"
+                              size="sm"
+                              onClick={() => handleMarkerClick(listing.id)}
+                            >
+                              View Details
+                            </Button>
+                          </LightMode>
+                          <LightMode>
+                            <Badge colorScheme="green">New</Badge>
+                          </LightMode>
                         </Flex>
                       </CardBody>
                     </Card>
