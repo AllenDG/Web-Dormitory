@@ -68,3 +68,12 @@ export const paypalValidationSchema = Yup.object({
     .required("PayPal account name is required")
     .min(3, "Account name should be at least 3 characters long"),
 });
+
+export const changeEmailValidationSchema = Yup.object().shape({
+  currentEmail: Yup.string()
+    .email("Invalid email format")
+    .required("Current email is required"),
+  newEmail: Yup.string()
+    .email("Invalid email format")
+    .required("New email is required"),
+});
