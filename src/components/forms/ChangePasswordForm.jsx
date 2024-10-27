@@ -1,24 +1,16 @@
 import {
   Box,
-  Input,
   Button,
-  FormControl,
-  FormLabel,
   VStack,
-  InputGroup,
-  InputRightElement,
-  IconButton,
-  useDisclosure,
   Heading,
   Text,
+  useColorModeValue,
+  LightMode,
 } from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons"; // Import visibility icons
+import PasswordInput from "../ui/PasswordInput";
 
 export default function ChangePasswordForm() {
-  // Use the Chakra UI disclosure hook to toggle password visibility
-  const { isOpen: showCurrent, onToggle: toggleShowCurrent } = useDisclosure();
-  const { isOpen: showNew, onToggle: toggleShowNew } = useDisclosure();
-  const { isOpen: showConfirm, onToggle: toggleShowConfirm } = useDisclosure();
+  const bgColor = useColorModeValue("bg.light", "bg.dark");
 
   return (
     <Box
@@ -26,12 +18,11 @@ export default function ChangePasswordForm() {
       maxW="500px"
       p={8}
       borderRadius="md"
-      bg="#fff" // Light background for the card
-      boxShadow="xl" // Enhanced shadow for a more modern look
-      mx="auto" // Centering the box horizontally
-      mt={12} // Spacing from the top
+      bgColor={bgColor}
+      boxShadow="xl"
+      mx="auto" 
+      mt={12}
     >
-      {/* Form Heading */}
       <Heading as="h2" size="lg" textAlign="center" mb={6}>
         Change Your Password
       </Heading>
@@ -40,74 +31,36 @@ export default function ChangePasswordForm() {
       </Text>
 
       <VStack spacing={5} align="flex-start">
-        {/* Current Password */}
-        <FormControl isRequired>
-          <FormLabel>Current Password</FormLabel>
-          <InputGroup>
-            <Input
-              type={showCurrent ? "text" : "password"}
-              placeholder="Enter current password"
-            />
-            <InputRightElement>
-              <IconButton
-                variant="ghost"
-                aria-label="Toggle Password Visibility"
-                icon={showCurrent ? <ViewOffIcon /> : <ViewIcon />}
-                onClick={toggleShowCurrent}
-              />
-            </InputRightElement>
-          </InputGroup>
-        </FormControl>
+        <PasswordInput
+          label="Current Password"
+          placeholder="Enter current password"
+          isRequired={true}
+        />
 
-        {/* New Password */}
-        <FormControl isRequired>
-          <FormLabel>New Password</FormLabel>
-          <InputGroup>
-            <Input
-              type={showNew ? "text" : "password"}
-              placeholder="Enter new password"
-            />
-            <InputRightElement>
-              <IconButton
-                variant="ghost"
-                aria-label="Toggle Password Visibility"
-                icon={showNew ? <ViewOffIcon /> : <ViewIcon />}
-                onClick={toggleShowNew}
-              />
-            </InputRightElement>
-          </InputGroup>
-        </FormControl>
+        <PasswordInput
+          label="New Password"
+          placeholder="Enter new password"
+          isRequired={true}
+        />
 
-        {/* Confirm New Password */}
-        <FormControl isRequired>
-          <FormLabel>Confirm New Password</FormLabel>
-          <InputGroup>
-            <Input
-              type={showConfirm ? "text" : "password"}
-              placeholder="Confirm new password"
-            />
-            <InputRightElement>
-              <IconButton
-                variant="ghost"
-                aria-label="Toggle Password Visibility"
-                icon={showConfirm ? <ViewOffIcon /> : <ViewIcon />}
-                onClick={toggleShowConfirm}
-              />
-            </InputRightElement>
-          </InputGroup>
-        </FormControl>
+        <PasswordInput
+          label="Confirm New Password"
+          placeholder="Confirm new password"
+          isRequired={true}
+        />
 
-        {/* Save Changes Button */}
-        <Button
-          mt={6}
-          colorScheme="blue"
-          w="100%"
-          size="lg"
-          boxShadow="md"
-          _hover={{ boxShadow: "lg", transform: "scale(1.02)" }} // Slight hover effect for the button
-        >
-          Save Changes
-        </Button>
+        <LightMode>
+          <Button
+            mt={6}
+            colorScheme="primary"
+            w="100%"
+            size="lg"
+            boxShadow="md"
+            _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
+          >
+            Save Changes
+          </Button>
+        </LightMode>
       </VStack>
     </Box>
   );

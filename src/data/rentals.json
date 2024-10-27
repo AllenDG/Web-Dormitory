@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "type": "Solo",
+    "amenities": "WiFi, Air Conditioning",
+    "scheduleVisit": "2024-10-25",
+    "rating": 4.5,
+    "status": "Available"
+  },
+  {
+    "id": 2,
+    "type": "Double",
+    "amenities": "WiFi, Kitchen",
+    "scheduleVisit": "2024-10-26",
+    "rating": 4.0,
+    "status": "Not Available"
+  },
+  {
+    "id": 3,
+    "type": "Studio",
+    "amenities": "WiFi, Parking",
+    "scheduleVisit": "2024-10-27",
+    "rating": 5.0,
+    "status": "Available"
+  }
+]

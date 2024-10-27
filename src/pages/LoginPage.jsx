@@ -9,8 +9,9 @@ import {
   useToast,
   useColorModeValue,
   Link,
+  LightMode,
 } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom"; // Ensure you're using react-router for navigation
+import { Link as RouterLink } from "react-router-dom";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -18,7 +19,7 @@ export default function LoginPage() {
   const [pin, setPin] = useState("");
   const [showPinInput, setShowPinInput] = useState(false);
   const toast = useToast();
-  const bgColor = useColorModeValue("#F4F4F4", "#1A202C");
+  const bgColor = useColorModeValue("bg.light", "bg.dark");
   const secondaryColor = "#0084FF";
 
   const handleLogin = () => {
@@ -63,13 +64,11 @@ export default function LoginPage() {
     >
       <Box
         w="100%"
-        maxW="500px" // Increased card width to match RegisterPage
-        bg="white"
+        maxW="500px"
         boxShadow="md"
         borderRadius="lg"
         p={8}
         border="1px"
-        borderColor={secondaryColor}
       >
         <Heading textAlign="center" fontSize="2xl" mb={4}>
           Dormitory
@@ -100,16 +99,18 @@ export default function LoginPage() {
           size="lg"
         />
 
-        <Button
-          onClick={handleLogin}
-          colorScheme="blue"
-          width="full"
-          mb={4}
-          size="lg"
-          borderRadius="md"
-        >
-          Login
-        </Button>
+        <LightMode>
+          <Button
+            onClick={handleLogin}
+            colorScheme="primary"
+            width="full"
+            mb={4}
+            size="lg"
+            borderRadius="md"
+          >
+            Login
+          </Button>
+        </LightMode>
 
         {showPinInput && (
           <>
@@ -123,15 +124,17 @@ export default function LoginPage() {
               _placeholder={{ color: "gray.400" }}
               size="lg"
             />
-            <Button
-              onClick={handlePinSubmit}
-              colorScheme="blue"
-              width="full"
-              size="lg"
-              borderRadius="md"
-            >
-              Verify Code
-            </Button>
+            <LightMode>
+              <Button
+                onClick={handlePinSubmit}
+                colorScheme="primary"
+                width="full"
+                size="lg"
+                borderRadius="md"
+              >
+                Verify Code
+              </Button>
+            </LightMode>
           </>
         )}
 

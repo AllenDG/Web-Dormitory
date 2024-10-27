@@ -7,6 +7,7 @@ import {
   useColorModeValue,
   VStack,
   Box,
+  LightMode,
 } from "@chakra-ui/react";
 import { ownerSidebarRoutes } from "../../routes/ownerSidebarRoutes";
 import { Link, useLocation } from "react-router-dom";
@@ -15,7 +16,7 @@ import { FiMenu, FiX, FiLogOut } from "react-icons/fi";
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation(); // Get the current location
-  const bgColor = useColorModeValue("gray.50", "gray.800"); // Light/Dark mode support
+  const bgColor = useColorModeValue("bg.light", "bg.dark");
   const textColor = useColorModeValue("gray.700", "white");
 
   const handleLogout = () => {
@@ -32,46 +33,44 @@ export default function Sidebar() {
       <Flex
         direction="column"
         justifyContent="space-between"
-        bg="#fff"
         p={4}
-        width={isCollapsed ? "80px" : "220px"} // Slightly reduced width for a minimalist feel
+        width={isCollapsed ? "80px" : "220px"}
         transition="width 0.3s ease-in-out"
         overflow="hidden"
         borderRight="1px solid"
         borderColor={useColorModeValue("gray.200", "gray.700")}
       >
-        {/* Sidebar header with collapse button */}
         <Box>
-          <Flex align="center" mb={2}>
-            <IconButton
-              aria-label="Toggle Sidebar"
-              icon={isCollapsed ? <FiMenu /> : <FiX />}
-              onClick={toggleSidebar}
-              bg="blue.500"
-              color="white"
-              _hover={{ bg: "blue.400" }}
-              size="sm"
-            />
+          <Flex
+            align="center"
+            justifyContent={{ base: "center", sm: "start" }}
+            mb={2}
+          >
+            <LightMode>
+              <IconButton
+                aria-label="Toggle Sidebar"
+                icon={isCollapsed ? <FiMenu /> : <FiX />}
+                onClick={toggleSidebar}
+                colorScheme="primary"
+                color="white"
+                _hover={{ bg: "blue.400" }}
+                size="sm"
+              />
+            </LightMode>
             {!isCollapsed && (
-              <Text
-                ml={3} // Margin for spacing between logo and button
-                color="blue.500"
-                fontSize="lg"
-                fontWeight="bold"
-              >
+              <Text ml={3} color="primary.500" fontSize="lg" fontWeight="bold">
                 Dormitory
               </Text>
             )}
           </Flex>
 
-          {/* Sidebar links */}
           <VStack as="nav" spacing={1} align="stretch">
             {ownerSidebarRoutes.map((item) => {
               const isActive = location.pathname === item.path;
               const activeStyles = {
-                bg: "blue.100",
-                color: "blue.500",
-                borderLeft: "4px solid blue.500",
+                bg: "blue.500",
+                color: "bg.light",
+                borderLeft: "4px solid primary.500",
               };
 
               return (
@@ -83,14 +82,14 @@ export default function Sidebar() {
                     transition="background-color 0.2s ease-in-out"
                     bg={isActive ? "blue.100" : "transparent"}
                     _hover={{
-                      bg: "blue.50",
-                      color: "blue.500",
+                      bg: "blue.500",
+                      color: "bg.light",
                     }}
                     {...(isActive ? activeStyles : null)}
                   >
                     <item.icon
-                      size={20} // Slightly smaller icon for a minimalist look
-                      color={isActive ? "blue.500" : textColor}
+                      size={20}
+                      color={isActive ? "primary.500" : textColor}
                     />
                     {!isCollapsed && (
                       <Text fontWeight="medium" ml={2}>

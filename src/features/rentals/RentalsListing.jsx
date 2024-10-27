@@ -30,7 +30,7 @@ import usePopularLocations from "../../hooks/usePopularLocation";
 
 export default function RentalsListing() {
   const popularLocations = usePopularLocations(5);
-  const bgColor = useColorModeValue("#F4F4F4", "gray.700");
+  const bgColor = useColorModeValue("bg.light", "bg.dark");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const rentalListings = useSelector((state) => state.rentals.rentals);
@@ -72,19 +72,21 @@ export default function RentalsListing() {
         <Wrap spacing="10px" align="center" justify="center">
           {amenities.map((amenity) => (
             <WrapItem key={amenity}>
-              <Tag
-                size="lg"
-                colorScheme="blue"
-                borderRadius="full"
-                cursor="pointer"
-                onClick={() => handleAmenityClick(amenity)}
-                variant={
-                  selectedAmenities.includes(amenity) ? "solid" : "outline"
-                }
-              >
-                <TagLabel>{amenity}</TagLabel>
-                <TagRightIcon as={amenityIcons[amenity]} />
-              </Tag>
+              <LightMode>
+                <Tag
+                  size="lg"
+                  colorScheme="primary"
+                  borderRadius="full"
+                  cursor="pointer"
+                  onClick={() => handleAmenityClick(amenity)}
+                  variant={
+                    selectedAmenities.includes(amenity) ? "solid" : "outline"
+                  }
+                >
+                  <TagLabel>{amenity}</TagLabel>
+                  <TagRightIcon as={amenityIcons[amenity]} />
+                </Tag>
+              </LightMode>
             </WrapItem>
           ))}
         </Wrap>
@@ -121,7 +123,13 @@ export default function RentalsListing() {
         {filteredListings.length > 0 ? (
           filteredListings.map((listing) => (
             <WrapItem key={listing.id}>
-              <Card maxW="sm" bg={bgColor} boxShadow="lg" borderRadius="md">
+              <Card
+                maxW="sm"
+                bg={bgColor}
+                variant="outline"
+                boxShadow="lg"
+                borderRadius="md"
+              >
                 <CardBody>
                   <Image
                     src={listing.imageUrl[0]}
@@ -153,14 +161,16 @@ export default function RentalsListing() {
                         />
                       ))}
                     </HStack>
-                    <Button
-                      as={Link}
-                      to={`/listing/${listing.id}`}
-                      colorScheme="blue"
-                      variant="outline"
-                    >
-                      View
-                    </Button>
+                    <LightMode>
+                      <Button
+                        as={Link}
+                        colorScheme="primary"
+                        to={`/listing/${listing.id}`}
+                        variant="outline"
+                      >
+                        View
+                      </Button>
+                    </LightMode>
                   </Stack>
                 </CardBody>
               </Card>

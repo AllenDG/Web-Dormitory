@@ -1,6 +1,4 @@
 import {
-  Box,
-  Flex,
   VStack,
   Button,
   Heading,
@@ -18,7 +16,7 @@ import ChangePasswordForm from "../components/forms/ChangePasswordForm";
 import ChangeSubscriptionForm from "../components/forms/ChangeSubscriptionForm";
 
 export default function OwnerSettingsPage() {
-  const bgColor = useColorModeValue("gray.50", "gray.900");
+  const bgColor = useColorModeValue("bg.light", "bg.dark");
   const [activeForm, setActiveForm] = useState("editDetails");
 
   const primaryColor = "#F4F4F4";

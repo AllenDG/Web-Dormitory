@@ -12,6 +12,8 @@ import {
   Textarea,
   VStack,
   Icon,
+  useColorModeValue,
+  LightMode,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -33,6 +35,7 @@ const generateUniqueId = () => {
 
 export default function AddPropertyForm() {
   const dispatch = useDispatch();
+  const bgColor = useColorModeValue("bg.light", "bg.dark");
   const [autocomplete, setAutocomplete] = useState(null);
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -87,8 +90,9 @@ export default function AddPropertyForm() {
       mx="auto"
       my="6"
       p="6"
+      bgColor={bgColor}
+      borderWidth={1}
       boxShadow="lg"
-      bg="white"
       borderRadius="md"
     >
       <Formik
@@ -146,23 +150,27 @@ export default function AddPropertyForm() {
                       name={`imageUrl[${index}]`}
                       placeholder="Enter image URL"
                     />
-                    <Button
-                      ml={2}
-                      colorScheme="red"
-                      onClick={() =>
-                        removeImageUrl(setFieldValue, index, values)
-                      }
-                    >
-                      Remove
-                    </Button>
+                    <LightMode>
+                      <Button
+                        ml={2}
+                        colorScheme="red"
+                        onClick={() =>
+                          removeImageUrl(setFieldValue, index, values)
+                        }
+                      >
+                        Remove
+                      </Button>
+                    </LightMode>
                   </Flex>
                 ))}
-                <Button
-                  onClick={() => addImageUrl(setFieldValue, values)}
-                  colorScheme="blue"
-                >
-                  Add Image URL
-                </Button>
+                <LightMode>
+                  <Button
+                    onClick={() => addImageUrl(setFieldValue, values)}
+                    colorScheme="blue"
+                  >
+                    Add Image URL
+                  </Button>
+                </LightMode>
               </FormControl>
 
               <FormControl>
@@ -210,9 +218,11 @@ export default function AddPropertyForm() {
                 </Stack>
               </FormControl>
 
-              <Button type="submit" colorScheme="green" w="full">
-                Create Rental
-              </Button>
+              <LightMode>
+                <Button type="submit" colorScheme="green" w="full">
+                  Create Rental
+                </Button>
+              </LightMode>
             </VStack>
           </Form>
         )}

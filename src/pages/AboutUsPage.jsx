@@ -8,13 +8,13 @@ import {
   Grid,
   GridItem,
   Button,
+  LightMode,
 } from "@chakra-ui/react";
 
 import person from "../assets/person.png";
 
 export default function AboutUsPage() {
-  const bgColor = useColorModeValue("#F4F4F4", "gray.800");
-  const textColor = useColorModeValue("gray.700", "gray.300");
+  const bgColor = useColorModeValue("bg.light", "bg.dark");
 
   const cardData = [
     {
@@ -89,7 +89,7 @@ export default function AboutUsPage() {
       <Heading as="h1" size="3xl" mb={4} mt={8} color="#0084FF">
         SECURE YOUR SPACE
       </Heading>
-      <Text fontSize="lg" color={textColor} mb={12} textAlign="center">
+      <Text fontSize="lg" mb={12} textAlign="center">
         Discover a hassle-free way to find your perfect living space.
       </Text>
 
@@ -135,17 +135,19 @@ export default function AboutUsPage() {
             mb={{ base: 8, md: 0 }}
             pr={{ base: 0, md: 4 }}
           >
-            <Heading as="h1" size="3xl" mb={4} color={textColor}>
+            <Heading as="h1" size="3xl" mb={4}>
               What is Dormitory?
             </Heading>
-            <Text fontSize="lg" color={textColor} mb={8}>
+            <Text fontSize="lg" mb={8}>
               An all-in-one web and app platform designed to help students and
               young professionals effortlessly find and secure their ideal
               dormitory or apartment.
             </Text>
-            <Button colorScheme="blue" variant="solid" size="lg">
-              Learn More
-            </Button>
+            <LightMode>
+              <Button colorScheme="primary" variant="solid" size="lg">
+                Learn More
+              </Button>
+            </LightMode>
           </Box>
           <Box flex="1" textAlign="center">
             <Image
@@ -216,12 +218,10 @@ export default function AboutUsPage() {
                   borderRadius="md"
                   mb={4}
                 />
-                <Heading as="h3" size="md" mb={2} color={textColor}>
+                <Heading as="h3" size="md" mb={2}>
                   {card.title}
                 </Heading>
-                <Text color={textColor} fontSize="sm">
-                  {card.description}
-                </Text>
+                <Text fontSize="sm">{card.description}</Text>
               </Box>
             </GridItem>
           ))}
@@ -230,7 +230,7 @@ export default function AboutUsPage() {
 
       {/* Team Section */}
       <Box w="full" py={10} bg={bgColor}>
-        <Heading as="h2" size="xl" mb={8} color={textColor} textAlign="center">
+        <Heading as="h2" size="xl" mb={8} textAlign="center">
           Meet Our Team
         </Heading>
         <Grid
@@ -254,10 +254,8 @@ export default function AboutUsPage() {
                 mb={4}
                 mx="auto"
               />
-              <Text fontWeight="bold" color={textColor}>
-                {member.name}
-              </Text>
-              <Text color={textColor}>{member.role}</Text>
+              <Text fontWeight="bold">{member.name}</Text>
+              <Text>{member.role}</Text>
             </Box>
           ))}
         </Grid>

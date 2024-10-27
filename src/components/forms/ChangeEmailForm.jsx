@@ -9,22 +9,25 @@ import {
   Text,
   InputGroup,
   InputLeftElement,
+  useColorModeValue,
+  LightMode,
 } from "@chakra-ui/react";
-import { EmailIcon } from "@chakra-ui/icons"; // Import an email icon
+import { EmailIcon } from "@chakra-ui/icons";
 
 export default function ChangeEmailForm() {
+  const bgColor = useColorModeValue("bg.light", "bg.dark");
+
   return (
     <Box
       w="100%"
       maxW="500px"
       p={8}
       borderRadius="md"
-      bg="#fff" // Light background for the card
-      boxShadow="xl" // Enhanced shadow for better aesthetics
-      mx="auto" // Centering the box horizontally
-      mt={12} // Spacing from the top
+      bgColor={bgColor}
+      boxShadow="xl"
+      mx="auto"
+      mt={12}
     >
-      {/* Form Heading */}
       <Heading as="h2" size="lg" textAlign="center" mb={6}>
         Change Your Email
       </Heading>
@@ -33,39 +36,46 @@ export default function ChangeEmailForm() {
       </Text>
 
       <VStack spacing={5} align="flex-start">
-        {/* Current Email */}
         <FormControl isRequired>
           <FormLabel>Current Email</FormLabel>
           <InputGroup>
             <InputLeftElement pointerEvents="none">
               <EmailIcon color="gray.400" />
             </InputLeftElement>
-            <Input placeholder="Enter current email" type="email" />
+            <Input
+              type="email"
+              placeholder="Enter current email"
+              focusBorderColor="primary.500"
+            />
           </InputGroup>
         </FormControl>
 
-        {/* New Email */}
         <FormControl isRequired>
           <FormLabel>New Email</FormLabel>
           <InputGroup>
             <InputLeftElement pointerEvents="none">
               <EmailIcon color="gray.400" />
             </InputLeftElement>
-            <Input placeholder="Enter new email" type="email" />
+            <Input
+              type="email"
+              placeholder="Enter new email"
+              focusBorderColor="primary.500"
+            />
           </InputGroup>
         </FormControl>
 
-        {/* Save Changes Button */}
-        <Button
-          mt={6}
-          colorScheme="blue"
-          w="100%"
-          size="lg"
-          boxShadow="md"
-          _hover={{ boxShadow: "lg", transform: "scale(1.02)" }} // Slight hover effect for the button
-        >
-          Save Changes
-        </Button>
+        <LightMode>
+          <Button
+            mt={6}
+            colorScheme="primary"
+            w="100%"
+            size="lg"
+            boxShadow="md"
+            _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
+          >
+            Save Changes
+          </Button>
+        </LightMode>
       </VStack>
     </Box>
   );
