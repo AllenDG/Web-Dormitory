@@ -15,6 +15,7 @@ import OwnerRentalsPage from "../pages/OwnerRentalsPage";
 import OwnerAddRentalsPage from "../pages/OwnerAddRentalsPage";
 import OwnerTenantsPage from "../pages/OwnerTenantsPage";
 import OwnerSettingsPage from "../pages/OwnerSettingsPage";
+import ScheduleVisitPage from "../pages/ScheduleVisitPage";
 
 export const mainRoutes = [
   {
@@ -62,6 +63,11 @@ export const mainRoutes = [
         path: "chat-page",
         element: <ChatPage />,
       },
+
+      {
+        path: "schedule-visit",
+        element: <ScheduleVisitPage />,
+      },
     ],
   },
   {
@@ -92,6 +98,6 @@ export const mainRoutes = [
         path: "settings",
         element: <OwnerSettingsPage />,
       },
-    ]
-  }
+    ],
+  },
 ];
