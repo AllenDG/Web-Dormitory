@@ -3,6 +3,7 @@ import RentalsListing from "../features/rentals/RentalsListing";
 import useTypingAnimation from "../hooks/useTypingAnimation";
 
 const words = ["rooms", "apartment", "condo"];
+const logoColor = "#0084FF";
 
 export default function LandingPage() {
   const bgColor = useColorModeValue("bg.light", "bg.dark");
@@ -12,7 +13,8 @@ export default function LandingPage() {
     <Flex p="12px" minH="100vh" direction="column" align="center" bg={bgColor}>
       <Box p="20px">
         <Heading as="h4" size="md">
-          Find {displayText} for rent with Dormitory
+          Find {displayText} for rent with{" "}
+          <span style={{ color: logoColor }}>Dormitory</span>
         </Heading>
       </Box>
       <RentalsListing />
