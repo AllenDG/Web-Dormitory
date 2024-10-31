@@ -57,7 +57,7 @@ export default function Navbar() {
             to="/login"
             variant="solid"
             borderRadius="30px"
-            _hover={{ bg: "#005BB5" }} // Darker blue on hover
+            _hover={{ bg: "#005BB5" }} 
             _focus={{ boxShadow: "outline" }}
           >
             Login
@@ -68,7 +68,7 @@ export default function Navbar() {
             to="/register"
             variant="solid"
             borderRadius="30px"
-            _hover={{ bg: "#005BB5" }} // Darker green on hover
+            _hover={{ bg: "#005BB5" }} 
             _focus={{ boxShadow: "outline" }}
           >
             Register
