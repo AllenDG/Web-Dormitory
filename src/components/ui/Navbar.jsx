@@ -63,12 +63,12 @@ export default function Navbar() {
             Login
           </Button>
           <Button
-            colorScheme="teal"
+            colorScheme="blue"
             as={Link}
             to="/register"
             variant="solid"
             borderRadius="30px"
-            _hover={{ bg: "#006B5F" }} // Darker green on hover
+            _hover={{ bg: "#005BB5" }} // Darker green on hover
             _focus={{ boxShadow: "outline" }}
           >
             Register
