@@ -40,8 +40,8 @@ Dormitory is a rental website focused on helping users find dormitories and apar
 5. Open the app in your browser at [http://localhost:5173](http://localhost:5173).
 
 ## Contributors
-- [Allen Walter](https://github.com/AllenDG)
-- [Patrick I.](https://github.com/patriki28)
+- [Allen Walter De Guzman](https://github.com/AllenDG)
+- [Patrick Diesta](https://github.com/patriki28)
 
 ## Repository
 [GitHub Repository](https://github.com/AllenDG/Web-Dormitory.git)
