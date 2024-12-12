@@ -43,6 +43,3 @@ Dormitory is a rental website focused on helping users find dormitories and apar
 - [Allen Walter De Guzman](https://github.com/AllenDG)
 - [Patrick Diesta](https://github.com/patriki28)
 
-## Repository
-[GitHub Repository](https://github.com/AllenDG/Web-Dormitory.git)
-
