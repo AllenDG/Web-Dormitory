@@ -4,6 +4,7 @@
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
 ![Chakra UI](https://img.shields.io/badge/Chakra--UI-319795?style=for-the-badge&logo=chakra-ui&logoColor=white)
 ![Google API](https://img.shields.io/badge/Google%20API-4285F4?style=for-the-badge&logo=google&logoColor=white)
+![Redux](https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white)
 ## Description
 Dormitory is a rental website focused on helping users find dormitories and apartments in Pangasinan. The platform offers features such as a chatbot, a booking system, a scheduling system, and a chat system to enhance user experience and simplify the rental process.
 
@@ -19,6 +20,7 @@ Dormitory is a rental website focused on helping users find dormitories and apar
 - **TailwindCSS**
 - **Chakra UI**
 - **Google API**
+- **Redux**
 
 ## Installation
 1. Clone the repository:
