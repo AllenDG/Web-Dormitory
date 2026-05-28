@@ -25,6 +25,7 @@ import useRentalStore from '../stores/useRentalStore';
 const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'Find Rentals', path: '/find-rentals' },
+  { name: 'Budget Finder', path: '/budget-finder' },
   { name: 'How It Works', path: '/how-it-works' },
   { name: 'About Us', path: '/about-us' },
   { name: 'Contact', path: '/contact' },

@@ -5,126 +5,145 @@ import {
   SimpleGrid,
   Icon,
   VStack,
-  useColorModeValue,
+  HStack,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import {
-  FiSearch,
+  FiCheckCircle,
+  FiZap,
   FiShield,
-  FiClock,
-  FiDollarSign,
   FiMapPin,
-  FiHeart,
+  FiClock,
+  FiUsers,
 } from 'react-icons/fi';
-import { Section, Card } from '../../../shared/components';
+import { Section } from '../../../shared/components';
+import { colors, spacing, borderRadius, typography } from '../../../shared/styles/tokens';
 
 const MotionBox = motion(Box);
 
-const features = [
+const benefits = [
   {
-    icon: FiSearch,
-    title: 'Easy Search',
+    icon: FiCheckCircle,
+    title: 'Verified Listings',
     description:
-      'Find your perfect place with advanced filters and interactive maps.',
-    color: 'blue.500',
+      'Every property is verified and inspected to ensure quality, safety, and authenticity. No fake listings, no surprises.',
+  },
+  {
+    icon: FiZap,
+    title: 'Smart Recommendations',
+    description:
+      'AI-powered suggestions based on your budget, location preferences, and lifestyle needs. Find the perfect match faster.',
+  },
+  {
+    icon: FiUsers,
+    title: 'Student-Focused',
+    description:
+      'Designed specifically for students with flexible terms, affordable pricing, and amenities that matter to student life.',
   },
   {
     icon: FiShield,
-    title: 'Verified Listings',
+    title: 'Safety & Trust',
     description:
-      'All properties are verified to ensure quality and authenticity.',
-    color: 'green.500',
-  },
-  {
-    icon: FiClock,
-    title: 'Quick Booking',
-    description:
-      'Schedule visits and book your room in minutes, not days.',
-    color: 'purple.500',
-  },
-  {
-    icon: FiDollarSign,
-    title: 'Best Prices',
-    description:
-      'Transparent pricing with no hidden fees. Find options for every budget.',
-    color: 'yellow.500',
+      'Safety ratings, verified owners, secure payments, and transparent reviews from real students.',
   },
   {
     icon: FiMapPin,
-    title: 'Prime Locations',
+    title: 'Nearby Establishments',
     description:
-      'Properties near universities, public transport, and amenities.',
-    color: 'red.500',
+      'See nearby universities, hospitals, transport stations, and essential services. Know your neighborhood before you move.',
   },
   {
-    icon: FiHeart,
-    title: 'Student-Friendly',
+    icon: FiClock,
+    title: 'Real-Time Availability',
     description:
-      'Designed for students with flexible terms and community features.',
-    color: 'pink.500',
+      'Live updates on room availability, instant booking confirmations, and quick responses from property owners.',
   },
 ];
 
 /**
- * Features Section showcasing platform benefits
+ * Redesigned Features Section - Phase 2
+ * Focus on informative benefits with clean card layout
  */
 const FeaturesSection = () => {
-  const bgColor = useColorModeValue('gray.50', 'gray.900');
-
   return (
-    <Section bg={bgColor}>
-      <VStack spacing={12}>
+    <Section bg="white">
+      <VStack spacing={spacing[12]}>
         {/* Section Header */}
-        <VStack spacing={4} textAlign="center" maxW="3xl">
+        <VStack spacing={spacing[4]} textAlign="center" maxW="3xl">
           <Heading
             as="h2"
             fontSize={{ base: '3xl', md: '4xl' }}
-            fontWeight="bold"
+            fontWeight={typography.fontWeight.bold}
+            color={colors.gray[900]}
           >
             Why Choose Dormy?
           </Heading>
-          <Text fontSize={{ base: 'md', md: 'lg' }} color="gray.600" _dark={{ color: 'gray.400' }}>
+          <Text
+            fontSize={{ base: 'md', md: 'lg' }}
+            color={colors.gray[600]}
+          >
             We make finding and renting student accommodation simple, safe, and
-            stress-free.
+            stress-free with verified listings and smart technology.
           </Text>
         </VStack>
 
-        {/* Features Grid */}
+        {/* Benefits Grid */}
         <SimpleGrid
           columns={{ base: 1, md: 2, lg: 3 }}
-          spacing={{ base: 6, md: 8 }}
+          spacing={{ base: spacing[6], md: spacing[8] }}
           w="full"
         >
-          {features.map((feature, index) => (
+          {benefits.map((benefit, index) => (
             <MotionBox
-              key={feature.title}
+              key={benefit.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card hover padding={8} h="full">
-                <VStack align="start" spacing={4}>
-                  <Box
-                    p={3}
-                    borderRadius="lg"
-                    bg={`${feature.color.split('.')[0]}.50`}
-                    _dark={{ bg: `${feature.color.split('.')[0]}.900` }}
+              <Box
+                bg={colors.gray[50]}
+                borderRadius={borderRadius.lg}
+                p={spacing[6]}
+                h="full"
+                transition="all 0.3s"
+                _hover={{
+                  bg: 'white',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                  transform: 'translateY(-4px)',
+                }}
+              >
+                <VStack align="start" spacing={spacing[4]}>
+                  <HStack spacing={spacing[3]}>
+                    <Box
+                      p={spacing[3]}
+                      borderRadius={borderRadius.md}
+                      bg={colors.primary[50]}
+                    >
+                      <Icon
+                        as={benefit.icon}
+                        boxSize={6}
+                        color={colors.primary[700]}
+                      />
+                    </Box>
+                    <Heading
+                      as="h3"
+                      fontSize={typography.fontSize.lg}
+                      fontWeight={typography.fontWeight.semibold}
+                      color={colors.gray[900]}
+                    >
+                      {benefit.title}
+                    </Heading>
+                  </HStack>
+                  <Text
+                    fontSize={typography.fontSize.sm}
+                    color={colors.gray[600]}
+                    lineHeight={typography.lineHeight.relaxed}
                   >
-                    <Icon
-                      as={feature.icon}
-                      boxSize={6}
-                      color={feature.color}
-                    />
-                  </Box>
-                  <Heading as="h3" size="md">
-                    {feature.title}
-                  </Heading>
-                  <Text color="gray.600" _dark={{ color: 'gray.400' }}>
-                    {feature.description}
+                    {benefit.description}
                   </Text>
                 </VStack>
-              </Card>
+              </Box>
             </MotionBox>
           ))}
         </SimpleGrid>

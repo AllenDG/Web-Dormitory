@@ -12,15 +12,29 @@ import {
   Divider,
   useColorModeValue,
   AspectRatio,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
 } from '@chakra-ui/react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FiMapPin, FiUsers, FiHeart, FiArrowLeft, FiCheck } from 'react-icons/fi';
-import { Section, Card, Container, Button } from '../../shared/components';
+import {
+  Section,
+  Card,
+  Container,
+  Button,
+  MapView,
+  NearbyPlaces,
+  CommuteCalculator,
+} from '../../shared/components';
 import useRentalStore from '../../shared/stores/useRentalStore';
 import { useState } from 'react';
 
 /**
- * Modern Rental Detail Page
+ * Enhanced Rental Detail Page - Phase 4
+ * With map integration and location features
  */
 const RentalDetailPage = () => {
   const { id } = useParams();
@@ -140,10 +154,10 @@ const RentalDetailPage = () => {
                 </VStack>
               </Card>
 
-              {/* Location */}
+              {/* Location & Map */}
               <Card padding={6} bg={cardBg}>
                 <VStack spacing={4} align="stretch">
-                  <Heading size="md">Location</Heading>
+                  <Heading size="md">Location & Nearby</Heading>
                   <HStack>
                     <Icon as={FiMapPin} color="primary.500" />
                     <Text fontSize="sm">{rental.address}</Text>
@@ -151,19 +165,46 @@ const RentalDetailPage = () => {
                   <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.400' }}>
                     {rental.city}
                   </Text>
-                  {/* Map placeholder */}
-                  <AspectRatio ratio={16 / 9}>
-                    <Box
-                      bg="gray.200"
-                      _dark={{ bg: 'gray.700' }}
-                      borderRadius="md"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Text color="gray.500">Map View</Text>
-                    </Box>
-                  </AspectRatio>
+
+                  {/* Tabs for Map, Nearby Places, and Commute */}
+                  <Tabs variant="enclosed" colorScheme="blue">
+                    <TabList>
+                      <Tab>Map</Tab>
+                      <Tab>Nearby Places</Tab>
+                      <Tab>Commute</Tab>
+                    </TabList>
+
+                    <TabPanels>
+                      {/* Map Tab */}
+                      <TabPanel px={0} py={4}>
+                        <MapView
+                          properties={[rental]}
+                          selectedProperty={rental}
+                          center={{
+                            lat: 14.6760,
+                            lng: 121.0437,
+                          }}
+                          zoom={15}
+                          height="400px"
+                        />
+                      </TabPanel>
+
+                      {/* Nearby Places Tab */}
+                      <TabPanel px={0} py={4}>
+                        <NearbyPlaces
+                          location={rental.city}
+                          radius={2}
+                        />
+                      </TabPanel>
+
+                      {/* Commute Tab */}
+                      <TabPanel px={0} py={4}>
+                        <CommuteCalculator
+                          propertyLocation={`${rental.address}, ${rental.city}`}
+                        />
+                      </TabPanel>
+                    </TabPanels>
+                  </Tabs>
                 </VStack>
               </Card>
             </VStack>

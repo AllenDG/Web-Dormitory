@@ -10,6 +10,7 @@ const ContactPage = lazy(() => import('../../features/contact/ContactPage'));
 const FindRentalsPage = lazy(() => import('../../features/rentals/FindRentalsPage'));
 const RentalDetailPage = lazy(() => import('../../features/rentals/RentalDetailPage'));
 const FavoritesPage = lazy(() => import('../../features/favorites/FavoritesPage'));
+const BudgetFinderPage = lazy(() => import('../../features/budget-finder/BudgetFinderPage'));
 const NotFoundPage = lazy(() => import('../../features/error/NotFoundPage'));
 
 // Loading component
@@ -86,6 +87,14 @@ export const routes = [
         element: (
           <LazyPage>
             <FavoritesPage />
+          </LazyPage>
+        ),
+      },
+      {
+        path: 'budget-finder',
+        element: (
+          <LazyPage>
+            <BudgetFinderPage />
           </LazyPage>
         ),
       },

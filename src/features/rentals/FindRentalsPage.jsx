@@ -1,37 +1,20 @@
-import {
-  Box,
-  Heading,
-  Text,
-  SimpleGrid,
-  VStack,
-  HStack,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Select,
-  RangeSlider,
-  RangeSliderTrack,
-  RangeSliderFilledTrack,
-  RangeSliderThumb,
-  Checkbox,
-  CheckboxGroup,
-  Stack,
-  Image,
-  Badge,
-  Icon,
-  IconButton,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Box, VStack, Drawer, DrawerOverlay, DrawerContent, useDisclosure, Flex, IconButton, Icon } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { FiSearch, FiMapPin, FiUsers, FiHeart, FiSliders } from 'react-icons/fi';
-import { Section, Card, Container, Button } from '../../shared/components';
+import { FiMap, FiList } from 'react-icons/fi';
+import {
+  StickyFilterBar,
+  AdvancedFiltersPanel,
+  PropertyListCard,
+  ComparisonPanel,
+} from './components';
+import { MapView } from '../../shared/components';
 import useRentalStore from '../../shared/stores/useRentalStore';
-import amenitiesData from '../../data/amenities.json';
-import bedTypesData from '../../data/bedTypes.json';
+import { colors, spacing, borderRadius } from '../../shared/styles/tokens';
 
 /**
- * Modern Find Rentals Page with Advanced Filters
+ * Redesigned Find Rentals Page - Phase 3 & 4
+ * Features: Sticky filter bar, desktop layout, comparison, map integration
  */
 const FindRentalsPage = () => {
   const navigate = useNavigate();
@@ -45,277 +28,303 @@ const FindRentalsPage = () => {
     isFavorite,
   } = useRentalStore();
 
-  const [showFilters, setShowFilters] = useState(true);
-  const filteredRentals = getFilteredRentals();
+  const { isOpen: isFiltersOpen, onOpen: onFiltersOpen, onClose: onFiltersClose } = useDisclosure();
+  const [sortBy, setSortBy] = useState('relevance');
+  const [comparedProperties, setComparedProperties] = useState([]);
+  const [showComparison, setShowComparison] = useState(false);
+  const [viewMode, setViewMode] = useState('list'); // 'list' or 'map'
+  const [selectedProperty, setSelectedProperty] = useState(null);
 
-  const bgColor = useColorModeValue('gray.50', 'gray.900');
-  const cardBg = useColorModeValue('white', 'gray.800');
+  const filteredRentals = getFilteredRentals();
 
   // Initialize from URL params
   useEffect(() => {
     const query = searchParams.get('q');
     const city = searchParams.get('city');
-    if (query) setFilters({ searchQuery: query });
-    if (city) setFilters({ city });
+    const location = searchParams.get('location');
+    const minBudget = searchParams.get('minBudget');
+    const maxBudget = searchParams.get('maxBudget');
+    const roomType = searchParams.get('roomType');
+    const gender = searchParams.get('gender');
+    const university = searchParams.get('university');
+
+    const newFilters = {};
+    if (query) newFilters.searchQuery = query;
+    if (city) newFilters.city = city;
+    if (location) newFilters.location = location;
+    if (minBudget && maxBudget) {
+      newFilters.priceRange = [parseInt(minBudget), parseInt(maxBudget)];
+    }
+    if (roomType) newFilters.roomType = roomType;
+    if (gender) newFilters.gender = gender;
+    if (university) newFilters.university = university;
+
+    if (Object.keys(newFilters).length > 0) {
+      setFilters(newFilters);
+    }
   }, [searchParams, setFilters]);
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-PH', {
-      style: 'currency',
-      currency: 'PHP',
-      minimumFractionDigits: 0,
-    }).format(price);
+  // Sort rentals
+  const sortedRentals = [...filteredRentals].sort((a, b) => {
+    switch (sortBy) {
+      case 'price-low':
+        return a.price - b.price;
+      case 'price-high':
+        return b.price - a.price;
+      case 'newest':
+        return b.id - a.id;
+      case 'rating':
+        return 0; // TODO: Implement rating sort
+      default:
+        return 0;
+    }
+  });
+
+  // Count active filters
+  const countActiveFilters = () => {
+    let count = 0;
+    if (filters.searchQuery) count++;
+    if (filters.priceRange && (filters.priceRange[0] > 1000 || filters.priceRange[1] < 20000)) count++;
+    if (filters.roomType) count++;
+    if (filters.gender) count++;
+    if (filters.amenities && filters.amenities.length > 0) count += filters.amenities.length;
+    if (filters.facilities && filters.facilities.length > 0) count += filters.facilities.length;
+    return count;
+  };
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+  const handleResetFilters = () => {
+    resetFilters();
+    onFiltersClose();
+  };
+
+  const handleApplyFilters = () => {
+    onFiltersClose();
+  };
+
+  const handleCompareToggle = (property) => {
+    setComparedProperties((prev) => {
+      const exists = prev.find((p) => p.id === property.id);
+      if (exists) {
+        const updated = prev.filter((p) => p.id !== property.id);
+        if (updated.length === 0) {
+          setShowComparison(false);
+        }
+        return updated;
+      } else {
+        if (prev.length >= 3) {
+          alert('You can compare up to 3 properties at a time');
+          return prev;
+        }
+        const updated = [...prev, property];
+        setShowComparison(true);
+        return updated;
+      }
+    });
+  };
+
+  const handleRemoveFromComparison = (propertyId) => {
+    setComparedProperties((prev) => {
+      const updated = prev.filter((p) => p.id !== propertyId);
+      if (updated.length === 0) {
+        setShowComparison(false);
+      }
+      return updated;
+    });
+  };
+
+  const isPropertyCompared = (propertyId) => {
+    return comparedProperties.some((p) => p.id === propertyId);
   };
 
   return (
-    <Box>
-      {/* Header */}
-      <Section bg={bgColor} py={8}>
-        <VStack spacing={4}>
-          <Heading as="h1" fontSize={{ base: '3xl', md: '4xl' }}>
-            Find Your Perfect Place
-          </Heading>
-          <Text color="gray.600" _dark={{ color: 'gray.400' }}>
-            {filteredRentals.length} properties available
-          </Text>
-        </VStack>
-      </Section>
+    <Box bg={colors.gray[50]} minH="100vh" pb={showComparison ? '400px' : spacing[12]}>
+      {/* Sticky Filter Bar */}
+      <StickyFilterBar
+        activeFiltersCount={countActiveFilters()}
+        onOpenFilters={onFiltersOpen}
+        onResetFilters={handleResetFilters}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+        resultsCount={sortedRentals.length}
+      />
+
+      {/* View Mode Toggle */}
+      <Box
+        maxW="1400px"
+        mx="auto"
+        px={{ base: spacing[4], md: spacing[6] }}
+        pt={spacing[4]}
+      >
+        <Flex justify="flex-end" mb={spacing[4]}>
+          <Flex
+            bg="white"
+            borderRadius={borderRadius.md}
+            border={`1px solid ${colors.gray[200]}`}
+            overflow="hidden"
+          >
+            <IconButton
+              icon={<Icon as={FiList} />}
+              aria-label="List view"
+              onClick={() => setViewMode('list')}
+              bg={viewMode === 'list' ? colors.primary[700] : 'white'}
+              color={viewMode === 'list' ? 'white' : colors.gray[600]}
+              borderRadius={0}
+              _hover={{
+                bg: viewMode === 'list' ? colors.primary[800] : colors.gray[50],
+              }}
+            />
+            <IconButton
+              icon={<Icon as={FiMap} />}
+              aria-label="Map view"
+              onClick={() => setViewMode('map')}
+              bg={viewMode === 'map' ? colors.primary[700] : 'white'}
+              color={viewMode === 'map' ? 'white' : colors.gray[600]}
+              borderRadius={0}
+              _hover={{
+                bg: viewMode === 'map' ? colors.primary[800] : colors.gray[50],
+              }}
+            />
+          </Flex>
+        </Flex>
+      </Box>
 
       {/* Main Content */}
-      <Section>
-        <SimpleGrid columns={{ base: 1, lg: showFilters ? '280px 1fr' : '1fr' }} spacing={8}>
-          {/* Filters Sidebar */}
-          {showFilters && (
-            <Box>
-              <Card padding={6} position="sticky" top="80px" bg={cardBg}>
-                <VStack spacing={6} align="stretch">
-                  <HStack justify="space-between">
-                    <Heading size="md">Filters</Heading>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={resetFilters}
-                    >
-                      Reset
-                    </Button>
-                  </HStack>
-
-                  {/* Search */}
-                  <Box>
-                    <Text fontWeight="medium" mb={2}>
-                      Search
-                    </Text>
-                    <InputGroup>
-                      <InputLeftElement pointerEvents="none">
-                        <FiSearch color="gray.400" />
-                      </InputLeftElement>
-                      <Input
-                        placeholder="Location, property..."
-                        value={filters.searchQuery}
-                        onChange={(e) =>
-                          setFilters({ searchQuery: e.target.value })
-                        }
-                      />
-                    </InputGroup>
-                  </Box>
-
-                  {/* Price Range */}
-                  <Box>
-                    <Text fontWeight="medium" mb={2}>
-                      Price Range
-                    </Text>
-                    <Text fontSize="sm" color="gray.600" mb={3}>
-                      {formatPrice(filters.priceRange[0])} -{' '}
-                      {formatPrice(filters.priceRange[1])}
-                    </Text>
-                    <RangeSlider
-                      min={0}
-                      max={10000}
-                      step={500}
-                      value={filters.priceRange}
-                      onChange={(val) => setFilters({ priceRange: val })}
-                    >
-                      <RangeSliderTrack>
-                        <RangeSliderFilledTrack bg="primary.500" />
-                      </RangeSliderTrack>
-                      <RangeSliderThumb index={0} />
-                      <RangeSliderThumb index={1} />
-                    </RangeSlider>
-                  </Box>
-
-                  {/* Bed Type */}
-                  <Box>
-                    <Text fontWeight="medium" mb={2}>
-                      Bed Type
-                    </Text>
-                    <Select
-                      value={filters.bedType}
-                      onChange={(e) => setFilters({ bedType: e.target.value })}
-                    >
-                      <option value="">All Types</option>
-                      {bedTypesData.map((type) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                    </Select>
-                  </Box>
-
-                  {/* Amenities */}
-                  <Box>
-                    <Text fontWeight="medium" mb={2}>
-                      Amenities
-                    </Text>
-                    <CheckboxGroup
-                      value={filters.amenities}
-                      onChange={(val) => setFilters({ amenities: val })}
-                    >
-                      <Stack spacing={2}>
-                        {amenitiesData.slice(0, 8).map((amenity) => (
-                          <Checkbox key={amenity} value={amenity}>
-                            <Text fontSize="sm">{amenity}</Text>
-                          </Checkbox>
-                        ))}
-                      </Stack>
-                    </CheckboxGroup>
-                  </Box>
-                </VStack>
-              </Card>
-            </Box>
-          )}
-
-          {/* Results */}
-          <Box>
-            {/* Toggle Filters Button (Mobile) */}
-            <Button
-              leftIcon={<FiSliders />}
-              onClick={() => setShowFilters(!showFilters)}
-              mb={4}
-              display={{ base: 'flex', lg: 'none' }}
+      <Box maxW="1400px" mx="auto" px={{ base: spacing[4], md: spacing[6] }} pb={spacing[8]}>
+        {viewMode === 'list' ? (
+          // List View
+          sortedRentals.length > 0 ? (
+            <VStack spacing={spacing[4]} align="stretch">
+              {sortedRentals.map((rental) => (
+                <PropertyListCard
+                  key={rental.id}
+                  property={rental}
+                  onClick={() => navigate(`/listing/${rental.id}`)}
+                  onFavoriteToggle={() => toggleFavorite(rental.id)}
+                  isFavorite={isFavorite(rental.id)}
+                  onCompareToggle={() => handleCompareToggle(rental)}
+                  isCompared={isPropertyCompared(rental.id)}
+                  showCompareCheckbox={true}
+                />
+              ))}
+            </VStack>
+          ) : (
+            <Box
+              bg="white"
+              borderRadius={spacing[2]}
+              p={spacing[12]}
+              textAlign="center"
             >
-              {showFilters ? 'Hide' : 'Show'} Filters
-            </Button>
-
-            {/* Results Grid */}
-            {filteredRentals.length > 0 ? (
-              <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6}>
-                {filteredRentals.map((rental) => (
-                  <Card
-                    key={rental.id}
-                    hover
-                    padding={0}
-                    overflow="hidden"
-                    cursor="pointer"
-                    onClick={() => navigate(`/listing/${rental.id}`)}
+              <VStack spacing={spacing[4]}>
+                <Box fontSize="48px">🏠</Box>
+                <Box>
+                  <Box
+                    as="h2"
+                    fontSize="xl"
+                    fontWeight="semibold"
+                    color={colors.gray[900]}
+                    mb={spacing[2]}
                   >
-                    {/* Image */}
-                    <Box position="relative" overflow="hidden" h="200px">
-                      <Image
-                        src={rental.imageUrl[0]}
-                        alt={rental.title}
-                        w="full"
-                        h="full"
-                        objectFit="cover"
-                        transition="transform 0.3s"
-                        _hover={{ transform: 'scale(1.1)' }}
-                      />
-                      {/* Favorite Button */}
-                      <IconButton
-                        icon={<FiHeart />}
-                        position="absolute"
-                        top={3}
-                        right={3}
-                        size="sm"
-                        borderRadius="full"
-                        bg={
-                          isFavorite(rental.id) ? 'red.500' : 'whiteAlpha.800'
-                        }
-                        color={isFavorite(rental.id) ? 'white' : 'gray.800'}
-                        _hover={{
-                          bg: isFavorite(rental.id) ? 'red.600' : 'white',
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleFavorite(rental.id);
-                        }}
-                        aria-label="Add to favorites"
-                      />
-                      {/* Price Badge */}
-                      <Badge
-                        position="absolute"
-                        bottom={3}
-                        left={3}
-                        colorScheme="green"
-                        fontSize="md"
-                        px={3}
-                        py={1}
-                        borderRadius="full"
-                      >
-                        {formatPrice(rental.price)}/mo
-                      </Badge>
-                    </Box>
-
-                    {/* Content */}
-                    <VStack align="start" spacing={3} p={5}>
-                      <Heading as="h3" size="md" noOfLines={1}>
-                        {rental.title}
-                      </Heading>
-
-                      <HStack
-                        spacing={2}
-                        color="gray.600"
-                        _dark={{ color: 'gray.400' }}
-                      >
-                        <Icon as={FiMapPin} />
-                        <Text fontSize="sm" noOfLines={1}>
-                          {rental.city}
-                        </Text>
-                      </HStack>
-
-                      <HStack spacing={4}>
-                        <HStack spacing={1}>
-                          <Icon as={FiUsers} color="gray.500" />
-                          <Text
-                            fontSize="sm"
-                            color="gray.600"
-                            _dark={{ color: 'gray.400' }}
-                          >
-                            {rental.availablePerson} persons
-                          </Text>
-                        </HStack>
-                        <Badge colorScheme="blue">{rental.bedType}</Badge>
-                      </HStack>
-
-                      <Text
-                        fontSize="sm"
-                        color="gray.600"
-                        _dark={{ color: 'gray.400' }}
-                        noOfLines={2}
-                      >
-                        {rental.description}
-                      </Text>
-                    </VStack>
-                  </Card>
-                ))}
-              </SimpleGrid>
-            ) : (
-              <Card padding={12} textAlign="center">
-                <VStack spacing={4}>
-                  <Heading size="md" color="gray.600">
                     No properties found
-                  </Heading>
-                  <Text color="gray.500">
+                  </Box>
+                  <Box fontSize="sm" color={colors.gray[600]}>
                     Try adjusting your filters to see more results
-                  </Text>
-                  <Button onClick={resetFilters} colorScheme="primary">
-                    Reset Filters
-                  </Button>
-                </VStack>
-              </Card>
-            )}
-          </Box>
-        </SimpleGrid>
-      </Section>
+                  </Box>
+                </Box>
+                <button
+                  onClick={handleResetFilters}
+                  style={{
+                    padding: `${spacing[3]} ${spacing[6]}`,
+                    backgroundColor: colors.primary[700],
+                    color: 'white',
+                    borderRadius: spacing[2],
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    border: 'none',
+                  }}
+                >
+                  Reset Filters
+                </button>
+              </VStack>
+            </Box>
+          )
+        ) : (
+          // Map View
+          <Flex gap={spacing[4]} direction={{ base: 'column', lg: 'row' }}>
+            {/* Map */}
+            <Box flex="1" minH="600px">
+              <MapView
+                properties={sortedRentals}
+                selectedProperty={selectedProperty}
+                onPropertySelect={setSelectedProperty}
+                onPropertyClick={(property) => navigate(`/listing/${property.id}`)}
+                height="calc(100vh - 250px)"
+              />
+            </Box>
+
+            {/* Property List Sidebar */}
+            <Box
+              width={{ base: '100%', lg: '400px' }}
+              maxH="calc(100vh - 250px)"
+              overflowY="auto"
+            >
+              <VStack spacing={spacing[3]} align="stretch">
+                {sortedRentals.map((rental) => (
+                  <Box
+                    key={rental.id}
+                    bg="white"
+                    borderRadius={borderRadius.md}
+                    border={`2px solid ${selectedProperty?.id === rental.id ? colors.primary[700] : colors.gray[200]}`}
+                    p={spacing[3]}
+                    cursor="pointer"
+                    onClick={() => setSelectedProperty(rental)}
+                    transition="all 0.2s"
+                    _hover={{
+                      borderColor: colors.primary[500],
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    }}
+                  >
+                    <PropertyListCard
+                      property={rental}
+                      onClick={() => navigate(`/listing/${rental.id}`)}
+                      onFavoriteToggle={() => toggleFavorite(rental.id)}
+                      isFavorite={isFavorite(rental.id)}
+                      onCompareToggle={() => handleCompareToggle(rental)}
+                      isCompared={isPropertyCompared(rental.id)}
+                      showCompareCheckbox={false}
+                    />
+                  </Box>
+                ))}
+              </VStack>
+            </Box>
+          </Flex>
+        )}
+      </Box>
+
+      {/* Filters Drawer */}
+      <Drawer isOpen={isFiltersOpen} onClose={onFiltersClose} size="md" placement="right">
+        <DrawerOverlay />
+        <DrawerContent>
+          <AdvancedFiltersPanel
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onReset={handleResetFilters}
+            onApply={handleApplyFilters}
+          />
+        </DrawerContent>
+      </Drawer>
+
+      {/* Comparison Panel */}
+      {showComparison && (
+        <ComparisonPanel
+          properties={comparedProperties}
+          onRemove={handleRemoveFromComparison}
+          onClose={() => setShowComparison(false)}
+        />
+      )}
     </Box>
   );
 };
