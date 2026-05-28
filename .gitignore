@@ -22,12 +22,25 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables
 *.env
-*FIXED_APPLIED.md
-*IMPLEMENTATION_CHECKLIST.md 
-*MIGRATION_GUIDE.md
-*MODERNIZATION_SUMMARY.md
-*PROJECT_STRUCTURE.md
-*QUICkK_START.md
-*START_HERE.md
-*WORKSPACE_SETUP.md
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Documentation files (development only)
+WORKSPACE_SETUP.md
+QUICK_START.md
+START_HERE.md
+PROJECT_STRUCTURE.md
+MODERNIZATION_SUMMARY.md
+MIGRATION_GUIDE.md
+IMPLEMENTATION_CHECKLIST.md
+FIXES_APPLIED.md
+
+# Build info
+.vite
+.cache
