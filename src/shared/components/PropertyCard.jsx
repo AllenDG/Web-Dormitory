@@ -8,10 +8,12 @@ import {
   Icon,
   IconButton,
   useColorModeValue,
+  useToast,
 } from '@chakra-ui/react';
-import { FiHeart, FiMapPin, FiUsers, FiWifi } from 'react-icons/fi';
+import { FiHeart, FiMapPin, FiUsers, FiWifi, FiPlus, FiCheck } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { Card } from './index';
+import useCompareStore from '../stores/useCompareStore';
 
 /**
  * Modern Property Card Component
@@ -24,7 +26,54 @@ const PropertyCard = ({
   showDistance = false,
 }) => {
   const navigate = useNavigate();
+  const toast = useToast();
   const cardBg = useColorModeValue('white', 'gray.800');
+  
+  // Compare store
+  const isInCompare = useCompareStore((state) => state.isInCompare(property.id));
+  const toggleCompare = useCompareStore((state) => state.toggleCompare);
+  const isLimitReached = useCompareStore((state) => state.isLimitReached());
+  const maxCompare = useCompareStore((state) => state.maxCompare);
+
+  const handleToggleCompare = (e) => {
+    e.stopPropagation();
+    
+    // If already in compare, remove it
+    if (isInCompare) {
+      toggleCompare(property.id);
+      toast({
+        title: 'Removed from comparison',
+        status: 'info',
+        duration: 2000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    // If limit reached, show error
+    if (isLimitReached) {
+      toast({
+        title: 'Comparison limit reached',
+        description: `You can compare up to ${maxCompare} properties at a time`,
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    // Add to compare
+    const added = toggleCompare(property.id);
+    if (added) {
+      toast({
+        title: 'Added to comparison',
+        description: 'View comparison at the bottom of the page',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+  };
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-PH', {
@@ -58,26 +107,43 @@ const PropertyCard = ({
           _hover={{ transform: 'scale(1.05)' }}
         />
         
-        {/* Favorite Button */}
-        <IconButton
-          icon={<Icon as={FiHeart} fill={isFavorite ? 'currentColor' : 'none'} />}
-          position="absolute"
-          top={3}
-          right={3}
-          size="sm"
-          borderRadius="md"
-          bg={isFavorite ? 'error' : 'whiteAlpha.900'}
-          color={isFavorite ? 'white' : 'gray.700'}
-          _hover={{
-            bg: isFavorite ? 'red.600' : 'white',
-            transform: 'scale(1.1)',
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleFavorite(property.id);
-          }}
-          aria-label="Add to favorites"
-        />
+        {/* Action Buttons */}
+        <HStack position="absolute" top={3} right={3} spacing={2}>
+          {/* Compare Button */}
+          <IconButton
+            icon={<Icon as={isInCompare ? FiCheck : FiPlus} />}
+            size="sm"
+            borderRadius="md"
+            bg={isInCompare ? 'primary.600' : 'whiteAlpha.900'}
+            color={isInCompare ? 'white' : 'gray.700'}
+            _hover={{
+              bg: isInCompare ? 'primary.700' : 'white',
+              transform: 'scale(1.1)',
+            }}
+            onClick={handleToggleCompare}
+            isDisabled={!isInCompare && isLimitReached}
+            aria-label={isInCompare ? 'Remove from comparison' : 'Add to comparison'}
+            title={isInCompare ? 'Remove from comparison' : 'Add to comparison'}
+          />
+
+          {/* Favorite Button */}
+          <IconButton
+            icon={<Icon as={FiHeart} fill={isFavorite ? 'currentColor' : 'none'} />}
+            size="sm"
+            borderRadius="md"
+            bg={isFavorite ? 'error' : 'whiteAlpha.900'}
+            color={isFavorite ? 'white' : 'gray.700'}
+            _hover={{
+              bg: isFavorite ? 'red.600' : 'white',
+              transform: 'scale(1.1)',
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite(property.id);
+            }}
+            aria-label="Add to favorites"
+          />
+        </HStack>
 
         {/* Price Badge */}
         <Badge

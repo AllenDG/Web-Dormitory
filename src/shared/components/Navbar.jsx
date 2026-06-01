@@ -15,17 +15,25 @@ import {
   VStack,
   Text,
   Badge,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
+  Avatar,
+  Icon,
 } from '@chakra-ui/react';
-import { FiMenu, FiSun, FiMoon, FiHeart } from 'react-icons/fi';
+import { FiMenu, FiSun, FiMoon, FiHeart, FiUser, FiSettings, FiLogOut, FiLogIn, FiCalendar, FiMessageSquare } from 'react-icons/fi';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Container } from './index';
 import useUIStore from '../stores/useUIStore';
 import useRentalStore from '../stores/useRentalStore';
+import useChatStore from '../stores/useChatStore';
+import { useAuth } from '../../app/providers/AuthProvider';
 
 const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'Find Rentals', path: '/find-rentals' },
-  { name: 'Budget Finder', path: '/budget-finder' },
   { name: 'How It Works', path: '/how-it-works' },
   { name: 'About Us', path: '/about-us' },
   { name: 'Contact', path: '/contact' },
@@ -39,13 +47,20 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useUIStore();
-  const { favorites } = useRentalStore();
+  const { favorites = [] } = useRentalStore();
+  const { unreadCount } = useChatStore();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const bg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const activeLinkColor = useColorModeValue('primary.500', 'primary.300');
 
   const isActive = (path) => location.pathname === path;
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <Box
@@ -58,55 +73,85 @@ const Navbar = () => {
       borderColor={borderColor}
       boxShadow="sm"
     >
-      <Container size="xl">
+      <Container maxW="1400px">
         <Flex h={16} alignItems="center" justifyContent="space-between">
-          {/* Logo */}
-          <Text
-            fontSize="2xl"
-            fontWeight="bold"
-            bgGradient="linear(to-r, primary.500, purple.500)"
-            bgClip="text"
-            cursor="pointer"
-            onClick={() => navigate('/')}
-          >
-            Dormy
-          </Text>
+          {/* Logo - Left Aligned */}
+          <HStack spacing={8}>
+            <Text
+              fontSize="xl"
+              fontWeight="semibold"
+              bgGradient="linear(to-r, primary.500, purple.500)"
+              bgClip="text"
+              cursor="pointer"
+              onClick={() => navigate('/')}
+            >
+              Dormy
+            </Text>
 
-          {/* Desktop Navigation */}
-          <HStack spacing={8} display={{ base: 'none', md: 'flex' }}>
-            {navLinks.map((link) => (
-              <Link key={link.path} to={link.path}>
-                <Text
-                  fontWeight="medium"
-                  color={isActive(link.path) ? activeLinkColor : 'gray.600'}
-                  _dark={{
-                    color: isActive(link.path) ? activeLinkColor : 'gray.300',
-                  }}
-                  _hover={{ color: activeLinkColor }}
-                  transition="color 0.2s"
-                  position="relative"
-                  _after={
-                    isActive(link.path)
-                      ? {
-                          content: '""',
-                          position: 'absolute',
-                          bottom: '-8px',
-                          left: 0,
-                          right: 0,
-                          height: '2px',
-                          bg: activeLinkColor,
-                        }
-                      : {}
-                  }
-                >
-                  {link.name}
-                </Text>
-              </Link>
-            ))}
+            {/* Desktop Navigation - Next to Logo */}
+            <HStack spacing={6} display={{ base: 'none', md: 'flex' }}>
+              {navLinks.map((link) => (
+                <Link key={link.path} to={link.path}>
+                  <Text
+                    fontSize="sm"
+                    fontWeight="medium"
+                    color={isActive(link.path) ? activeLinkColor : 'gray.600'}
+                    _dark={{
+                      color: isActive(link.path) ? activeLinkColor : 'gray.300',
+                    }}
+                    _hover={{ color: activeLinkColor }}
+                    transition="color 0.2s"
+                    position="relative"
+                    _after={
+                      isActive(link.path)
+                        ? {
+                            content: '""',
+                            position: 'absolute',
+                            bottom: '-8px',
+                            left: 0,
+                            right: 0,
+                            height: '2px',
+                            bg: activeLinkColor,
+                          }
+                        : {}
+                    }
+                  >
+                    {link.name}
+                  </Text>
+                </Link>
+              ))}
+            </HStack>
           </HStack>
 
-          {/* Right Side Actions */}
+          {/* Right Side Actions - Right Aligned */}
           <HStack spacing={2}>
+            {/* Chat (Authenticated only) */}
+            {isAuthenticated && (
+              <IconButton
+                icon={
+                  <Box position="relative">
+                    <FiMessageSquare />
+                    {unreadCount > 0 && (
+                      <Badge
+                        position="absolute"
+                        top="-8px"
+                        right="-8px"
+                        colorScheme="red"
+                        borderRadius="full"
+                        fontSize="xs"
+                      >
+                        {unreadCount}
+                      </Badge>
+                    )}
+                  </Box>
+                }
+                variant="ghost"
+                aria-label="Messages"
+                onClick={() => navigate('/chat')}
+                display={{ base: 'none', md: 'flex' }}
+              />
+            )}
+
             {/* Favorites */}
             <IconButton
               icon={
@@ -140,6 +185,72 @@ const Navbar = () => {
               aria-label="Toggle theme"
             />
 
+            {/* User Menu (Desktop) */}
+            {isAuthenticated ? (
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  variant="ghost"
+                  p={1}
+                  borderRadius="full"
+                  display={{ base: 'none', md: 'flex' }}
+                >
+                  <Avatar size="sm" name={user?.name} bg="primary.500" />
+                </MenuButton>
+                <MenuList>
+                  <Box px={3} py={2}>
+                    <Text fontWeight="600" fontSize="sm">
+                      {user?.name}
+                    </Text>
+                    <Text fontSize="xs" color="gray.600">
+                      {user?.email}
+                    </Text>
+                  </Box>
+                  <MenuDivider />
+                  <MenuItem icon={<Icon as={FiUser} />} onClick={() => navigate('/profile')}>
+                    My Profile
+                  </MenuItem>
+                  <MenuItem icon={<Icon as={FiMessageSquare} />} onClick={() => navigate('/chat')}>
+                    Messages
+                    {unreadCount > 0 && (
+                      <Badge ml={2} colorScheme="red" borderRadius="full">
+                        {unreadCount}
+                      </Badge>
+                    )}
+                  </MenuItem>
+                  <MenuItem icon={<Icon as={FiHeart} />} onClick={() => navigate('/favorites')}>
+                    Favorites
+                    {favorites.length > 0 && (
+                      <Badge ml={2} colorScheme="red" borderRadius="full">
+                        {favorites.length}
+                      </Badge>
+                    )}
+                  </MenuItem>
+                  <MenuItem icon={<Icon as={FiCalendar} />} onClick={() => navigate('/my-bookings')}>
+                    My Bookings
+                  </MenuItem>
+                  <MenuItem icon={<Icon as={FiCalendar} />} onClick={() => navigate('/my-visits')}>
+                    My Visits
+                  </MenuItem>
+                  <MenuDivider />
+                  <MenuItem icon={<Icon as={FiLogOut} />} onClick={handleLogout} color="red.500">
+                    Logout
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            ) : (
+              <Button
+                leftIcon={<Icon as={FiLogIn} />}
+                colorScheme="primary"
+                size="sm"
+                onClick={() => navigate('/login')}
+                display={{ base: 'none', md: 'flex' }}
+                borderRadius="8px"
+              >
+                Sign In
+              </Button>
+            )}
+
             {/* Mobile Menu Button */}
             <IconButton
               icon={<FiMenu />}
@@ -164,6 +275,36 @@ const Navbar = () => {
           <DrawerHeader>Menu</DrawerHeader>
           <DrawerBody>
             <VStack spacing={4} align="stretch">
+              {/* User Info (Mobile) */}
+              {isAuthenticated ? (
+                <Box p={4} bg="primary.50" borderRadius="8px" mb={2}>
+                  <HStack spacing={3}>
+                    <Avatar size="sm" name={user?.name} bg="primary.500" />
+                    <VStack align="start" spacing={0}>
+                      <Text fontWeight="600" fontSize="sm">
+                        {user?.name}
+                      </Text>
+                      <Text fontSize="xs" color="gray.600">
+                        {user?.email}
+                      </Text>
+                    </VStack>
+                  </HStack>
+                </Box>
+              ) : (
+                <Button
+                  leftIcon={<Icon as={FiLogIn} />}
+                  colorScheme="primary"
+                  onClick={() => {
+                    navigate('/login');
+                    closeMobileMenu();
+                  }}
+                  borderRadius="8px"
+                  mb={2}
+                >
+                  Sign In
+                </Button>
+              )}
+
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
@@ -189,26 +330,131 @@ const Navbar = () => {
                 </Link>
               ))}
 
-              {/* Favorites in Mobile */}
-              <Box
-                p={3}
-                borderRadius="md"
-                _hover={{ bg: 'gray.100', _dark: { bg: 'gray.700' } }}
-                cursor="pointer"
-                onClick={() => {
-                  navigate('/favorites');
-                  closeMobileMenu();
-                }}
-              >
-                <HStack justify="space-between">
-                  <Text fontWeight="medium">Favorites</Text>
-                  {favorites.length > 0 && (
-                    <Badge colorScheme="red" borderRadius="full">
-                      {favorites.length}
-                    </Badge>
-                  )}
-                </HStack>
-              </Box>
+              {isAuthenticated && (
+                <>
+                  <Box h="1px" bg="gray.200" my={2} />
+
+                  {/* Profile */}
+                  <Box
+                    p={3}
+                    borderRadius="md"
+                    _hover={{ bg: 'gray.100', _dark: { bg: 'gray.700' } }}
+                    cursor="pointer"
+                    onClick={() => {
+                      navigate('/profile');
+                      closeMobileMenu();
+                    }}
+                  >
+                    <HStack>
+                      <Icon as={FiUser} />
+                      <Text fontWeight="medium">My Profile</Text>
+                    </HStack>
+                  </Box>
+
+                  {/* Messages */}
+                  <Box
+                    p={3}
+                    borderRadius="md"
+                    _hover={{ bg: 'gray.100', _dark: { bg: 'gray.700' } }}
+                    cursor="pointer"
+                    onClick={() => {
+                      navigate('/chat');
+                      closeMobileMenu();
+                    }}
+                  >
+                    <HStack justify="space-between">
+                      <HStack>
+                        <Icon as={FiMessageSquare} />
+                        <Text fontWeight="medium">Messages</Text>
+                      </HStack>
+                      {unreadCount > 0 && (
+                        <Badge colorScheme="red" borderRadius="full">
+                          {unreadCount}
+                        </Badge>
+                      )}
+                    </HStack>
+                  </Box>
+
+                  {/* Favorites in Mobile */}
+                  <Box
+                    p={3}
+                    borderRadius="md"
+                    _hover={{ bg: 'gray.100', _dark: { bg: 'gray.700' } }}
+                    cursor="pointer"
+                    onClick={() => {
+                      navigate('/favorites');
+                      closeMobileMenu();
+                    }}
+                  >
+                    <HStack justify="space-between">
+                      <HStack>
+                        <Icon as={FiHeart} />
+                        <Text fontWeight="medium">Favorites</Text>
+                      </HStack>
+                      {favorites.length > 0 && (
+                        <Badge colorScheme="red" borderRadius="full">
+                          {favorites.length}
+                        </Badge>
+                      )}
+                    </HStack>
+                  </Box>
+
+                  {/* My Bookings */}
+                  <Box
+                    p={3}
+                    borderRadius="md"
+                    _hover={{ bg: 'gray.100', _dark: { bg: 'gray.700' } }}
+                    cursor="pointer"
+                    onClick={() => {
+                      navigate('/my-bookings');
+                      closeMobileMenu();
+                    }}
+                  >
+                    <HStack>
+                      <Icon as={FiCalendar} />
+                      <Text fontWeight="medium">My Bookings</Text>
+                    </HStack>
+                  </Box>
+
+                  {/* My Visits */}
+                  <Box
+                    p={3}
+                    borderRadius="md"
+                    _hover={{ bg: 'gray.100', _dark: { bg: 'gray.700' } }}
+                    cursor="pointer"
+                    onClick={() => {
+                      navigate('/my-visits');
+                      closeMobileMenu();
+                    }}
+                  >
+                    <HStack>
+                      <Icon as={FiCalendar} />
+                      <Text fontWeight="medium">My Visits</Text>
+                    </HStack>
+                  </Box>
+
+                  <Box h="1px" bg="gray.200" my={2} />
+
+                  {/* Logout */}
+                  <Box
+                    p={3}
+                    borderRadius="md"
+                    _hover={{ bg: 'red.50', _dark: { bg: 'red.900' } }}
+                    cursor="pointer"
+                    onClick={() => {
+                      handleLogout();
+                      closeMobileMenu();
+                    }}
+                  >
+                    <HStack>
+                      <Icon as={FiLogOut} color="red.500" />
+                      <Text fontWeight="medium" color="red.500">
+                        Logout
+                      </Text>
+                    </HStack>
+                  </Box>
+                </>
+              )}
             </VStack>
           </DrawerBody>
         </DrawerContent>

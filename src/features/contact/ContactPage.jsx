@@ -10,291 +10,384 @@ import {
   FormLabel,
   Input,
   Textarea,
-  useColorModeValue,
+  Button,
+  Container,
   useToast,
 } from '@chakra-ui/react';
-import { motion } from 'framer-motion';
-import { FiMail, FiPhone, FiMapPin, FiClock } from 'react-icons/fi';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Section, Card, Container, Button } from '../../shared/components';
+import {
+  FiMail,
+  FiPhone,
+  FiMapPin,
+  FiMessageSquare,
+  FiSend,
+  FiSearch,
+  FiHome,
+} from 'react-icons/fi';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const MotionBox = motion(Box);
+/**
+ * Contact Page v4.0
+ * Enhanced UX matching home page design
+ * Full-width CTA, gradient hero, Container maxW="1200px"
+ */
 
 const contactInfo = [
   {
     icon: FiMail,
-    title: 'Email Us',
-    details: 'support@dormy.ph',
-    description: 'Send us an email anytime',
-    color: 'blue.500',
+    title: 'Email',
+    value: 'support@dormy.ph',
+    link: 'mailto:support@dormy.ph',
   },
   {
     icon: FiPhone,
-    title: 'Call Us',
-    details: '+63 912 345 6789',
-    description: 'Mon-Fri from 8am to 6pm',
-    color: 'green.500',
+    title: 'Phone',
+    value: '+63 912 345 6789',
+    link: 'tel:+639123456789',
   },
   {
     icon: FiMapPin,
-    title: 'Visit Us',
-    details: 'Dagupan City, Pangasinan',
-    description: 'Come say hello',
-    color: 'purple.500',
-  },
-  {
-    icon: FiClock,
-    title: 'Working Hours',
-    details: 'Mon-Fri: 8am - 6pm',
-    description: 'Sat: 9am - 3pm',
-    color: 'orange.500',
+    title: 'Address',
+    value: 'Dagupan City, Pangasinan, Philippines',
+    link: null,
   },
 ];
 
-// Form validation schema
-const contactSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email address'),
-  subject: z.string().min(5, 'Subject must be at least 5 characters'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
-});
+const faqs = [
+  {
+    question: 'How do I list my property?',
+    answer: 'Sign up as a property owner, verify your account, and click "Add Property" in your dashboard. Fill in the details, upload photos, and submit for review.',
+  },
+  {
+    question: 'Are all properties verified?',
+    answer: 'Yes, our team verifies every property listing to ensure legitimacy and safety for our users.',
+  },
+  {
+    question: 'How do I schedule a property visit?',
+    answer: 'Click "Schedule Visit" on any property detail page, select your preferred date and time, and the owner will confirm your appointment.',
+  },
+  {
+    question: 'Is there a booking fee?',
+    answer: 'Dormy is free to use for tenants. Property owners pay a small commission only when they successfully rent out their property.',
+  },
+];
 
-/**
- * Modern Contact Us Page
- */
 const ContactPage = () => {
   const toast = useToast();
-  const bgColor = useColorModeValue('gray.50', 'gray.900');
-  const cardBg = useColorModeValue('white', 'gray.800');
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm({
-    resolver: zodResolver(contactSchema),
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onSubmit = async (data) => {
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    console.log('Contact form submitted:', data);
-    
+
     toast({
-      title: 'Message sent!',
-      description: "We'll get back to you as soon as possible.",
+      title: 'Message Sent!',
+      description: "We'll get back to you within 24 hours.",
       status: 'success',
       duration: 5000,
-      isClosable: true,
     });
-    
-    reset();
+
+    setFormData({
+      name: '',
+      email: '',
+      subject: '',
+      message: '',
+    });
+    setIsSubmitting(false);
   };
 
   return (
-    <Box>
+    <Box bg="gray.50" minH="100vh">
       {/* Hero Section */}
-      <Section
-        bg="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-        _dark={{ bg: 'linear-gradient(135deg, #1a202c 0%, #2d3748 100%)' }}
-        py={{ base: 16, md: 20 }}
+      <Box
+        bgGradient="linear(to-br, primary.50, white)"
+        borderBottom="1px"
+        borderColor="gray.200"
+        py={{ base: 12, md: 16 }}
       >
-        <VStack spacing={6} textAlign="center" color="white">
-          <MotionBox
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+        <Container maxW="1200px">
+          <VStack spacing={3} textAlign="center" maxW="3xl" mx="auto">
             <Heading
-              as="h1"
-              fontSize={{ base: '4xl', md: '5xl', lg: '6xl' }}
-              fontWeight="bold"
+              fontSize={{ base: '3xl', md: '4xl' }}
+              fontWeight="semibold"
+              color="gray.900"
             >
-              Get In Touch
+              Contact Us
             </Heading>
-          </MotionBox>
-          <MotionBox
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <Text fontSize={{ base: 'lg', md: 'xl' }} maxW="3xl" opacity={0.9}>
-              Have questions? We'd love to hear from you. Send us a message and
-              we'll respond as soon as possible.
+            <Text
+              fontSize="md"
+              color="gray.600"
+              lineHeight="1.6"
+            >
+              Have questions? We're here to help. Send us a message and we'll respond as soon as possible.
             </Text>
-          </MotionBox>
-        </VStack>
-      </Section>
-
-      {/* Contact Info Cards */}
-      <Section>
-        <SimpleGrid
-          columns={{ base: 1, sm: 2, lg: 4 }}
-          spacing={{ base: 6, md: 8 }}
-        >
-          {contactInfo.map((info, index) => (
-            <MotionBox
-              key={info.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
-              <Card hover padding={6} textAlign="center" h="full">
-                <VStack spacing={3}>
-                  <Box
-                    p={3}
-                    borderRadius="lg"
-                    bg={`${info.color.split('.')[0]}.50`}
-                    _dark={{ bg: `${info.color.split('.')[0]}.900` }}
-                  >
-                    <Icon as={info.icon} boxSize={6} color={info.color} />
-                  </Box>
-                  <Heading as="h3" size="sm">
-                    {info.title}
-                  </Heading>
-                  <Text fontWeight="medium" color="primary.500">
-                    {info.details}
-                  </Text>
-                  <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.400' }}>
-                    {info.description}
-                  </Text>
-                </VStack>
-              </Card>
-            </MotionBox>
-          ))}
-        </SimpleGrid>
-      </Section>
-
-      {/* Contact Form Section */}
-      <Section bg={bgColor}>
-        <Container size="lg">
-          <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={12}>
-            {/* Left Column - Info */}
-            <MotionBox
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <VStack align="start" spacing={6} h="full" justify="center">
-                <Heading as="h2" fontSize={{ base: '3xl', md: '4xl' }}>
-                  Let's Talk
-                </Heading>
-                <Text
-                  fontSize={{ base: 'md', md: 'lg' }}
-                  color="gray.600"
-                  _dark={{ color: 'gray.400' }}
-                >
-                  Whether you're a student looking for accommodation or a property
-                  owner wanting to list your space, we're here to help. Fill out
-                  the form and we'll get back to you within 24 hours.
-                </Text>
-                <VStack align="start" spacing={4} pt={4}>
-                  <HStack>
-                    <Icon as={FiMail} color="primary.500" />
-                    <Text>support@dormy.ph</Text>
-                  </HStack>
-                  <HStack>
-                    <Icon as={FiPhone} color="primary.500" />
-                    <Text>+63 912 345 6789</Text>
-                  </HStack>
-                  <HStack>
-                    <Icon as={FiMapPin} color="primary.500" />
-                    <Text>Dagupan City, Pangasinan, Philippines</Text>
-                  </HStack>
-                </VStack>
-              </VStack>
-            </MotionBox>
-
-            {/* Right Column - Form */}
-            <MotionBox
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <Card padding={8} bg={cardBg}>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <VStack spacing={6}>
-                    <FormControl isInvalid={errors.name}>
-                      <FormLabel>Name</FormLabel>
-                      <Input
-                        {...register('name')}
-                        placeholder="Your full name"
-                        size="lg"
-                      />
-                      {errors.name && (
-                        <Text color="red.500" fontSize="sm" mt={1}>
-                          {errors.name.message}
-                        </Text>
-                      )}
-                    </FormControl>
-
-                    <FormControl isInvalid={errors.email}>
-                      <FormLabel>Email</FormLabel>
-                      <Input
-                        {...register('email')}
-                        type="email"
-                        placeholder="your.email@example.com"
-                        size="lg"
-                      />
-                      {errors.email && (
-                        <Text color="red.500" fontSize="sm" mt={1}>
-                          {errors.email.message}
-                        </Text>
-                      )}
-                    </FormControl>
-
-                    <FormControl isInvalid={errors.subject}>
-                      <FormLabel>Subject</FormLabel>
-                      <Input
-                        {...register('subject')}
-                        placeholder="What is this about?"
-                        size="lg"
-                      />
-                      {errors.subject && (
-                        <Text color="red.500" fontSize="sm" mt={1}>
-                          {errors.subject.message}
-                        </Text>
-                      )}
-                    </FormControl>
-
-                    <FormControl isInvalid={errors.message}>
-                      <FormLabel>Message</FormLabel>
-                      <Textarea
-                        {...register('message')}
-                        placeholder="Tell us more..."
-                        rows={6}
-                        size="lg"
-                      />
-                      {errors.message && (
-                        <Text color="red.500" fontSize="sm" mt={1}>
-                          {errors.message.message}
-                        </Text>
-                      )}
-                    </FormControl>
-
-                    <Button
-                      type="submit"
-                      colorScheme="primary"
-                      size="lg"
-                      w="full"
-                      isLoading={isSubmitting}
-                    >
-                      Send Message
-                    </Button>
-                  </VStack>
-                </form>
-              </Card>
-            </MotionBox>
-          </SimpleGrid>
+          </VStack>
         </Container>
-      </Section>
+      </Box>
+
+      {/* Main Content */}
+      <Container maxW="1200px" py={{ base: 8, md: 12 }}>
+        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
+          {/* Contact Form */}
+          <Box
+            bg="white"
+            p={6}
+            borderRadius="lg"
+            border="1px"
+            borderColor="gray.200"
+          >
+            <VStack spacing={4} align="stretch">
+              <VStack align="start" spacing={1}>
+                <HStack spacing={2}>
+                  <Icon as={FiMessageSquare} color="primary.600" boxSize={5} />
+                  <Heading fontSize="xl" fontWeight="semibold">
+                    Send us a Message
+                  </Heading>
+                </HStack>
+                <Text fontSize="sm" color="gray.600">
+                  Fill out the form below and we'll get back to you within 24 hours
+                </Text>
+              </VStack>
+
+              <form onSubmit={handleSubmit}>
+                <VStack spacing={3}>
+                  <FormControl isRequired>
+                    <FormLabel fontSize="sm">Name</FormLabel>
+                    <Input
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="Your full name"
+                      fontSize="sm"
+                    />
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel fontSize="sm">Email</FormLabel>
+                    <Input
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="your.email@example.com"
+                      fontSize="sm"
+                    />
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel fontSize="sm">Subject</FormLabel>
+                    <Input
+                      name="subject"
+                      value={formData.subject}
+                      onChange={handleChange}
+                      placeholder="What is this about?"
+                      fontSize="sm"
+                    />
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel fontSize="sm">Message</FormLabel>
+                    <Textarea
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      placeholder="Tell us more..."
+                      rows={6}
+                      fontSize="sm"
+                    />
+                  </FormControl>
+
+                  <Button
+                    type="submit"
+                    colorScheme="primary"
+                    size="md"
+                    w="full"
+                    leftIcon={<Icon as={FiSend} />}
+                    isLoading={isSubmitting}
+                    fontSize="sm"
+                  >
+                    Send Message
+                  </Button>
+                </VStack>
+              </form>
+            </VStack>
+          </Box>
+
+          {/* Contact Info & FAQ */}
+          <VStack spacing={4} align="stretch">
+            {/* Contact Info */}
+            <Box
+              bg="white"
+              p={6}
+              borderRadius="lg"
+              border="1px"
+              borderColor="gray.200"
+            >
+              <VStack spacing={4} align="stretch">
+                <Heading fontSize="xl" fontWeight="semibold">
+                  Get in Touch
+                </Heading>
+
+                {contactInfo.map((info, index) => (
+                  <HStack key={index} spacing={3} align="start">
+                    <Box bg="primary.50" p={2} borderRadius="lg">
+                      <Icon as={info.icon} boxSize={4} color="primary.600" />
+                    </Box>
+                    <VStack align="start" spacing={0}>
+                      <Text
+                        fontSize="xs"
+                        fontWeight="semibold"
+                        color="gray.700"
+                      >
+                        {info.title}
+                      </Text>
+                      {info.link ? (
+                        <Text
+                          as="a"
+                          href={info.link}
+                          fontSize="sm"
+                          color="primary.600"
+                          _hover={{ textDecoration: 'underline' }}
+                        >
+                          {info.value}
+                        </Text>
+                      ) : (
+                        <Text fontSize="sm" color="gray.600">
+                          {info.value}
+                        </Text>
+                      )}
+                    </VStack>
+                  </HStack>
+                ))}
+              </VStack>
+            </Box>
+
+            {/* FAQ */}
+            <Box
+              bg="white"
+              p={6}
+              borderRadius="lg"
+              border="1px"
+              borderColor="gray.200"
+            >
+              <VStack spacing={4} align="stretch">
+                <Heading fontSize="xl" fontWeight="semibold">
+                  Frequently Asked Questions
+                </Heading>
+
+                {faqs.map((faq, index) => (
+                  <VStack key={index} align="start" spacing={1}>
+                    <Text
+                      fontSize="sm"
+                      fontWeight="semibold"
+                      color="gray.900"
+                    >
+                      {faq.question}
+                    </Text>
+                    <Text
+                      fontSize="sm"
+                      color="gray.600"
+                      lineHeight="1.5"
+                    >
+                      {faq.answer}
+                    </Text>
+                  </VStack>
+                ))}
+              </VStack>
+            </Box>
+          </VStack>
+        </SimpleGrid>
+      </Container>
+
+      {/* CTA Section - Full Width */}
+      <Box
+        bgGradient="linear(to-r, primary.600, primary.700)"
+        py={{ base: 12, md: 16 }}
+        position="relative"
+        overflow="hidden"
+      >
+        {/* Background Pattern */}
+        <Box
+          position="absolute"
+          top="0"
+          left="0"
+          right="0"
+          bottom="0"
+          opacity="0.1"
+          bgImage="radial-gradient(circle, white 1px, transparent 1px)"
+          bgSize="24px 24px"
+          pointerEvents="none"
+        />
+
+        <Container maxW="1200px" position="relative">
+          <VStack spacing={6} textAlign="center">
+            <VStack spacing={3} maxW="700px">
+              <Heading
+                as="h2"
+                fontSize={{ base: '2xl', md: '3xl' }}
+                fontWeight="semibold"
+                color="white"
+              >
+                Ready to Find Your Next Home?
+              </Heading>
+              <Text
+                fontSize="md"
+                color="whiteAlpha.900"
+              >
+                Join thousands of students
+              </Text>
+            </VStack>
+
+            <HStack spacing={3} flexWrap="wrap" justify="center">
+              <Button
+                leftIcon={<Icon as={FiSearch} />}
+                size="md"
+                bg="white"
+                color="primary.600"
+                _hover={{
+                  bg: 'whiteAlpha.900',
+                  transform: 'translateY(-1px)',
+                  boxShadow: 'lg',
+                }}
+                onClick={() => navigate('/find-rentals')}
+              >
+                Search Rentals
+              </Button>
+              <Button
+                leftIcon={<Icon as={FiHome} />}
+                size="md"
+                variant="outline"
+                borderColor="white"
+                color="white"
+                _hover={{
+                  bg: 'whiteAlpha.200',
+                  transform: 'translateY(-1px)',
+                }}
+                onClick={() => navigate('/owner/dashboard')}
+              >
+                Post My Listing
+              </Button>
+            </HStack>
+          </VStack>
+        </Container>
+      </Box>
     </Box>
   );
 };

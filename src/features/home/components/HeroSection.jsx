@@ -1,133 +1,237 @@
-import { Box, Heading, Text, Stack, VStack } from '@chakra-ui/react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import {
+  Box,
   Container,
-  AdvancedSearchBar,
-  QuickFilters,
-} from '../../../shared/components';
-import { colors, spacing } from '../../../shared/styles/tokens';
-
-const MotionBox = motion(Box);
-const MotionHeading = motion(Heading);
-const MotionText = motion(Text);
+  Heading,
+  Text,
+  VStack,
+  HStack,
+  Input,
+  Button,
+  Icon,
+  useColorModeValue,
+  Badge,
+  Tooltip,
+} from '@chakra-ui/react';
+import { FiSearch, FiZap } from 'react-icons/fi';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { searchParserService } from '../../../services/ai';
 
 /**
- * Redesigned Hero Section - Phase 2
- * Features: Advanced search, quick filters, no gradients, clean design
+ * Hero Section v3.2
+ * Clean, simple search bar with AI-powered natural language parsing
+ * Quick filter chips below for common searches
+ * Better UX - not overwhelming, easy to use
  */
 const HeroSection = () => {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isParsing, setIsParsing] = useState(false);
+  const [showAIBadge, setShowAIBadge] = useState(false);
 
-  const handleSearch = (searchParams) => {
-    // Build query string from search parameters
-    const params = new URLSearchParams();
-    
-    if (searchParams.location) {
-      params.append('location', searchParams.location.name);
-    }
-    if (searchParams.budget) {
-      params.append('minBudget', searchParams.budget[0]);
-      params.append('maxBudget', searchParams.budget[1]);
-    }
-    if (searchParams.roomType) {
-      params.append('roomType', searchParams.roomType);
-    }
-    if (searchParams.gender) {
-      params.append('gender', searchParams.gender);
-    }
-    if (searchParams.nearbyUniversity) {
-      params.append('university', searchParams.nearbyUniversity);
+  const bgGradient = useColorModeValue(
+    'linear(to-br, primary.50, white)',
+    'linear(to-br, gray.900, gray.800)'
+  );
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) {
+      navigate('/find-rentals');
+      return;
     }
 
-    navigate(`/find-rentals?${params.toString()}`);
+    // Check if query looks like natural language (has multiple words or numbers)
+    const isNaturalLanguage = searchQuery.split(' ').length > 1 || /\d/.test(searchQuery);
+
+    if (isNaturalLanguage && searchParserService.isAvailable()) {
+      setIsParsing(true);
+      setShowAIBadge(true);
+
+      try {
+        // Parse natural language query into structured filters
+        const filters = await searchParserService.parseQuery(searchQuery);
+        
+        // Build query string from filters
+        const params = new URLSearchParams();
+        
+        if (filters.location) params.append('location', filters.location);
+        if (filters.minPrice) params.append('minPrice', filters.minPrice);
+        if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
+        if (filters.propertyType) params.append('propertyType', filters.propertyType);
+        if (filters.bedType) params.append('bedType', filters.bedType);
+        if (filters.availablePerson) params.append('persons', filters.availablePerson);
+        if (filters.amenities && filters.amenities.length > 0) {
+          filters.amenities.forEach(amenity => params.append('amenity', amenity));
+        }
+
+        // Add original query for reference
+        params.append('q', searchQuery);
+        
+        navigate(`/find-rentals?${params.toString()}`);
+      } catch (error) {
+        console.error('Search parsing error:', error);
+        // Fallback to simple search
+        navigate(`/find-rentals?search=${encodeURIComponent(searchQuery)}`);
+      } finally {
+        setIsParsing(false);
+        setTimeout(() => setShowAIBadge(false), 3000);
+      }
+    } else {
+      // Simple location search
+      navigate(`/find-rentals?search=${encodeURIComponent(searchQuery)}`);
+    }
   };
 
-  const handleQuickFilterChange = (filters) => {
-    // Navigate to find rentals with quick filters
-    const params = new URLSearchParams();
-    filters.forEach((filter) => {
-      params.append('filter', filter);
-    });
-    navigate(`/find-rentals?${params.toString()}`);
+  const handleQuickFilter = (filter) => {
+    navigate(`/find-rentals?amenity=${filter}`);
   };
 
   return (
     <Box
+      bgGradient={bgGradient}
+      pt={{ base: 16, md: 24 }}
+      pb={{ base: 12, md: 16 }}
       position="relative"
-      minH={{ base: '85vh', md: '80vh' }}
-      display="flex"
-      alignItems="center"
-      bg={colors.gray[50]}
-      py={{ base: spacing[12], md: spacing[20] }}
+      overflow="hidden"
     >
-      <Container size="xl" position="relative" zIndex={1}>
-        <Stack spacing={spacing[8]} align="center" textAlign="center">
-          {/* Main Heading */}
-          <MotionHeading
-            as="h1"
-            fontSize={{ base: '4xl', md: '5xl', lg: '6xl' }}
-            fontWeight="bold"
-            lineHeight="shorter"
-            color={colors.gray[900]}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            Find Your Perfect
-            <Text as="span" display="block" color={colors.primary[500]}>
-              Student Dormitory
+      {/* Background Pattern */}
+      <Box
+        position="absolute"
+        top="0"
+        left="0"
+        right="0"
+        bottom="0"
+        opacity="0.05"
+        bgImage="radial-gradient(circle, currentColor 1px, transparent 1px)"
+        bgSize="24px 24px"
+        pointerEvents="none"
+      />
+
+      <Container maxW="1200px" position="relative">
+        <VStack spacing={6} align="center" textAlign="center">
+          {/* Headline */}
+          <VStack spacing={3} maxW="800px">
+            <Heading
+              as="h1"
+              fontSize={{ base: '3xl', md: '4xl' }}
+              fontWeight="semibold"
+              color="gray.900"
+              _dark={{ color: 'white' }}
+              lineHeight="1.2"
+            >
+              Find Your Perfect Student Home
+            </Heading>
+            <Text
+              fontSize={{ base: 'md', md: 'lg' }}
+              color="gray.600"
+              _dark={{ color: 'gray.400' }}
+              maxW="600px"
+            >
+              Verified dormitories near your school
             </Text>
-          </MotionHeading>
+          </VStack>
 
-          {/* Subtitle */}
-          <MotionText
-            fontSize={{ base: 'lg', md: 'xl' }}
-            maxW="2xl"
-            color={colors.gray[600]}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Discover verified, affordable dormitories near your campus. Smart
-            search, real-time availability, and student-friendly options.
-          </MotionText>
-
-          {/* Advanced Search Bar */}
-          <MotionBox
-            w="full"
-            maxW="4xl"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <AdvancedSearchBar onSearch={handleSearch} />
-          </MotionBox>
-
-          {/* Quick Filters */}
-          <MotionBox
-            w="full"
-            maxW="4xl"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
-            <VStack spacing={spacing[3]} align="start">
-              <Text
-                fontSize="sm"
-                fontWeight="medium"
-                color={colors.gray[700]}
-                alignSelf="center"
+          {/* AI-Powered Search Bar */}
+          <Box w="full" maxW="700px">
+            <Box position="relative">
+              <HStack
+                bg="white"
+                _dark={{ bg: 'gray.800' }}
+                borderRadius="lg"
+                boxShadow="lg"
+                p={2}
+                spacing={2}
               >
-                Quick Filters
+                {/* Main Search Input */}
+                <HStack flex="1" px={4} spacing={3}>
+                  <Icon as={FiSearch} color="gray.400" boxSize={5} />
+                  <Input
+                    placeholder='Try "2 bedroom near university under 10k"...'
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    variant="unstyled"
+                    fontSize="md"
+                    _placeholder={{ color: 'gray.400' }}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  />
+                </HStack>
+
+                {/* Search Button */}
+                <Button
+                  colorScheme="primary"
+                  size="md"
+                  px={6}
+                  onClick={handleSearch}
+                  flexShrink={0}
+                  isLoading={isParsing}
+                  loadingText="Parsing..."
+                >
+                  Search
+                </Button>
+              </HStack>
+
+              {/* AI Badge */}
+              {showAIBadge && (
+                <Tooltip label="AI-powered smart search" placement="top">
+                  <Badge
+                    position="absolute"
+                    top="-10px"
+                    right="120px"
+                    colorScheme="purple"
+                    fontSize="xs"
+                    px={2}
+                    py={1}
+                    borderRadius="full"
+                    display="flex"
+                    alignItems="center"
+                    gap={1}
+                  >
+                    <Icon as={FiZap} boxSize={3} />
+                    AI Parsed
+                  </Badge>
+                </Tooltip>
+              )}
+            </Box>
+
+            {/* Quick Filters Below */}
+            <HStack spacing={2} mt={4} justify="center" flexWrap="wrap">
+              <Text fontSize="sm" color="gray.600" fontWeight="medium">
+                Popular:
               </Text>
-              <QuickFilters onFilterChange={handleQuickFilterChange} />
-            </VStack>
-          </MotionBox>
-        </Stack>
+              {[
+                { label: 'Near Schools', icon: '🎓' },
+                { label: 'WiFi', icon: '📶' },
+                { label: 'Budget-Friendly', icon: '💰' },
+                { label: 'Pet-Friendly', icon: '🐕' },
+              ].map((filter) => (
+                <Button
+                  key={filter.label}
+                  size="sm"
+                  variant="ghost"
+                  fontSize="sm"
+                  fontWeight="normal"
+                  color="gray.700"
+                  onClick={() => handleQuickFilter(filter.label)}
+                  _hover={{
+                    bg: 'primary.50',
+                    color: 'primary.600',
+                  }}
+                >
+                  <span style={{ marginRight: '6px' }}>{filter.icon}</span>
+                  {filter.label}
+                </Button>
+              ))}
+            </HStack>
+
+            {/* AI Search Examples */}
+            <Text fontSize="xs" color="gray.500" mt={3}>
+              💡 Try: "Studio in Quezon City under 8k" or "2 bedroom condo with parking"
+            </Text>
+          </Box>
+        </VStack>
       </Container>
     </Box>
   );
-};
+};;
 
 export default HeroSection;

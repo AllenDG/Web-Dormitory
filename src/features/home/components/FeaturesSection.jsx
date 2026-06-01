@@ -1,154 +1,139 @@
 import {
   Box,
+  Container,
   Heading,
   Text,
   SimpleGrid,
-  Icon,
   VStack,
-  HStack,
+  Icon,
+  useColorModeValue,
 } from '@chakra-ui/react';
-import { motion } from 'framer-motion';
-import {
-  FiCheckCircle,
-  FiZap,
-  FiShield,
-  FiMapPin,
-  FiClock,
-  FiUsers,
-} from 'react-icons/fi';
-import { Section } from '../../../shared/components';
-import { colors, spacing, borderRadius, typography } from '../../../shared/styles/tokens';
+import { FiShield, FiMap, FiZap, FiHeart, FiDollarSign, FiUsers } from 'react-icons/fi';
 
-const MotionBox = motion(Box);
+/**
+ * Features Section v3.0
+ * "Why Choose Dormitory" - 3-column icon cards
+ * Concise benefit headlines (per spec)
+ */
 
-const benefits = [
+const features = [
   {
-    icon: FiCheckCircle,
+    icon: FiShield,
     title: 'Verified Listings',
-    description:
-      'Every property is verified and inspected to ensure quality, safety, and authenticity. No fake listings, no surprises.',
+    description: 'Every property is verified by our team. No fake listings, no scams. Just real homes from trusted owners.',
+    color: 'primary',
+  },
+  {
+    icon: FiMap,
+    title: 'Smart Map Search',
+    description: 'Find properties near your school with our interactive map. See exactly where you\'ll be living.',
+    color: 'success',
   },
   {
     icon: FiZap,
-    title: 'Smart Recommendations',
-    description:
-      'AI-powered suggestions based on your budget, location preferences, and lifestyle needs. Find the perfect match faster.',
+    title: 'Instant Booking',
+    description: 'Schedule visits directly with owners. No middlemen, no delays. Connect and move in faster.',
+    color: 'warning',
+  },
+  {
+    icon: FiDollarSign,
+    title: 'Budget-Friendly',
+    description: 'Filter by your budget and find the best value. Our Budget Finder helps you maximize every peso.',
+    color: 'info',
+  },
+  {
+    icon: FiHeart,
+    title: 'Save Favorites',
+    description: 'Bookmark properties you love and compare them side-by-side. Make informed decisions.',
+    color: 'error',
   },
   {
     icon: FiUsers,
-    title: 'Student-Focused',
-    description:
-      'Designed specifically for students with flexible terms, affordable pricing, and amenities that matter to student life.',
-  },
-  {
-    icon: FiShield,
-    title: 'Safety & Trust',
-    description:
-      'Safety ratings, verified owners, secure payments, and transparent reviews from real students.',
-  },
-  {
-    icon: FiMapPin,
-    title: 'Nearby Establishments',
-    description:
-      'See nearby universities, hospitals, transport stations, and essential services. Know your neighborhood before you move.',
-  },
-  {
-    icon: FiClock,
-    title: 'Real-Time Availability',
-    description:
-      'Live updates on room availability, instant booking confirmations, and quick responses from property owners.',
+    title: 'Student-Centered',
+    description: 'Built specifically for Filipino students and young professionals. We understand your needs.',
+    color: 'primary',
   },
 ];
 
-/**
- * Redesigned Features Section - Phase 2
- * Focus on informative benefits with clean card layout
- */
-const FeaturesSection = () => {
-  return (
-    <Section bg="white">
-      <VStack spacing={spacing[12]}>
-        {/* Section Header */}
-        <VStack spacing={spacing[4]} textAlign="center" maxW="3xl">
-          <Heading
-            as="h2"
-            fontSize={{ base: '3xl', md: '4xl' }}
-            fontWeight={typography.fontWeight.bold}
-            color={colors.gray[900]}
-          >
-            Why Choose Dormy?
-          </Heading>
-          <Text
-            fontSize={{ base: 'md', md: 'lg' }}
-            color={colors.gray[600]}
-          >
-            We make finding and renting student accommodation simple, safe, and
-            stress-free with verified listings and smart technology.
-          </Text>
-        </VStack>
+const FeatureCard = ({ icon, title, description, color }) => {
+  const bgColor = useColorModeValue('white', 'gray.800');
+  const iconBg = useColorModeValue(`${color}.50`, `${color}.900`);
+  const iconColor = useColorModeValue(`${color}.600`, `${color}.200`);
 
-        {/* Benefits Grid */}
-        <SimpleGrid
-          columns={{ base: 1, md: 2, lg: 3 }}
-          spacing={{ base: spacing[6], md: spacing[8] }}
-          w="full"
-        >
-          {benefits.map((benefit, index) => (
-            <MotionBox
-              key={benefit.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
-              <Box
-                bg={colors.gray[50]}
-                borderRadius={borderRadius.lg}
-                p={spacing[6]}
-                h="full"
-                transition="all 0.3s"
-                _hover={{
-                  bg: 'white',
-                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                  transform: 'translateY(-4px)',
-                }}
-              >
-                <VStack align="start" spacing={spacing[4]}>
-                  <HStack spacing={spacing[3]}>
-                    <Box
-                      p={spacing[3]}
-                      borderRadius={borderRadius.md}
-                      bg={colors.primary[50]}
-                    >
-                      <Icon
-                        as={benefit.icon}
-                        boxSize={6}
-                        color={colors.primary[700]}
-                      />
-                    </Box>
-                    <Heading
-                      as="h3"
-                      fontSize={typography.fontSize.lg}
-                      fontWeight={typography.fontWeight.semibold}
-                      color={colors.gray[900]}
-                    >
-                      {benefit.title}
-                    </Heading>
-                  </HStack>
-                  <Text
-                    fontSize={typography.fontSize.sm}
-                    color={colors.gray[600]}
-                    lineHeight={typography.lineHeight.relaxed}
-                  >
-                    {benefit.description}
-                  </Text>
-                </VStack>
-              </Box>
-            </MotionBox>
-          ))}
-        </SimpleGrid>
+  return (
+    <VStack
+      bg={bgColor}
+      p={6}
+      borderRadius="lg"
+      border="1px"
+      borderColor="gray.200"
+      _dark={{ borderColor: 'gray.700' }}
+      align="start"
+      spacing={3}
+      transition="all 0.3s"
+      _hover={{
+        transform: 'translateY(-2px)',
+        boxShadow: 'md',
+        borderColor: `${color}.200`,
+      }}
+    >
+      <Box
+        p={3}
+        borderRadius="lg"
+        bg={iconBg}
+      >
+        <Icon as={icon} boxSize={5} color={iconColor} />
+      </Box>
+      <VStack align="start" spacing={1}>
+        <Heading fontSize="lg" fontWeight="semibold">
+          {title}
+        </Heading>
+        <Text color="gray.600" _dark={{ color: 'gray.400' }} fontSize="sm" lineHeight="1.5">
+          {description}
+        </Text>
       </VStack>
-    </Section>
+    </VStack>
+  );
+};
+
+const FeaturesSection = () => {
+  const bgColor = useColorModeValue('gray.50', 'gray.900');
+
+  return (
+    <Box bg={bgColor} py={{ base: 12, md: 16 }}>
+      <Container maxW="1200px">
+        <VStack spacing={8}>
+          {/* Section Header */}
+          <VStack spacing={2} textAlign="center" maxW="700px">
+            <Heading
+              as="h2"
+              fontSize={{ base: '2xl', md: '3xl' }}
+              fontWeight="semibold"
+            >
+              Why Choose Dormitory?
+            </Heading>
+            <Text
+              fontSize="md"
+              color="gray.600"
+              _dark={{ color: 'gray.400' }}
+            >
+              Simple, safe, and stress-free
+            </Text>
+          </VStack>
+
+          {/* Feature Cards Grid */}
+          <SimpleGrid
+            columns={{ base: 1, md: 2, lg: 3 }}
+            spacing={6}
+            w="full"
+          >
+            {features.map((feature) => (
+              <FeatureCard key={feature.title} {...feature} />
+            ))}
+          </SimpleGrid>
+        </VStack>
+      </Container>
+    </Box>
   );
 };
 

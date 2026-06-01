@@ -1,5 +1,5 @@
 // Rentals Components Barrel Export
-export { default as StickyFilterBar } from './StickyFilterBar';
-export { default as AdvancedFiltersPanel } from './AdvancedFiltersPanel';
 export { default as PropertyListCard } from './PropertyListCard';
-export { default as ComparisonPanel } from './ComparisonPanel';
+export { default as PropertyGridCard } from './PropertyGridCard';
+export { default as FilterSidebar } from './FilterSidebar';
+export { default as SendInquiryModal } from './SendInquiryModal';

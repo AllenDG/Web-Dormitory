@@ -1,24 +1,50 @@
-import { Box, VStack, Drawer, DrawerOverlay, DrawerContent, useDisclosure, Flex, IconButton, Icon } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  VStack,
+  HStack,
+  Text,
+  Select,
+  IconButton,
+  Icon,
+  useDisclosure,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  Button,
+  Grid,
+  useBreakpointValue,
+} from '@chakra-ui/react';
+import { FiMap, FiList, FiSliders } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { FiMap, FiList } from 'react-icons/fi';
-import {
-  StickyFilterBar,
-  AdvancedFiltersPanel,
-  PropertyListCard,
-  ComparisonPanel,
-} from './components';
+import FilterSidebar from './components/FilterSidebar';
+import { PropertyListCard, PropertyGridCard } from './components';
 import { MapView } from '../../shared/components';
+import { BudgetMatches, PopularNearby } from '../recommendations';
 import useRentalStore from '../../shared/stores/useRentalStore';
-import { colors, spacing, borderRadius } from '../../shared/styles/tokens';
+import useRecommendationStore from '../../shared/stores/useRecommendationStore';
+import { CompareFloatingButton } from '../compare';
 
 /**
- * Redesigned Find Rentals Page - Phase 3 & 4
- * Features: Sticky filter bar, desktop layout, comparison, map integration
+ * Find Rentals Page v6.0 - With Recommendations
+ * 
+ * Features:
+ * - 2-column grid layout for better property viewing
+ * - Split view with interactive map
+ * - Advanced filtering and sorting
+ * - Hover synchronization between cards and map
+ * - Budget matches and popular nearby recommendations
+ * - Responsive design for all devices
+ * 
+ * @component
  */
 const FindRentalsPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { userPreferences } = useRecommendationStore();
+  
   const {
     filters,
     setFilters,
@@ -28,36 +54,32 @@ const FindRentalsPage = () => {
     isFavorite,
   } = useRentalStore();
 
-  const { isOpen: isFiltersOpen, onOpen: onFiltersOpen, onClose: onFiltersClose } = useDisclosure();
   const [sortBy, setSortBy] = useState('relevance');
-  const [comparedProperties, setComparedProperties] = useState([]);
-  const [showComparison, setShowComparison] = useState(false);
-  const [viewMode, setViewMode] = useState('list'); // 'list' or 'map'
+  const [viewMode, setViewMode] = useState('split'); // 'grid', 'split'
+  const [hoveredProperty, setHoveredProperty] = useState(null);
   const [selectedProperty, setSelectedProperty] = useState(null);
 
   const filteredRentals = getFilteredRentals();
+  
+  // Responsive: Show split view only on desktop
+  const isMobile = useBreakpointValue({ base: true, lg: false });
+  const effectiveViewMode = isMobile ? 'grid' : viewMode;
 
   // Initialize from URL params
   useEffect(() => {
-    const query = searchParams.get('q');
     const city = searchParams.get('city');
-    const location = searchParams.get('location');
     const minBudget = searchParams.get('minBudget');
     const maxBudget = searchParams.get('maxBudget');
     const roomType = searchParams.get('roomType');
-    const gender = searchParams.get('gender');
-    const university = searchParams.get('university');
+    const amenity = searchParams.get('amenity');
 
     const newFilters = {};
-    if (query) newFilters.searchQuery = query;
     if (city) newFilters.city = city;
-    if (location) newFilters.location = location;
     if (minBudget && maxBudget) {
       newFilters.priceRange = [parseInt(minBudget), parseInt(maxBudget)];
     }
-    if (roomType) newFilters.roomType = roomType;
-    if (gender) newFilters.gender = gender;
-    if (university) newFilters.university = university;
+    if (roomType) newFilters.roomTypes = [roomType];
+    if (amenity) newFilters.amenities = [amenity];
 
     if (Object.keys(newFilters).length > 0) {
       setFilters(newFilters);
@@ -73,260 +95,257 @@ const FindRentalsPage = () => {
         return b.price - a.price;
       case 'newest':
         return b.id - a.id;
-      case 'rating':
-        return 0; // TODO: Implement rating sort
       default:
         return 0;
     }
   });
 
-  // Count active filters
-  const countActiveFilters = () => {
-    let count = 0;
-    if (filters.searchQuery) count++;
-    if (filters.priceRange && (filters.priceRange[0] > 1000 || filters.priceRange[1] < 20000)) count++;
-    if (filters.roomType) count++;
-    if (filters.gender) count++;
-    if (filters.amenities && filters.amenities.length > 0) count += filters.amenities.length;
-    if (filters.facilities && filters.facilities.length > 0) count += filters.facilities.length;
-    return count;
-  };
-
-  const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
-  };
-
-  const handleResetFilters = () => {
-    resetFilters();
-    onFiltersClose();
-  };
-
-  const handleApplyFilters = () => {
-    onFiltersClose();
-  };
-
-  const handleCompareToggle = (property) => {
-    setComparedProperties((prev) => {
-      const exists = prev.find((p) => p.id === property.id);
-      if (exists) {
-        const updated = prev.filter((p) => p.id !== property.id);
-        if (updated.length === 0) {
-          setShowComparison(false);
-        }
-        return updated;
-      } else {
-        if (prev.length >= 3) {
-          alert('You can compare up to 3 properties at a time');
-          return prev;
-        }
-        const updated = [...prev, property];
-        setShowComparison(true);
-        return updated;
-      }
-    });
-  };
-
-  const handleRemoveFromComparison = (propertyId) => {
-    setComparedProperties((prev) => {
-      const updated = prev.filter((p) => p.id !== propertyId);
-      if (updated.length === 0) {
-        setShowComparison(false);
-      }
-      return updated;
-    });
-  };
-
-  const isPropertyCompared = (propertyId) => {
-    return comparedProperties.some((p) => p.id === propertyId);
-  };
-
   return (
-    <Box bg={colors.gray[50]} minH="100vh" pb={showComparison ? '400px' : spacing[12]}>
-      {/* Sticky Filter Bar */}
-      <StickyFilterBar
-        activeFiltersCount={countActiveFilters()}
-        onOpenFilters={onFiltersOpen}
-        onResetFilters={handleResetFilters}
-        sortBy={sortBy}
-        onSortChange={setSortBy}
-        resultsCount={sortedRentals.length}
-      />
-
-      {/* View Mode Toggle */}
-      <Box
-        maxW="1400px"
-        mx="auto"
-        px={{ base: spacing[4], md: spacing[6] }}
-        pt={spacing[4]}
-      >
-        <Flex justify="flex-end" mb={spacing[4]}>
-          <Flex
-            bg="white"
-            borderRadius={borderRadius.md}
-            border={`1px solid ${colors.gray[200]}`}
-            overflow="hidden"
-          >
-            <IconButton
-              icon={<Icon as={FiList} />}
-              aria-label="List view"
-              onClick={() => setViewMode('list')}
-              bg={viewMode === 'list' ? colors.primary[700] : 'white'}
-              color={viewMode === 'list' ? 'white' : colors.gray[600]}
-              borderRadius={0}
-              _hover={{
-                bg: viewMode === 'list' ? colors.primary[800] : colors.gray[50],
-              }}
-            />
-            <IconButton
-              icon={<Icon as={FiMap} />}
-              aria-label="Map view"
-              onClick={() => setViewMode('map')}
-              bg={viewMode === 'map' ? colors.primary[700] : 'white'}
-              color={viewMode === 'map' ? 'white' : colors.gray[600]}
-              borderRadius={0}
-              _hover={{
-                bg: viewMode === 'map' ? colors.primary[800] : colors.gray[50],
-              }}
-            />
-          </Flex>
-        </Flex>
+    <Flex minH="100vh" bg="gray.50">
+      {/* Desktop Sidebar */}
+      <Box display={{ base: 'none', lg: 'block' }}>
+        <FilterSidebar
+          filters={{ ...filters, resultsCount: sortedRentals.length }}
+          onFilterChange={setFilters}
+          onReset={resetFilters}
+        />
       </Box>
 
       {/* Main Content */}
-      <Box maxW="1400px" mx="auto" px={{ base: spacing[4], md: spacing[6] }} pb={spacing[8]}>
-        {viewMode === 'list' ? (
-          // List View
-          sortedRentals.length > 0 ? (
-            <VStack spacing={spacing[4]} align="stretch">
-              {sortedRentals.map((rental) => (
-                <PropertyListCard
-                  key={rental.id}
-                  property={rental}
-                  onClick={() => navigate(`/listing/${rental.id}`)}
-                  onFavoriteToggle={() => toggleFavorite(rental.id)}
-                  isFavorite={isFavorite(rental.id)}
-                  onCompareToggle={() => handleCompareToggle(rental)}
-                  isCompared={isPropertyCompared(rental.id)}
-                  showCompareCheckbox={true}
+      <Box flex="1" minW="0">
+        {/* Top Bar */}
+        <Box
+          bg="white"
+          borderBottom="1px"
+          borderColor="gray.200"
+          px={6}
+          py={3}
+          position="sticky"
+          top="0"
+          zIndex="sticky"
+        >
+          <Flex justify="space-between" align="center" gap={4}>
+            {/* Results Count */}
+            <Text fontWeight="medium" fontSize="md">
+              {sortedRentals.length} properties
+              {filters.city && ` in ${filters.city}`}
+            </Text>
+
+            {/* Right Side Controls */}
+            <HStack spacing={3}>
+              {/* Mobile Filter Button */}
+              <Button
+                leftIcon={<Icon as={FiSliders} />}
+                display={{ base: 'flex', lg: 'none' }}
+                onClick={onOpen}
+                size="sm"
+              >
+                Filters
+              </Button>
+
+              {/* Sort Dropdown */}
+              <Select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                size="sm"
+                w="180px"
+              >
+                <option value="relevance">Recommended</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="newest">Newest First</option>
+              </Select>
+
+              {/* View Toggle - Desktop Only */}
+              <HStack spacing={0} bg="gray.100" borderRadius="8px" p={1} display={{ base: 'none', lg: 'flex' }}>
+                <IconButton
+                  icon={<Icon as={FiList} />}
+                  size="sm"
+                  variant={viewMode === 'grid' ? 'solid' : 'ghost'}
+                  colorScheme={viewMode === 'grid' ? 'primary' : 'gray'}
+                  onClick={() => setViewMode('grid')}
+                  aria-label="Grid view"
+                  borderRadius="8px"
                 />
-              ))}
-            </VStack>
-          ) : (
+                <IconButton
+                  icon={<Icon as={FiMap} />}
+                  size="sm"
+                  variant={viewMode === 'split' ? 'solid' : 'ghost'}
+                  colorScheme={viewMode === 'split' ? 'primary' : 'gray'}
+                  onClick={() => setViewMode('split')}
+                  aria-label="Split view"
+                  borderRadius="8px"
+                />
+              </HStack>
+            </HStack>
+          </Flex>
+        </Box>
+
+        {/* Content Area */}
+        {effectiveViewMode === 'split' ? (
+          // Split View: 2-Column Grid + Map (Desktop Only)
+          <Flex h="calc(100vh - 120px)">
+            {/* Left: Property Grid - 2 Columns */}
             <Box
-              bg="white"
-              borderRadius={spacing[2]}
-              p={spacing[12]}
-              textAlign="center"
+              w="60%"
+              overflowY="auto"
+              p={4}
+              css={{
+                '&::-webkit-scrollbar': {
+                  width: '8px',
+                },
+                '&::-webkit-scrollbar-track': {
+                  background: '#f1f1f1',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  background: '#888',
+                  borderRadius: '4px',
+                },
+              }}
             >
-              <VStack spacing={spacing[4]}>
-                <Box fontSize="48px">🏠</Box>
-                <Box>
-                  <Box
-                    as="h2"
-                    fontSize="xl"
-                    fontWeight="semibold"
-                    color={colors.gray[900]}
-                    mb={spacing[2]}
-                  >
-                    No properties found
-                  </Box>
-                  <Box fontSize="sm" color={colors.gray[600]}>
-                    Try adjusting your filters to see more results
-                  </Box>
-                </Box>
-                <button
-                  onClick={handleResetFilters}
-                  style={{
-                    padding: `${spacing[3]} ${spacing[6]}`,
-                    backgroundColor: colors.primary[700],
-                    color: 'white',
-                    borderRadius: spacing[2],
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    border: 'none',
-                  }}
+              {sortedRentals.length > 0 ? (
+                <Grid
+                  templateColumns="repeat(2, 1fr)"
+                  gap={4}
                 >
-                  Reset Filters
-                </button>
-              </VStack>
+                  {sortedRentals.map((rental) => (
+                    <Box
+                      key={rental.id}
+                      onMouseEnter={() => setHoveredProperty(rental.id)}
+                      onMouseLeave={() => setHoveredProperty(null)}
+                      transform={hoveredProperty === rental.id ? 'scale(1.02)' : 'scale(1)'}
+                      transition="transform 0.2s"
+                    >
+                      <PropertyGridCard
+                        property={rental}
+                        onClick={() => navigate(`/listing/${rental.id}`)}
+                        onFavoriteToggle={() => toggleFavorite(rental.id)}
+                        isFavorite={isFavorite(rental.id)}
+                        isHighlighted={hoveredProperty === rental.id || selectedProperty === rental.id}
+                      />
+                    </Box>
+                  ))}
+                </Grid>
+              ) : (
+                <EmptyState onReset={resetFilters} />
+              )}
             </Box>
-          )
-        ) : (
-          // Map View
-          <Flex gap={spacing[4]} direction={{ base: 'column', lg: 'row' }}>
-            {/* Map */}
-            <Box flex="1" minH="600px">
+
+            {/* Right: Map */}
+            <Box
+              w="40%"
+              position="sticky"
+              top="120px"
+              h="calc(100vh - 120px)"
+              borderLeft="1px"
+              borderColor="gray.200"
+            >
               <MapView
                 properties={sortedRentals}
                 selectedProperty={selectedProperty}
+                hoveredProperty={hoveredProperty}
                 onPropertySelect={setSelectedProperty}
+                onPropertyHover={setHoveredProperty}
                 onPropertyClick={(property) => navigate(`/listing/${property.id}`)}
-                height="calc(100vh - 250px)"
+                height="100%"
               />
             </Box>
-
-            {/* Property List Sidebar */}
-            <Box
-              width={{ base: '100%', lg: '400px' }}
-              maxH="calc(100vh - 250px)"
-              overflowY="auto"
-            >
-              <VStack spacing={spacing[3]} align="stretch">
-                {sortedRentals.map((rental) => (
-                  <Box
-                    key={rental.id}
-                    bg="white"
-                    borderRadius={borderRadius.md}
-                    border={`2px solid ${selectedProperty?.id === rental.id ? colors.primary[700] : colors.gray[200]}`}
-                    p={spacing[3]}
-                    cursor="pointer"
-                    onClick={() => setSelectedProperty(rental)}
-                    transition="all 0.2s"
-                    _hover={{
-                      borderColor: colors.primary[500],
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                    }}
-                  >
-                    <PropertyListCard
+          </Flex>
+        ) : (
+          // Grid View Only (Mobile and Desktop Grid Mode)
+          <Box p={4}>
+            {sortedRentals.length > 0 ? (
+              <>
+                <Grid
+                  templateColumns={{
+                    base: '1fr',
+                    sm: 'repeat(2, 1fr)',
+                    lg: 'repeat(3, 1fr)',
+                  }}
+                  gap={4}
+                  mb={12}
+                >
+                  {sortedRentals.map((rental) => (
+                    <PropertyGridCard
+                      key={rental.id}
                       property={rental}
                       onClick={() => navigate(`/listing/${rental.id}`)}
                       onFavoriteToggle={() => toggleFavorite(rental.id)}
                       isFavorite={isFavorite(rental.id)}
-                      onCompareToggle={() => handleCompareToggle(rental)}
-                      isCompared={isPropertyCompared(rental.id)}
-                      showCompareCheckbox={false}
                     />
-                  </Box>
-                ))}
-              </VStack>
-            </Box>
-          </Flex>
+                  ))}
+                </Grid>
+
+                {/* Recommendation Sections */}
+                {userPreferences.hasCompletedWizard && (
+                  <>
+                    <Box mb={12}>
+                      <BudgetMatches limit={6} />
+                    </Box>
+                    <Box mb={12}>
+                      <PopularNearby limit={6} />
+                    </Box>
+                  </>
+                )}
+              </>
+            ) : (
+              <EmptyState onReset={resetFilters} />
+            )}
+          </Box>
         )}
       </Box>
 
-      {/* Filters Drawer */}
-      <Drawer isOpen={isFiltersOpen} onClose={onFiltersClose} size="md" placement="right">
+      {/* Mobile Filter Drawer */}
+      <Drawer isOpen={isOpen} onClose={onClose} size="md" placement="left">
         <DrawerOverlay />
         <DrawerContent>
-          <AdvancedFiltersPanel
-            filters={filters}
-            onFilterChange={handleFilterChange}
-            onReset={handleResetFilters}
-            onApply={handleApplyFilters}
+          <FilterSidebar
+            filters={{ ...filters, resultsCount: sortedRentals.length }}
+            onFilterChange={(newFilters) => {
+              setFilters(newFilters);
+              onClose();
+            }}
+            onReset={() => {
+              resetFilters();
+              onClose();
+            }}
           />
         </DrawerContent>
       </Drawer>
 
-      {/* Comparison Panel */}
-      {showComparison && (
-        <ComparisonPanel
-          properties={comparedProperties}
-          onRemove={handleRemoveFromComparison}
-          onClose={() => setShowComparison(false)}
-        />
-      )}
-    </Box>
+      {/* Floating Compare Button */}
+      <CompareFloatingButton />
+    </Flex>
   );
 };
+
+/**
+ * Empty State Component
+ * Displayed when no properties match the current filters
+ * 
+ * @param {Object} props
+ * @param {Function} props.onReset - Callback to reset all filters
+ */
+const EmptyState = ({ onReset }) => (
+  <Box
+    bg="white"
+    borderRadius="8px"
+    p={12}
+    textAlign="center"
+  >
+    <VStack spacing={4}>
+      <Text fontSize="4xl">🏠</Text>
+      <Text fontSize="xl" fontWeight="semibold" color="gray.900">
+        No properties found
+      </Text>
+      <Text color="gray.600" fontSize="md">
+        Try adjusting your filters to see more results
+      </Text>
+      <Button onClick={onReset} colorScheme="primary" size="md" borderRadius="8px">
+        Reset All Filters
+      </Button>
+    </VStack>
+  </Box>
+);
 
 export default FindRentalsPage;

@@ -9,22 +9,21 @@ import {
   Badge,
   Icon,
   IconButton,
-  useColorModeValue,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { FiMapPin, FiUsers, FiHeart, FiTrash2 } from 'react-icons/fi';
-import { Section, Card, Container, Button } from '../../shared/components';
+import { Card, Button, PageContainer } from '../../shared/components';
+import { TYPOGRAPHY, LAYOUT } from '../../shared/styles/layoutConstants';
 import useRentalStore from '../../shared/stores/useRentalStore';
 
 /**
- * Favorites Page - Display saved properties
+ * Favorites Page - With Standardized Layout
+ * Follows layout constants and typography scale
  */
 const FavoritesPage = () => {
   const navigate = useNavigate();
   const { getFavoriteRentals, toggleFavorite } = useRentalStore();
   const favoriteRentals = getFavoriteRentals();
-
-  const bgColor = useColorModeValue('gray.50', 'gray.900');
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-PH', {
@@ -37,24 +36,24 @@ const FavoritesPage = () => {
   return (
     <Box>
       {/* Header */}
-      <Section bg={bgColor} py={12}>
-        <Container>
+      <Box bg="gray.50" py={12}>
+        <PageContainer>
           <VStack spacing={4}>
             <Icon as={FiHeart} boxSize={12} color="red.500" />
-            <Heading as="h1" fontSize={{ base: '3xl', md: '4xl' }}>
+            <Heading fontSize={TYPOGRAPHY.h1}>
               My Favorites
             </Heading>
-            <Text color="gray.600" _dark={{ color: 'gray.400' }}>
+            <Text color="gray.600" fontSize={TYPOGRAPHY.body.regular}>
               {favoriteRentals.length} saved{' '}
               {favoriteRentals.length === 1 ? 'property' : 'properties'}
             </Text>
           </VStack>
-        </Container>
-      </Section>
+        </PageContainer>
+      </Box>
 
       {/* Content */}
-      <Section>
-        <Container>
+      <Box py={LAYOUT.sectionSpacing}>
+        <PageContainer>
           {favoriteRentals.length > 0 ? (
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
               {favoriteRentals.map((rental) => (
@@ -111,17 +110,16 @@ const FavoritesPage = () => {
 
                   {/* Content */}
                   <VStack align="start" spacing={3} p={5}>
-                    <Heading as="h3" size="md" noOfLines={1}>
+                    <Heading fontSize={TYPOGRAPHY.h4} noOfLines={1}>
                       {rental.title}
                     </Heading>
 
                     <HStack
                       spacing={2}
                       color="gray.600"
-                      _dark={{ color: 'gray.400' }}
                     >
                       <Icon as={FiMapPin} />
-                      <Text fontSize="sm" noOfLines={1}>
+                      <Text fontSize={TYPOGRAPHY.body.small} noOfLines={1}>
                         {rental.city}
                       </Text>
                     </HStack>
@@ -130,9 +128,8 @@ const FavoritesPage = () => {
                       <HStack spacing={1}>
                         <Icon as={FiUsers} color="gray.500" />
                         <Text
-                          fontSize="sm"
+                          fontSize={TYPOGRAPHY.body.small}
                           color="gray.600"
-                          _dark={{ color: 'gray.400' }}
                         >
                           {rental.availablePerson} persons
                         </Text>
@@ -141,9 +138,8 @@ const FavoritesPage = () => {
                     </HStack>
 
                     <Text
-                      fontSize="sm"
+                      fontSize={TYPOGRAPHY.body.small}
                       color="gray.600"
-                      _dark={{ color: 'gray.400' }}
                       noOfLines={2}
                     >
                       {rental.description}
@@ -157,10 +153,10 @@ const FavoritesPage = () => {
               <VStack spacing={6}>
                 <Icon as={FiHeart} boxSize={16} color="gray.400" />
                 <VStack spacing={2}>
-                  <Heading size="lg" color="gray.600">
+                  <Heading fontSize={TYPOGRAPHY.h3} color="gray.600">
                     No Favorites Yet
                   </Heading>
-                  <Text color="gray.500" maxW="md">
+                  <Text color="gray.500" maxW="md" fontSize={TYPOGRAPHY.body.regular}>
                     Start exploring properties and save your favorites by clicking
                     the heart icon.
                   </Text>
@@ -169,14 +165,15 @@ const FavoritesPage = () => {
                   onClick={() => navigate('/find-rentals')}
                   colorScheme="primary"
                   size="lg"
+                  fontSize={TYPOGRAPHY.button}
                 >
                   Browse Properties
                 </Button>
               </VStack>
             </Card>
           )}
-        </Container>
-      </Section>
+        </PageContainer>
+      </Box>
     </Box>
   );
 };

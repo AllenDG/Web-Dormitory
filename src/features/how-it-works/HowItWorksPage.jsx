@@ -6,13 +6,14 @@ import {
   HStack,
   Icon,
   SimpleGrid,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  Button,
+  Container,
 } from '@chakra-ui/react';
-import { motion } from 'framer-motion';
 import {
   FiSearch,
   FiSliders,
@@ -22,496 +23,305 @@ import {
   FiHome,
   FiUser,
   FiShield,
+  FiDollarSign,
+  FiMessageSquare,
+  FiTrendingUp,
 } from 'react-icons/fi';
-import { Section, Card, Container, Button } from '../../shared/components';
 import { useNavigate } from 'react-router-dom';
-import { colors, spacing, borderRadius, typography } from '../../shared/styles/tokens';
 
-const MotionBox = motion(Box);
+/**
+ * How It Works Page v5.0
+ * Enhanced UX with cleaner layout and interactive design
+ * 100% width CTA, 8px border radius, better visual hierarchy
+ */
 
-const steps = [
+const tenantSteps = [
   {
     icon: FiSearch,
-    title: 'Search Dorms',
-    description:
-      'Browse verified listings using our advanced search. Filter by location, budget, and amenities to find your perfect match.',
+    number: '1',
+    title: 'Search Properties',
+    description: 'Browse verified listings using our smart search. Filter by location, budget, and amenities.',
   },
   {
     icon: FiSliders,
+    number: '2',
     title: 'Apply Filters',
-    description:
-      'Use quick filters or advanced options to narrow down results. Sort by price, rating, or distance from your school.',
+    description: 'Use advanced filters to narrow down results. Sort by price, rating, or distance.',
   },
   {
     icon: FiMap,
+    number: '3',
     title: 'Explore & Compare',
-    description:
-      'View properties on an interactive map, check nearby places, calculate commute times, and compare up to 3 properties.',
+    description: 'View properties on map, check nearby places, and compare up to 3 properties.',
   },
   {
     icon: FiCalendar,
+    number: '4',
     title: 'Schedule Visit',
-    description:
-      'Found something you like? Schedule a visit at your convenience. Property owners respond quickly to inquiries.',
+    description: 'Found something you like? Schedule a visit at your convenience.',
   },
   {
     icon: FiCheckCircle,
+    number: '5',
     title: 'Review Details',
-    description:
-      'Check amenities, read reviews from other students, view photos, and ensure the property meets all your needs.',
+    description: 'Check amenities, read reviews, view photos, and ensure it meets your needs.',
   },
   {
     icon: FiHome,
-    title: 'Reserve & Move In',
-    description:
-      "Complete the booking process and get ready to move in. We'll guide you through every step of the way.",
+    number: '6',
+    title: 'Move In',
+    description: 'Complete the booking and get ready to move in. We guide you every step.',
   },
 ];
 
-const forStudents = [
-  {
-    icon: FiSearch,
-    title: 'Smart Search',
-    points: [
-      'Advanced filters for precise results',
-      'Budget Finder for best value recommendations',
-      'Interactive map with property markers',
-      'Save favorites and compare properties',
-    ],
-  },
-  {
-    icon: FiShield,
-    title: 'Safe & Verified',
-    points: [
-      'All properties verified by our team',
-      'Real reviews from actual students',
-      'Transparent pricing, no hidden fees',
-      'Secure booking and payment process',
-    ],
-  },
-];
-
-const forOwners = [
+const ownerSteps = [
   {
     icon: FiUser,
-    title: 'List Your Property',
-    points: [
-      'Create detailed listings with photos',
-      'Set your own pricing and availability',
-      'Manage bookings through dashboard',
-      'Reach thousands of potential tenants',
-    ],
+    number: '1',
+    title: 'Create Account',
+    description: 'Sign up as a property owner and verify your account.',
   },
   {
     icon: FiHome,
-    title: 'Manage Easily',
-    points: [
-      'Track inquiries and bookings in real-time',
-      'Communicate directly with students',
-      'Update property details anytime',
-      'Access analytics and insights',
-    ],
+    number: '2',
+    title: 'List Property',
+    description: 'Add your property with photos, amenities, and pricing details.',
+  },
+  {
+    icon: FiMessageSquare,
+    number: '3',
+    title: 'Receive Inquiries',
+    description: 'Get notified when tenants are interested in your property.',
+  },
+  {
+    icon: FiCalendar,
+    number: '4',
+    title: 'Manage Bookings',
+    description: 'Approve visit requests and manage your booking calendar.',
+  },
+  {
+    icon: FiDollarSign,
+    number: '5',
+    title: 'Get Paid',
+    description: 'Receive payments securely through our platform.',
+  },
+  {
+    icon: FiTrendingUp,
+    number: '6',
+    title: 'Track Performance',
+    description: 'Monitor views, inquiries, and optimize your listings.',
   },
 ];
 
-const faqs = [
-  {
-    question: 'Is Dormy free to use?',
-    answer:
-      'Yes! Browsing and searching for properties on Dormy is completely free for students. Property owners pay a small fee to list their properties.',
-  },
-  {
-    question: 'How do I schedule a property visit?',
-    answer:
-      'Simply click on any property listing and use the "Schedule a Visit" button. Choose your preferred date and time, and the property owner will confirm your appointment.',
-  },
-  {
-    question: 'Are all properties verified?',
-    answer:
-      'Yes, our team verifies every property listing to ensure accuracy and quality. We check property details, photos, and owner credentials before approval.',
-  },
-  {
-    question: 'What if I have issues with a property?',
-    answer:
-      "We have a dedicated support team ready to help. You can contact us through the platform, and we'll work with you and the property owner to resolve any issues.",
-  },
-  {
-    question: 'Can I list multiple properties?',
-    answer:
-      'Absolutely! Property owners can list as many properties as they want through our owner portal. Each property gets its own dedicated listing page.',
-  },
-  {
-    question: 'How does the Budget Finder work?',
-    answer:
-      'Enter your budget range, location preferences, and lifestyle needs. Our algorithm scores properties based on value, amenities, and your preferences to recommend the best matches.',
-  },
-];
+const StepCard = ({ step }) => (
+  <Box
+    bg="white"
+    p={5}
+    borderRadius="8px"
+    border="1px"
+    borderColor="gray.200"
+    transition="all 0.3s"
+    _hover={{ 
+      boxShadow: 'lg', 
+      borderColor: 'primary.400', 
+      transform: 'translateY(-4px)',
+      bg: 'primary.50'
+    }}
+    cursor="pointer"
+    h="full"
+  >
+    <VStack align="start" spacing={4} h="full">
+      <HStack spacing={3} w="full" justify="space-between">
+        <Box
+          bg="primary.100"
+          p={2.5}
+          borderRadius="8px"
+          transition="all 0.3s"
+          _groupHover={{ bg: 'primary.200' }}
+        >
+          <Icon as={step.icon} boxSize={6} color="primary.600" />
+        </Box>
+        <Box
+          bg="primary.600"
+          color="white"
+          w={9}
+          h={9}
+          borderRadius="8px"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          fontWeight="bold"
+          fontSize="md"
+          boxShadow="sm"
+        >
+          {step.number}
+        </Box>
+      </HStack>
+      <VStack align="start" spacing={2} flex="1">
+        <Heading fontSize="md" fontWeight="semibold" color="gray.900">
+          {step.title}
+        </Heading>
+        <Text fontSize="sm" color="gray.600" lineHeight="1.6">
+          {step.description}
+        </Text>
+      </VStack>
+    </VStack>
+  </Box>
+);
 
-/**
- * Redesigned How It Works Page - Phase 7
- * Clean, minimalist design with step-by-step guide
- */
 const HowItWorksPage = () => {
   const navigate = useNavigate();
 
   return (
-    <Box>
+    <Box bg="gray.50" minH="100vh">
       {/* Hero Section */}
-      <Section
-        bg="white"
-        borderBottom={`1px solid ${colors.gray[200]}`}
-        py={{ base: spacing[12], md: spacing[16] }}
+      <Box
+        bgGradient="linear(to-br, primary.50, white)"
+        borderBottom="1px"
+        borderColor="gray.200"
+        py={{ base: 12, md: 16 }}
       >
-        <VStack spacing={spacing[6]} textAlign="center">
-          <MotionBox
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+        <Container maxW="1200px">
+          <VStack spacing={3} textAlign="center" maxW="3xl" mx="auto">
             <Heading
-              as="h1"
-              fontSize={{ base: '4xl', md: '5xl', lg: '6xl' }}
-              fontWeight={typography.fontWeight.bold}
-              color={colors.gray[900]}
-            >
-              How Dormy Works
-            </Heading>
-          </MotionBox>
-          <MotionBox
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <Text
-              fontSize={{ base: 'lg', md: 'xl' }}
-              maxW="3xl"
-              color={colors.gray[600]}
-              lineHeight={typography.lineHeight.relaxed}
-            >
-              Finding your perfect student accommodation is simple with Dormy.
-              Follow these steps to discover, compare, and book your ideal dorm.
-            </Text>
-          </MotionBox>
-        </VStack>
-      </Section>
-
-      {/* Steps Section */}
-      <Section bg={colors.gray[50]}>
-        <VStack spacing={spacing[12]}>
-          <Heading
-            as="h2"
-            fontSize={{ base: '3xl', md: '4xl' }}
-            textAlign="center"
-            fontWeight={typography.fontWeight.bold}
-            color={colors.gray[900]}
-          >
-            Your Journey to Finding Home
-          </Heading>
-
-          <SimpleGrid
-            columns={{ base: 1, md: 2, lg: 3 }}
-            spacing={{ base: spacing[6], md: spacing[8] }}
-            w="full"
-          >
-            {steps.map((step, index) => (
-              <MotionBox
-                key={step.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <Box
-                  bg="white"
-                  borderRadius={borderRadius.lg}
-                  p={spacing[6]}
-                  h="full"
-                  border={`1px solid ${colors.gray[200]}`}
-                  transition="all 0.3s"
-                  _hover={{
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                    transform: 'translateY(-4px)',
-                  }}
-                >
-                  <VStack spacing={spacing[4]} align="start">
-                    {/* Step Number and Icon */}
-                    <HStack spacing={spacing[3]}>
-                      <Box
-                        w="48px"
-                        h="48px"
-                        borderRadius={borderRadius.md}
-                        bg={colors.primary[50]}
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                      >
-                        <Icon as={step.icon} boxSize={6} color={colors.primary[700]} />
-                      </Box>
-                      <Box
-                        w="32px"
-                        h="32px"
-                        borderRadius="full"
-                        bg={colors.primary[700]}
-                        color="white"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        fontWeight={typography.fontWeight.bold}
-                        fontSize={typography.fontSize.sm}
-                      >
-                        {index + 1}
-                      </Box>
-                    </HStack>
-
-                    <Heading
-                      as="h3"
-                      fontSize={typography.fontSize.lg}
-                      fontWeight={typography.fontWeight.semibold}
-                      color={colors.gray[900]}
-                    >
-                      {step.title}
-                    </Heading>
-                    <Text
-                      fontSize={typography.fontSize.sm}
-                      color={colors.gray[600]}
-                      lineHeight={typography.lineHeight.relaxed}
-                    >
-                      {step.description}
-                    </Text>
-                  </VStack>
-                </Box>
-              </MotionBox>
-            ))}
-          </SimpleGrid>
-        </VStack>
-      </Section>
-
-      {/* For Students Section */}
-      <Section bg="white">
-        <VStack spacing={spacing[12]}>
-          <VStack spacing={spacing[4]} textAlign="center">
-            <Heading
-              as="h2"
               fontSize={{ base: '3xl', md: '4xl' }}
-              fontWeight={typography.fontWeight.bold}
-              color={colors.gray[900]}
+              fontWeight="semibold"
+              color="gray.900"
             >
-              For Students
+              How It Works
             </Heading>
             <Text
-              fontSize={{ base: 'md', md: 'lg' }}
-              color={colors.gray[600]}
-              maxW="2xl"
+              fontSize="md"
+              color="gray.600"
+              lineHeight="1.6"
             >
-              Everything you need to find your perfect student accommodation
+              Simple steps to find your perfect home or list your property
             </Text>
-          </VStack>
-
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={spacing[8]} w="full">
-            {forStudents.map((feature, index) => (
-              <MotionBox
-                key={feature.title}
-                initial={{ opacity: 0, x: index === 0 ? -20 : 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <Box
-                  bg={colors.gray[50]}
-                  borderRadius={borderRadius.lg}
-                  p={spacing[6]}
-                  h="full"
-                  border={`1px solid ${colors.gray[200]}`}
-                >
-                  <VStack align="start" spacing={spacing[4]}>
-                    <HStack spacing={spacing[3]}>
-                      <Icon as={feature.icon} boxSize={6} color={colors.primary[700]} />
-                      <Heading
-                        as="h3"
-                        fontSize={typography.fontSize.lg}
-                        fontWeight={typography.fontWeight.semibold}
-                        color={colors.gray[900]}
-                      >
-                        {feature.title}
-                      </Heading>
-                    </HStack>
-                    <VStack align="start" spacing={spacing[2]} pl={spacing[9]}>
-                      {feature.points.map((point, i) => (
-                        <HStack key={i} align="start">
-                          <Icon
-                            as={FiCheckCircle}
-                            color={colors.success}
-                            mt="2px"
-                            flexShrink={0}
-                          />
-                          <Text
-                            fontSize={typography.fontSize.sm}
-                            color={colors.gray[600]}
-                          >
-                            {point}
-                          </Text>
-                        </HStack>
-                      ))}
-                    </VStack>
-                  </VStack>
-                </Box>
-              </MotionBox>
-            ))}
-          </SimpleGrid>
-
-          <Button
-            size="lg"
-            bg={colors.primary[700]}
-            color="white"
-            onClick={() => navigate('/find-rentals')}
-            px={spacing[8]}
-            _hover={{
-              bg: colors.primary[800],
-            }}
-          >
-            Start Searching
-          </Button>
-        </VStack>
-      </Section>
-
-      {/* For Property Owners Section */}
-      <Section bg={colors.gray[50]}>
-        <VStack spacing={spacing[12]}>
-          <VStack spacing={spacing[4]} textAlign="center">
-            <Heading
-              as="h2"
-              fontSize={{ base: '3xl', md: '4xl' }}
-              fontWeight={typography.fontWeight.bold}
-              color={colors.gray[900]}
-            >
-              For Property Owners
-            </Heading>
-            <Text
-              fontSize={{ base: 'md', md: 'lg' }}
-              color={colors.gray[600]}
-              maxW="2xl"
-            >
-              Reach thousands of students looking for accommodation
-            </Text>
-          </VStack>
-
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={spacing[8]} w="full">
-            {forOwners.map((feature, index) => (
-              <MotionBox
-                key={feature.title}
-                initial={{ opacity: 0, x: index === 0 ? -20 : 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <Box
-                  bg="white"
-                  borderRadius={borderRadius.lg}
-                  p={spacing[6]}
-                  h="full"
-                  border={`1px solid ${colors.gray[200]}`}
-                >
-                  <VStack align="start" spacing={spacing[4]}>
-                    <HStack spacing={spacing[3]}>
-                      <Icon as={feature.icon} boxSize={6} color={colors.primary[700]} />
-                      <Heading
-                        as="h3"
-                        fontSize={typography.fontSize.lg}
-                        fontWeight={typography.fontWeight.semibold}
-                        color={colors.gray[900]}
-                      >
-                        {feature.title}
-                      </Heading>
-                    </HStack>
-                    <VStack align="start" spacing={spacing[2]} pl={spacing[9]}>
-                      {feature.points.map((point, i) => (
-                        <HStack key={i} align="start">
-                          <Icon
-                            as={FiCheckCircle}
-                            color={colors.success}
-                            mt="2px"
-                            flexShrink={0}
-                          />
-                          <Text
-                            fontSize={typography.fontSize.sm}
-                            color={colors.gray[600]}
-                          >
-                            {point}
-                          </Text>
-                        </HStack>
-                      ))}
-                    </VStack>
-                  </VStack>
-                </Box>
-              </MotionBox>
-            ))}
-          </SimpleGrid>
-
-          <Text
-            fontSize={typography.fontSize.sm}
-            color={colors.gray[600]}
-            textAlign="center"
-          >
-            Property owner portal coming soon! Contact us to list your property.
-          </Text>
-        </VStack>
-      </Section>
-
-      {/* FAQ Section */}
-      <Section bg="white">
-        <Container size="lg">
-          <VStack spacing={spacing[8]}>
-            <Heading
-              as="h2"
-              fontSize={{ base: '3xl', md: '4xl' }}
-              textAlign="center"
-              fontWeight={typography.fontWeight.bold}
-              color={colors.gray[900]}
-            >
-              Frequently Asked Questions
-            </Heading>
-
-            <Accordion allowToggle w="full">
-              {faqs.map((faq, index) => (
-                <AccordionItem key={index} border="none" mb={spacing[4]}>
-                  <Box
-                    bg={colors.gray[50]}
-                    borderRadius={borderRadius.lg}
-                    border={`1px solid ${colors.gray[200]}`}
-                  >
-                    <AccordionButton
-                      p={spacing[6]}
-                      _hover={{ bg: 'transparent' }}
-                      borderRadius={borderRadius.lg}
-                    >
-                      <Box flex="1" textAlign="left">
-                        <Heading
-                          as="h3"
-                          fontSize={typography.fontSize.base}
-                          fontWeight={typography.fontWeight.semibold}
-                          color={colors.gray[900]}
-                        >
-                          {faq.question}
-                        </Heading>
-                      </Box>
-                      <AccordionIcon color={colors.primary[700]} />
-                    </AccordionButton>
-                    <AccordionPanel pb={spacing[6]} px={spacing[6]}>
-                      <Text
-                        fontSize={typography.fontSize.sm}
-                        color={colors.gray[600]}
-                        lineHeight={typography.lineHeight.relaxed}
-                      >
-                        {faq.answer}
-                      </Text>
-                    </AccordionPanel>
-                  </Box>
-                </AccordionItem>
-              ))}
-            </Accordion>
           </VStack>
         </Container>
-      </Section>
+      </Box>
+
+      {/* Main Content */}
+      <Container maxW="1200px" py={{ base: 8, md: 12 }}>
+        <Tabs colorScheme="primary" size="md" variant="soft-rounded">
+          <Box display="flex" justifyContent="center" mb={8}>
+            <TabList bg="white" p={1.5} borderRadius="8px" boxShadow="sm" border="1px" borderColor="gray.200">
+              <Tab
+                fontSize="sm"
+                fontWeight="medium"
+                px={8}
+                py={2}
+                borderRadius="8px"
+                _selected={{ color: 'white', bg: 'primary.600', boxShadow: 'sm' }}
+                transition="all 0.2s"
+              >
+                For Tenants
+              </Tab>
+              <Tab
+                fontSize="sm"
+                fontWeight="medium"
+                px={8}
+                py={2}
+                borderRadius="8px"
+                _selected={{ color: 'white', bg: 'primary.600', boxShadow: 'sm' }}
+                transition="all 0.2s"
+              >
+                For Property Owners
+              </Tab>
+            </TabList>
+          </Box>
+
+          <TabPanels>
+            {/* Tenants Tab */}
+            <TabPanel px={0} pt={0}>
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={5} w="full">
+                {tenantSteps.map((step, index) => (
+                  <StepCard key={index} step={step} />
+                ))}
+              </SimpleGrid>
+            </TabPanel>
+
+            {/* Owners Tab */}
+            <TabPanel px={0} pt={0}>
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={5} w="full">
+                {ownerSteps.map((step, index) => (
+                  <StepCard key={index} step={step} />
+                ))}
+              </SimpleGrid>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </Container>
+
+      {/* CTA Section - 100% Width Outside Container */}
+      <Box
+        bgGradient="linear(to-r, primary.600, primary.700)"
+        py={{ base: 12, md: 16 }}
+        position="relative"
+        overflow="hidden"
+        mt={8}
+      >
+        {/* Background Pattern */}
+        <Box
+          position="absolute"
+          top="0"
+          left="0"
+          right="0"
+          bottom="0"
+          opacity="0.1"
+          bgImage="radial-gradient(circle, white 1px, transparent 1px)"
+          bgSize="24px 24px"
+          pointerEvents="none"
+        />
+
+        <Container maxW="1200px" position="relative">
+          <VStack spacing={6} textAlign="center">
+            <VStack spacing={3} maxW="700px">
+              <Heading fontSize={{ base: '2xl', md: '3xl' }} fontWeight="semibold" color="white">
+                Ready to Find Your Next Home?
+              </Heading>
+              <Text fontSize="md" color="whiteAlpha.900">
+                Join thousands of students
+              </Text>
+            </VStack>
+
+            <HStack spacing={3} flexWrap="wrap" justify="center">
+              <Button
+                leftIcon={<Icon as={FiSearch} />}
+                size="md"
+                bg="white"
+                color="primary.600"
+                borderRadius="8px"
+                _hover={{
+                  bg: 'whiteAlpha.900',
+                  transform: 'translateY(-2px)',
+                  boxShadow: 'xl',
+                }}
+                transition="all 0.2s"
+                onClick={() => navigate('/find-rentals')}
+              >
+                Search Rentals
+              </Button>
+              <Button
+                leftIcon={<Icon as={FiHome} />}
+                size="md"
+                variant="outline"
+                borderColor="white"
+                color="white"
+                borderRadius="8px"
+                _hover={{
+                  bg: 'whiteAlpha.200',
+                  transform: 'translateY(-2px)',
+                }}
+                transition="all 0.2s"
+                onClick={() => navigate('/owner/dashboard')}
+              >
+                Post My Listing
+              </Button>
+            </HStack>
+          </VStack>
+        </Container>
+      </Box>
     </Box>
   );
 };
