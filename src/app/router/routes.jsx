@@ -43,6 +43,7 @@ const SettingsPage = lazy(() => import('../../features/owner/settings/SettingsPa
 
 // Admin Pages (Lazy loaded)
 const AdminDashboard = lazy(() => import('../../features/admin/AdminDashboard'));
+const AdminDashboardEnhanced = lazy(() => import('../../features/admin/AdminDashboardEnhanced'));
 
 // Error Pages
 const NotFoundPage = lazy(() => import('../../features/error/NotFoundPage'));
@@ -269,7 +270,19 @@ export const routes = [
       <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
         <Box minH="100vh">
           <LazyPage>
-            <AdminDashboard />
+            <AdminDashboardEnhanced />
+          </LazyPage>
+        </Box>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/dashboard',
+    element: (
+      <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+        <Box minH="100vh">
+          <LazyPage>
+            <AdminDashboardEnhanced />
           </LazyPage>
         </Box>
       </ProtectedRoute>

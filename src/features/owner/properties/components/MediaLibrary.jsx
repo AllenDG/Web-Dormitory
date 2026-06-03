@@ -9,10 +9,7 @@ import {
   SimpleGrid,
   Image,
   IconButton,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
+  Badge,
   useDisclosure,
   Modal,
   ModalOverlay,
@@ -24,137 +21,146 @@ import {
   Input,
   FormControl,
   FormLabel,
-  Badge,
-  useToast,
   Tabs,
   TabList,
-  Tab,
   TabPanels,
+  Tab,
   TabPanel,
+  useToast,
+  Checkbox,
 } from '@chakra-ui/react';
 import {
   FiUpload,
   FiTrash2,
-  FiDownload,
-  FiEdit,
-  FiMoreVertical,
+  FiEye,
+  FiStar,
   FiImage,
   FiVideo,
-  FiStar,
+  FiDownload,
 } from 'react-icons/fi';
 import { useState } from 'react';
 
 /**
  * Media Library Component
- * Manage property photos and videos
+ * Upload, manage, and organize property photos and videos
  */
 
-const MediaItem = ({ media, onDelete, onSetPrimary, onEdit, isPrimary }) => {
+const MediaItem = ({ media, isSelected, onSelect, onDelete, onSetPrimary, onPreview }) => {
   return (
     <Box
       position="relative"
       borderRadius="lg"
       overflow="hidden"
       border="2px"
-      borderColor={isPrimary ? 'primary.600' : 'gray.200'}
+      borderColor={isSelected ? 'primary.500' : 'gray.200'}
+      bg="white"
       transition="all 0.2s"
-      _hover={{ borderColor: 'primary.400', transform: 'scale(1.02)' }}
+      _hover={{ transform: 'scale(1.02)', boxShadow: 'lg' }}
     >
+      {/* Selection Checkbox */}
+      <Checkbox
+        position="absolute"
+        top={2}
+        left={2}
+        zIndex={2}
+        isChecked={isSelected}
+        onChange={onSelect}
+        bg="white"
+        borderRadius="md"
+      />
+
       {/* Primary Badge */}
-      {isPrimary && (
+      {media.isPrimary && (
         <Badge
           position="absolute"
           top={2}
-          left={2}
-          colorScheme="yellow"
+          right={2}
           zIndex={2}
-          display="flex"
-          alignItems="center"
-          gap={1}
+          colorScheme="yellow"
+          fontSize="xs"
         >
-          <Icon as={FiStar} boxSize={3} />
-          <Text>Primary</Text>
+          <HStack spacing={1}>
+            <Icon as={FiStar} boxSize={3} />
+            <Text>Primary</Text>
+          </HStack>
         </Badge>
       )}
 
       {/* Media Preview */}
-      {media.type === 'image' ? (
-        <Image
-          src={media.url}
-          alt={media.caption}
-          w="full"
-          h="200px"
-          objectFit="cover"
-        />
-      ) : (
-        <Box
-          w="full"
-          h="200px"
-          bg="gray.900"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Icon as={FiVideo} boxSize={12} color="white" />
-        </Box>
-      )}
+      <Box
+        position="relative"
+        h="200px"
+        bg="gray.100"
+        cursor="pointer"
+        onClick={onPreview}
+      >
+        {media.type === 'image' ? (
+          <Image
+            src={media.url}
+            alt={media.name}
+            w="full"
+            h="full"
+            objectFit="cover"
+          />
+        ) : (
+          <VStack justify="center" h="full">
+            <Icon as={FiVideo} boxSize={12} color="gray.400" />
+            <Text fontSize="sm" color="gray.600">Video</Text>
+          </VStack>
+        )}
+      </Box>
 
       {/* Actions Overlay */}
       <Box
         position="absolute"
-        top={0}
+        bottom={0}
+        left={0}
         right={0}
+        bg="blackAlpha.700"
         p={2}
+        opacity={0}
+        transition="opacity 0.2s"
+        _groupHover={{ opacity: 1 }}
+        role="group"
       >
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            icon={<Icon as={FiMoreVertical} />}
-            size="sm"
-            bg="whiteAlpha.900"
-            _hover={{ bg: 'white' }}
-          />
-          <MenuList>
-            {!isPrimary && (
-              <MenuItem
+        <HStack justify="space-between">
+          <HStack spacing={1}>
+            <IconButton
+              icon={<Icon as={FiEye} />}
+              size="sm"
+              colorScheme="whiteAlpha"
+              onClick={onPreview}
+              aria-label="Preview"
+            />
+            {!media.isPrimary && (
+              <IconButton
                 icon={<Icon as={FiStar} />}
-                onClick={() => onSetPrimary(media)}
-              >
-                Set as Primary
-              </MenuItem>
+                size="sm"
+                colorScheme="whiteAlpha"
+                onClick={onSetPrimary}
+                aria-label="Set as primary"
+              />
             )}
-            <MenuItem icon={<Icon as={FiEdit} />} onClick={() => onEdit(media)}>
-              Edit Details
-            </MenuItem>
-            <MenuItem icon={<Icon as={FiDownload} />}>
-              Download
-            </MenuItem>
-            <MenuItem
-              icon={<Icon as={FiTrash2} />}
-              color="error.500"
-              onClick={() => onDelete(media)}
-            >
-              Delete
-            </MenuItem>
-          </MenuList>
-        </Menu>
+          </HStack>
+          <IconButton
+            icon={<Icon as={FiTrash2} />}
+            size="sm"
+            colorScheme="red"
+            onClick={onDelete}
+            aria-label="Delete"
+          />
+        </HStack>
       </Box>
 
-      {/* Caption */}
-      {media.caption && (
-        <Box
-          position="absolute"
-          bottom={0}
-          left={0}
-          right={0}
-          p={3}
-          bg="blackAlpha.700"
-        >
-          <Text color="white" fontSize="sm" noOfLines={1}>
-            {media.caption}
-          </Text>
-        </Box>
-      )}
+      {/* Info */}
+      <Box p={3} bg="white">
+        <Text fontSize="xs" fontWeight="semibold" noOfLines={1}>
+          {media.name}
+        </Text>
+        <Text fontSize="xs" color="gray.600">
+          {media.size} • {media.uploadDate}
+        </Text>
+      </Box>
     </Box>
   );
 };
@@ -162,130 +168,126 @@ const MediaItem = ({ media, onDelete, onSetPrimary, onEdit, isPrimary }) => {
 const MediaLibrary = ({ propertyId }) => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedMedia, setSelectedMedia] = useState(null);
-  const [activeTab, setActiveTab] = useState(0);
+  const [selectedMedia, setSelectedMedia] = useState([]);
+  const [previewMedia, setPreviewMedia] = useState(null);
 
   // Mock data - replace with actual API
-  const [mediaItems, setMediaItems] = useState([
-    {
-      id: 1,
-      type: 'image',
-      url: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400',
-      caption: 'Main entrance',
-      isPrimary: true,
-      uploadDate: '2026-06-01',
-    },
-    {
-      id: 2,
-      type: 'image',
-      url: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400',
-      caption: 'Living room',
-      isPrimary: false,
-      uploadDate: '2026-06-01',
-    },
-    {
-      id: 3,
-      type: 'image',
-      url: 'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=400',
-      caption: 'Bedroom',
-      isPrimary: false,
-      uploadDate: '2026-06-01',
-    },
-    {
-      id: 4,
-      type: 'image',
-      url: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=400',
-      caption: 'Kitchen',
-      isPrimary: false,
-      uploadDate: '2026-06-02',
-    },
-    {
-      id: 5,
-      type: 'video',
-      url: '/videos/property-tour.mp4',
-      caption: 'Property walkthrough',
-      isPrimary: false,
-      uploadDate: '2026-06-02',
-    },
-    {
-      id: 6,
-      type: 'image',
-      url: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400',
-      caption: 'Bathroom',
-      isPrimary: false,
-      uploadDate: '2026-06-03',
-    },
-  ]);
+  const [mediaItems, setMediaItems] = useState({
+    images: [
+      {
+        id: 1,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
+        name: 'bedroom_1.jpg',
+        size: '2.4 MB',
+        uploadDate: 'Jun 1, 2026',
+        isPrimary: true,
+      },
+      {
+        id: 2,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800',
+        name: 'living_room.jpg',
+        size: '1.8 MB',
+        uploadDate: 'Jun 1, 2026',
+        isPrimary: false,
+      },
+      {
+        id: 3,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=800',
+        name: 'kitchen.jpg',
+        size: '2.1 MB',
+        uploadDate: 'Jun 2, 2026',
+        isPrimary: false,
+      },
+      {
+        id: 4,
+        type: 'image',
+        url: 'https://images.unsplash.com/photo-1564540583246-934409427776?w=800',
+        name: 'bathroom.jpg',
+        size: '1.5 MB',
+        uploadDate: 'Jun 2, 2026',
+        isPrimary: false,
+      },
+    ],
+    videos: [
+      {
+        id: 5,
+        type: 'video',
+        url: '/videos/property_tour.mp4',
+        name: 'property_tour.mp4',
+        size: '45.2 MB',
+        uploadDate: 'Jun 3, 2026',
+        isPrimary: false,
+      },
+    ],
+  });
 
-  const [editForm, setEditForm] = useState({ caption: '' });
-
-  const handleDelete = (media) => {
-    if (media.isPrimary) {
-      toast({
-        title: 'Cannot Delete',
-        description: 'Cannot delete the primary image. Set another image as primary first.',
-        status: 'warning',
-        duration: 3000,
-      });
-      return;
+  const handleSelect = (id, type) => {
+    const key = `${type}-${id}`;
+    if (selectedMedia.includes(key)) {
+      setSelectedMedia(selectedMedia.filter((item) => item !== key));
+    } else {
+      setSelectedMedia([...selectedMedia, key]);
     }
+  };
 
-    if (window.confirm(`Delete "${media.caption}"?`)) {
-      setMediaItems(mediaItems.filter((m) => m.id !== media.id));
+  const handleDelete = (id, type) => {
+    if (window.confirm('Delete this media item?')) {
+      const category = type === 'image' ? 'images' : 'videos';
+      setMediaItems({
+        ...mediaItems,
+        [category]: mediaItems[category].filter((item) => item.id !== id),
+      });
       toast({
         title: 'Media Deleted',
+        description: 'Media item has been removed.',
         status: 'success',
-        duration: 2000,
+        duration: 3000,
       });
     }
   };
 
-  const handleSetPrimary = (media) => {
-    setMediaItems(
-      mediaItems.map((m) => ({
-        ...m,
-        isPrimary: m.id === media.id,
-      }))
-    );
-    toast({
-      title: 'Primary Image Updated',
-      description: `"${media.caption}" is now the primary image.`,
-      status: 'success',
-      duration: 2000,
+  const handleSetPrimary = (id, type) => {
+    const category = type === 'image' ? 'images' : 'videos';
+    setMediaItems({
+      ...mediaItems,
+      [category]: mediaItems[category].map((item) => ({
+        ...item,
+        isPrimary: item.id === id,
+      })),
     });
-  };
-
-  const handleEdit = (media) => {
-    setSelectedMedia(media);
-    setEditForm({ caption: media.caption });
-    onOpen();
-  };
-
-  const handleSaveEdit = () => {
-    setMediaItems(
-      mediaItems.map((m) =>
-        m.id === selectedMedia.id ? { ...m, caption: editForm.caption } : m
-      )
-    );
     toast({
-      title: 'Caption Updated',
+      title: 'Primary Photo Updated',
+      description: 'This photo will be shown first in listings.',
       status: 'success',
-      duration: 2000,
-    });
-    onClose();
-  };
-
-  const handleUpload = () => {
-    toast({
-      title: 'Upload Feature',
-      description: 'File upload will be integrated with backend.',
-      status: 'info',
       duration: 3000,
     });
   };
 
-  const images = mediaItems.filter((m) => m.type === 'image');
-  const videos = mediaItems.filter((m) => m.type === 'video');
+  const handleBulkDelete = () => {
+    if (selectedMedia.length === 0) return;
+    if (window.confirm(`Delete ${selectedMedia.length} selected items?`)) {
+      // Implement bulk delete logic
+      setSelectedMedia([]);
+      toast({
+        title: 'Media Deleted',
+        description: `${selectedMedia.length} items removed.`,
+        status: 'success',
+        duration: 3000,
+      });
+    }
+  };
+
+  const handlePreview = (media) => {
+    setPreviewMedia(media);
+    onOpen();
+  };
+
+  const totalImages = mediaItems.images.length;
+  const totalVideos = mediaItems.videos.length;
+  const totalSize = '52.0 MB'; // Mock calculation
 
   return (
     <Box>
@@ -296,95 +298,109 @@ const MediaLibrary = ({ propertyId }) => {
             Media Library
           </Heading>
           <Text fontSize="sm" color="gray.600">
-            Manage property photos and videos
+            Manage photos and videos for your property
           </Text>
         </Box>
-        <Button
-          leftIcon={<Icon as={FiUpload} />}
-          colorScheme="primary"
-          size="sm"
-          onClick={handleUpload}
-        >
-          Upload Media
-        </Button>
+        <HStack spacing={3}>
+          {selectedMedia.length > 0 && (
+            <Button
+              leftIcon={<Icon as={FiTrash2} />}
+              colorScheme="red"
+              variant="outline"
+              size="sm"
+              onClick={handleBulkDelete}
+            >
+              Delete ({selectedMedia.length})
+            </Button>
+          )}
+          <Button
+            leftIcon={<Icon as={FiUpload} />}
+            colorScheme="primary"
+            size="sm"
+          >
+            Upload Media
+          </Button>
+        </HStack>
       </HStack>
 
       {/* Stats */}
-      <HStack spacing={4} mb={6}>
-        <Box bg="blue.50" px={4} py={2} borderRadius="lg">
-          <HStack spacing={2}>
-            <Icon as={FiImage} color="blue.600" />
-            <Text fontSize="sm" fontWeight="semibold">
-              {images.length} Photos
+      <SimpleGrid columns={{ base: 3 }} spacing={4} mb={6}>
+        <Box bg="primary.50" p={4} borderRadius="lg" textAlign="center">
+          <HStack justify="center" mb={1}>
+            <Icon as={FiImage} color="primary.600" />
+            <Text fontSize="2xl" fontWeight="bold" color="primary.600">
+              {totalImages}
             </Text>
           </HStack>
+          <Text fontSize="xs" color="gray.600">Photos</Text>
         </Box>
-        <Box bg="purple.50" px={4} py={2} borderRadius="lg">
-          <HStack spacing={2}>
+        <Box bg="purple.50" p={4} borderRadius="lg" textAlign="center">
+          <HStack justify="center" mb={1}>
             <Icon as={FiVideo} color="purple.600" />
-            <Text fontSize="sm" fontWeight="semibold">
-              {videos.length} Videos
+            <Text fontSize="2xl" fontWeight="bold" color="purple.600">
+              {totalVideos}
             </Text>
           </HStack>
+          <Text fontSize="xs" color="gray.600">Videos</Text>
         </Box>
-      </HStack>
+        <Box bg="gray.50" p={4} borderRadius="lg" textAlign="center">
+          <HStack justify="center" mb={1}>
+            <Icon as={FiDownload} color="gray.600" />
+            <Text fontSize="2xl" fontWeight="bold" color="gray.600">
+              {totalSize}
+            </Text>
+          </HStack>
+          <Text fontSize="xs" color="gray.600">Total Size</Text>
+        </Box>
+      </SimpleGrid>
 
       {/* Tabs */}
-      <Tabs
-        colorScheme="primary"
-        index={activeTab}
-        onChange={setActiveTab}
-      >
+      <Tabs colorScheme="primary">
         <TabList>
-          <Tab>All Media ({mediaItems.length})</Tab>
-          <Tab>Photos ({images.length})</Tab>
-          <Tab>Videos ({videos.length})</Tab>
+          <Tab>
+            <HStack spacing={2}>
+              <Icon as={FiImage} />
+              <Text>Photos ({totalImages})</Text>
+            </HStack>
+          </Tab>
+          <Tab>
+            <HStack spacing={2}>
+              <Icon as={FiVideo} />
+              <Text>Videos ({totalVideos})</Text>
+            </HStack>
+          </Tab>
         </TabList>
 
         <TabPanels>
-          {/* All Media */}
-          <TabPanel px={0} pt={6}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
-              {mediaItems.map((media) => (
+          {/* Photos Tab */}
+          <TabPanel px={0} py={6}>
+            <SimpleGrid columns={{ base: 2, md: 3, lg: 4 }} spacing={4}>
+              {mediaItems.images.map((media) => (
                 <MediaItem
                   key={media.id}
                   media={media}
-                  isPrimary={media.isPrimary}
-                  onDelete={handleDelete}
-                  onSetPrimary={handleSetPrimary}
-                  onEdit={handleEdit}
+                  isSelected={selectedMedia.includes(`image-${media.id}`)}
+                  onSelect={() => handleSelect(media.id, 'image')}
+                  onDelete={() => handleDelete(media.id, 'image')}
+                  onSetPrimary={() => handleSetPrimary(media.id, 'image')}
+                  onPreview={() => handlePreview(media)}
                 />
               ))}
             </SimpleGrid>
           </TabPanel>
 
-          {/* Photos Only */}
-          <TabPanel px={0} pt={6}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
-              {images.map((media) => (
+          {/* Videos Tab */}
+          <TabPanel px={0} py={6}>
+            <SimpleGrid columns={{ base: 2, md: 3, lg: 4 }} spacing={4}>
+              {mediaItems.videos.map((media) => (
                 <MediaItem
                   key={media.id}
                   media={media}
-                  isPrimary={media.isPrimary}
-                  onDelete={handleDelete}
-                  onSetPrimary={handleSetPrimary}
-                  onEdit={handleEdit}
-                />
-              ))}
-            </SimpleGrid>
-          </TabPanel>
-
-          {/* Videos Only */}
-          <TabPanel px={0} pt={6}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
-              {videos.map((media) => (
-                <MediaItem
-                  key={media.id}
-                  media={media}
-                  isPrimary={media.isPrimary}
-                  onDelete={handleDelete}
-                  onSetPrimary={handleSetPrimary}
-                  onEdit={handleEdit}
+                  isSelected={selectedMedia.includes(`video-${media.id}`)}
+                  onSelect={() => handleSelect(media.id, 'video')}
+                  onDelete={() => handleDelete(media.id, 'video')}
+                  onSetPrimary={() => handleSetPrimary(media.id, 'video')}
+                  onPreview={() => handlePreview(media)}
                 />
               ))}
             </SimpleGrid>
@@ -392,43 +408,37 @@ const MediaLibrary = ({ propertyId }) => {
         </TabPanels>
       </Tabs>
 
-      {/* Edit Modal */}
-      <Modal isOpen={isOpen} onClose={onClose}>
+      {/* Preview Modal */}
+      <Modal isOpen={isOpen} onClose={onClose} size="4xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Edit Media Details</ModalHeader>
+          <ModalHeader>{previewMedia?.name}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <VStack spacing={4}>
-              {selectedMedia && (
-                <Image
-                  src={selectedMedia.url}
-                  alt={selectedMedia.caption}
-                  w="full"
-                  h="200px"
-                  objectFit="cover"
-                  borderRadius="md"
-                />
-              )}
-              <FormControl>
-                <FormLabel fontSize="sm">Caption</FormLabel>
-                <Input
-                  value={editForm.caption}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, caption: e.target.value })
-                  }
-                  placeholder="Enter caption"
-                />
-              </FormControl>
-            </VStack>
+            {previewMedia?.type === 'image' ? (
+              <Image
+                src={previewMedia.url}
+                alt={previewMedia.name}
+                w="full"
+                borderRadius="lg"
+              />
+            ) : (
+              <video
+                src={previewMedia?.url}
+                controls
+                style={{ width: '100%', borderRadius: '8px' }}
+              />
+            )}
           </ModalBody>
           <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
-              Cancel
-            </Button>
-            <Button colorScheme="primary" onClick={handleSaveEdit}>
-              Save Changes
-            </Button>
+            <HStack spacing={3}>
+              <Text fontSize="sm" color="gray.600">
+                {previewMedia?.size} • {previewMedia?.uploadDate}
+              </Text>
+              <Button variant="ghost" onClick={onClose}>
+                Close
+              </Button>
+            </HStack>
           </ModalFooter>
         </ModalContent>
       </Modal>

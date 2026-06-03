@@ -2,12 +2,12 @@ import {
   Box,
   Heading,
   Text,
-  SimpleGrid,
   VStack,
   HStack,
+  SimpleGrid,
   Icon,
-  Progress,
   Badge,
+  Progress,
   Select,
 } from '@chakra-ui/react';
 import {
@@ -18,7 +18,7 @@ import {
   FiTrendingUp,
   FiTrendingDown,
   FiUsers,
-  FiMessageSquare,
+  FiStar,
 } from 'react-icons/fi';
 import {
   LineChart,
@@ -36,10 +36,10 @@ import { useState } from 'react';
 
 /**
  * Property Analytics Component
- * Detailed metrics for individual property performance
+ * Detailed analytics for individual property performance
  */
 
-const MetricCard = ({ label, value, change, changeType, icon, color }) => {
+const MetricCard = ({ label, value, change, trend, icon, color }) => {
   return (
     <Box
       bg="white"
@@ -48,88 +48,79 @@ const MetricCard = ({ label, value, change, changeType, icon, color }) => {
       border="1px"
       borderColor="gray.200"
     >
-      <VStack align="stretch" spacing={3}>
-        <HStack justify="space-between">
-          <Box
-            p={2}
-            borderRadius="lg"
-            bg={`${color}.50`}
-          >
-            <Icon as={icon} boxSize={5} color={`${color}.600`} />
-          </Box>
-          {change && (
-            <Badge
-              colorScheme={changeType === 'up' ? 'green' : 'red'}
-              fontSize="xs"
-            >
-              <HStack spacing={1}>
-                <Icon
-                  as={changeType === 'up' ? FiTrendingUp : FiTrendingDown}
-                  boxSize={3}
-                />
-                <Text>{change}</Text>
-              </HStack>
-            </Badge>
-          )}
-        </HStack>
-        <VStack align="start" spacing={1}>
-          <Text fontSize="sm" color="gray.600">
-            {label}
-          </Text>
-          <Text fontSize="2xl" fontWeight="bold">
-            {value}
-          </Text>
-        </VStack>
+      <HStack justify="space-between" mb={3}>
+        <Box
+          bg={`${color}.50`}
+          p={2}
+          borderRadius="lg"
+        >
+          <Icon as={icon} boxSize={5} color={`${color}.600`} />
+        </Box>
+        <Badge
+          colorScheme={trend === 'up' ? 'green' : 'red'}
+          fontSize="xs"
+        >
+          <HStack spacing={1}>
+            <Icon
+              as={trend === 'up' ? FiTrendingUp : FiTrendingDown}
+              boxSize={3}
+            />
+            <Text>{change}</Text>
+          </HStack>
+        </Badge>
+      </HStack>
+      <VStack align="start" spacing={1}>
+        <Text fontSize="xs" color="gray.600">
+          {label}
+        </Text>
+        <Text fontSize="2xl" fontWeight="bold">
+          {value}
+        </Text>
       </VStack>
     </Box>
   );
 };
 
 const PropertyAnalytics = ({ propertyId }) => {
-  const [timeRange, setTimeRange] = useState('30days');
+  const [timeRange, setTimeRange] = useState('7days');
 
   // Mock data - replace with actual API
   const metrics = {
-    views: { value: '1,234', change: '+15%', changeType: 'up' },
-    favorites: { value: '89', change: '+8%', changeType: 'up' },
-    inquiries: { value: '45', change: '+12%', changeType: 'up' },
-    bookings: { value: '12', change: '-5%', changeType: 'down' },
-    revenue: { value: '₱96,000', change: '+18%', changeType: 'up' },
-    occupancy: { value: '92%', change: '+3%', changeType: 'up' },
-    avgStay: { value: '8.5 mo', change: '+2%', changeType: 'up' },
-    rating: { value: '4.8/5', change: '+0.2', changeType: 'up' },
+    views: { value: 1247, change: '+23%', trend: 'up' },
+    favorites: { value: 89, change: '+15%', trend: 'up' },
+    bookings: { value: 12, change: '-5%', trend: 'down' },
+    revenue: { value: '₱48,000', change: '+18%', trend: 'up' },
+    inquiries: { value: 34, change: '+12%', trend: 'up' },
+    avgRating: { value: '4.8', change: '+0.2', trend: 'up' },
   };
 
   const viewsData = [
-    { date: 'Jun 1', views: 45, inquiries: 5 },
-    { date: 'Jun 5', views: 52, inquiries: 7 },
-    { date: 'Jun 10', views: 48, inquiries: 6 },
-    { date: 'Jun 15', views: 65, inquiries: 8 },
-    { date: 'Jun 20', views: 58, inquiries: 7 },
-    { date: 'Jun 25', views: 72, inquiries: 9 },
-    { date: 'Jun 30', views: 68, inquiries: 8 },
-  ];
+    { date: 'Mon', views: 45, clicks: 12, bookings: 2 },
+    { date: 'Tue', views: 52, clicks: 15, bookings: 3 },
+    { date: 'Wed', views: 48, clicks: 14, bookings: 1 },
+    { date: 'Thu', views: 61, clicks: 18, bookings: 4 },
+    { date: 'Fri', views: 55, clicks: 16, bookings: 2 },
+    { date: 'Sat', views: 72, clicks: 22, bookings: 5 },
+    { date: 'Sun', views: 68, clicks: 20, bookings: 3 },
+  };
 
-  const bookingData = [
-    { month: 'Jan', bookings: 8, revenue: 64000 },
-    { month: 'Feb', bookings: 10, revenue: 80000 },
-    { month: 'Mar', bookings: 7, revenue: 56000 },
-    { month: 'Apr', bookings: 12, revenue: 96000 },
-    { month: 'May', bookings: 9, revenue: 72000 },
-    { month: 'Jun', bookings: 11, revenue: 88000 },
+  const performanceData = [
+    { metric: 'Views', value: 92, color: '#2563EB' },
+    { metric: 'Click Rate', value: 78, color: '#10B981' },
+    { metric: 'Booking Rate', value: 65, color: '#F59E0B' },
+    { metric: 'Response Rate', value: 88, color: '#8B5CF6' },
+    { metric: 'Occupancy', value: 85, color: '#EF4444' },
   ];
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       return (
         <Box bg="white" p={3} borderRadius="md" boxShadow="lg" border="1px" borderColor="gray.200">
-          <Text fontWeight="semibold" mb={2}>{payload[0].payload.date || payload[0].payload.month}</Text>
+          <Text fontWeight="semibold" mb={2}>{payload[0].payload.date}</Text>
           {payload.map((entry, index) => (
             <HStack key={index} justify="space-between" spacing={4}>
               <Text fontSize="sm" color={entry.color}>{entry.name}:</Text>
-              <Text fontSize="sm" fontWeight="semibold">
-                {entry.name === 'revenue' ? `₱${entry.value.toLocaleString()}` : entry.value}
-              </Text>
+              <Text fontSize="sm" fontWeight="semibold">{entry.value}</Text>
             </HStack>
           ))}
         </Box>
@@ -147,7 +138,7 @@ const PropertyAnalytics = ({ propertyId }) => {
             Property Analytics
           </Heading>
           <Text fontSize="sm" color="gray.600">
-            Performance metrics and trends
+            Track performance and visitor engagement
           </Text>
         </Box>
         <Select
@@ -159,17 +150,17 @@ const PropertyAnalytics = ({ propertyId }) => {
           <option value="7days">Last 7 Days</option>
           <option value="30days">Last 30 Days</option>
           <option value="90days">Last 90 Days</option>
-          <option value="1year">Last Year</option>
+          <option value="year">This Year</option>
         </Select>
       </HStack>
 
       {/* Key Metrics */}
-      <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4} mb={6}>
+      <SimpleGrid columns={{ base: 2, md: 3, lg: 6 }} spacing={4} mb={6}>
         <MetricCard
           label="Total Views"
           value={metrics.views.value}
           change={metrics.views.change}
-          changeType={metrics.views.changeType}
+          trend={metrics.views.trend}
           icon={FiEye}
           color="primary"
         />
@@ -177,176 +168,134 @@ const PropertyAnalytics = ({ propertyId }) => {
           label="Favorites"
           value={metrics.favorites.value}
           change={metrics.favorites.change}
-          changeType={metrics.favorites.changeType}
+          trend={metrics.favorites.trend}
           icon={FiHeart}
           color="error"
-        />
-        <MetricCard
-          label="Inquiries"
-          value={metrics.inquiries.value}
-          change={metrics.inquiries.change}
-          changeType={metrics.inquiries.changeType}
-          icon={FiMessageSquare}
-          color="info"
         />
         <MetricCard
           label="Bookings"
           value={metrics.bookings.value}
           change={metrics.bookings.change}
-          changeType={metrics.bookings.changeType}
+          trend={metrics.bookings.trend}
           icon={FiCalendar}
           color="success"
         />
-      </SimpleGrid>
-
-      {/* Revenue & Performance Metrics */}
-      <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4} mb={6}>
         <MetricCard
-          label="Total Revenue"
+          label="Revenue"
           value={metrics.revenue.value}
           change={metrics.revenue.change}
-          changeType={metrics.revenue.changeType}
+          trend={metrics.revenue.trend}
           icon={FiDollarSign}
           color="warning"
         />
         <MetricCard
-          label="Occupancy Rate"
-          value={metrics.occupancy.value}
-          change={metrics.occupancy.change}
-          changeType={metrics.occupancy.changeType}
-          icon={FiTrendingUp}
+          label="Inquiries"
+          value={metrics.inquiries.value}
+          change={metrics.inquiries.change}
+          trend={metrics.inquiries.trend}
+          icon={FiUsers}
           color="purple"
         />
         <MetricCard
-          label="Avg. Stay"
-          value={metrics.avgStay.value}
-          change={metrics.avgStay.change}
-          changeType={metrics.avgStay.changeType}
-          icon={FiUsers}
-          color="info"
-        />
-        <MetricCard
-          label="Rating"
-          value={metrics.rating.value}
-          change={metrics.rating.change}
-          changeType={metrics.rating.changeType}
-          icon={FiTrendingUp}
+          label="Avg. Rating"
+          value={metrics.avgRating.value}
+          change={metrics.avgRating.change}
+          trend={metrics.avgRating.trend}
+          icon={FiStar}
           color="warning"
         />
       </SimpleGrid>
 
-      {/* Charts */}
-      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
-        {/* Views & Inquiries Chart */}
-        <Box
-          bg="white"
-          p={6}
-          borderRadius="lg"
-          border="1px"
-          borderColor="gray.200"
-        >
-          <Heading size="sm" mb={4}>
-            Views & Inquiries
-          </Heading>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={viewsData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#6b7280" />
-              <YAxis tick={{ fontSize: 12 }} stroke="#6b7280" />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend wrapperStyle={{ fontSize: '14px', paddingTop: '10px' }} />
-              <Line
-                type="monotone"
-                dataKey="views"
-                stroke="#2563EB"
-                strokeWidth={2}
-                name="Views"
-                dot={{ fill: '#2563EB', r: 4 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="inquiries"
-                stroke="#10B981"
-                strokeWidth={2}
-                name="Inquiries"
-                dot={{ fill: '#10B981', r: 4 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </Box>
-
-        {/* Bookings & Revenue Chart */}
-        <Box
-          bg="white"
-          p={6}
-          borderRadius="lg"
-          border="1px"
-          borderColor="gray.200"
-        >
-          <Heading size="sm" mb={4}>
-            Bookings & Revenue
-          </Heading>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={bookingData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="#6b7280" />
-              <YAxis tick={{ fontSize: 12 }} stroke="#6b7280" />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend wrapperStyle={{ fontSize: '14px', paddingTop: '10px' }} />
-              <Bar dataKey="bookings" fill="#10B981" name="Bookings" radius={[4, 4, 0, 0]} />
-              <Bar
-                dataKey="revenue"
-                fill="#2563EB"
-                name="Revenue"
-                radius={[4, 4, 0, 0]}
-                yAxisId="right"
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </Box>
-      </SimpleGrid>
-
-      {/* Conversion Funnel */}
+      {/* Views Trend Chart */}
       <Box
         bg="white"
         p={6}
         borderRadius="lg"
         border="1px"
         borderColor="gray.200"
-        mt={6}
+        mb={6}
       >
         <Heading size="sm" mb={4}>
-          Conversion Funnel
+          Visitor Engagement Trend
         </Heading>
-        <VStack spacing={3} align="stretch">
-          <Box>
-            <HStack justify="space-between" mb={2}>
-              <Text fontSize="sm" color="gray.600">Views</Text>
-              <Text fontSize="sm" fontWeight="semibold">1,234 (100%)</Text>
-            </HStack>
-            <Progress value={100} colorScheme="blue" borderRadius="full" />
-          </Box>
-          <Box>
-            <HStack justify="space-between" mb={2}>
-              <Text fontSize="sm" color="gray.600">Favorites</Text>
-              <Text fontSize="sm" fontWeight="semibold">89 (7.2%)</Text>
-            </HStack>
-            <Progress value={7.2} colorScheme="red" borderRadius="full" />
-          </Box>
-          <Box>
-            <HStack justify="space-between" mb={2}>
-              <Text fontSize="sm" color="gray.600">Inquiries</Text>
-              <Text fontSize="sm" fontWeight="semibold">45 (3.6%)</Text>
-            </HStack>
-            <Progress value={3.6} colorScheme="purple" borderRadius="full" />
-          </Box>
-          <Box>
-            <HStack justify="space-between" mb={2}>
-              <Text fontSize="sm" color="gray.600">Bookings</Text>
-              <Text fontSize="sm" fontWeight="semibold">12 (1.0%)</Text>
-            </HStack>
-            <Progress value={1.0} colorScheme="green" borderRadius="full" />
-          </Box>
+        <ResponsiveContainer width="100%" height={280}>
+          <LineChart data={viewsData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+            <XAxis
+              dataKey="date"
+              tick={{ fontSize: 12 }}
+              stroke="#6b7280"
+            />
+            <YAxis
+              tick={{ fontSize: 12 }}
+              stroke="#6b7280"
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend
+              wrapperStyle={{ fontSize: '14px', paddingTop: '20px' }}
+            />
+            <Line
+              type="monotone"
+              dataKey="views"
+              stroke="#2563EB"
+              strokeWidth={2}
+              name="Views"
+              dot={{ fill: '#2563EB', r: 4 }}
+            />
+            <Line
+              type="monotone"
+              dataKey="clicks"
+              stroke="#10B981"
+              strokeWidth={2}
+              name="Clicks"
+              dot={{ fill: '#10B981', r: 4 }}
+            />
+            <Line
+              type="monotone"
+              dataKey="bookings"
+              stroke="#F59E0B"
+              strokeWidth={2}
+              name="Bookings"
+              dot={{ fill: '#F59E0B', r: 4 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </Box>
+
+      {/* Performance Scores */}
+      <Box
+        bg="white"
+        p={6}
+        borderRadius="lg"
+        border="1px"
+        borderColor="gray.200"
+      >
+        <Heading size="sm" mb={4}>
+          Performance Scores
+        </Heading>
+        <VStack spacing={4} align="stretch">
+          {performanceData.map((item) => (
+            <Box key={item.metric}>
+              <HStack justify="space-between" mb={2}>
+                <Text fontSize="sm" fontWeight="medium">
+                  {item.metric}
+                </Text>
+                <Text fontSize="sm" fontWeight="bold" color={item.color}>
+                  {item.value}%
+                </Text>
+              </HStack>
+              <Progress
+                value={item.value}
+                size="sm"
+                borderRadius="full"
+                sx={{
+                  '& > div': {
+                    backgroundColor: item.color,
+                  },
+                }}
+              />
+            </Box>
+          ))}
         </VStack>
       </Box>
     </Box>
