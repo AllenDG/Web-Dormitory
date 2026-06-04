@@ -1,7 +1,7 @@
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import theme from '../../components/theme/theme';
+import theme from '../../shared/theme/theme';
 import AuthProvider from './AuthProvider';
 
 // Create a client for React Query
