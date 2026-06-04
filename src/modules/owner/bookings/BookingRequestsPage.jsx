@@ -45,7 +45,7 @@ import {
 } from 'react-icons/fi';
 import { Card } from '../../../shared/components';
 import useBookingStore, { BOOKING_STATUS } from '../../../shared/stores/useBookingStore';
-import { BookingStatusBadge } from '../../../features/booking/components';
+import { BookingStatusBadge } from '../../../domains/bookings/components';
 import { useAuth } from '../../../app/providers/AuthProvider';
 
 /**
