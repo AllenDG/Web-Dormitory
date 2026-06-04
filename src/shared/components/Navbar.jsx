@@ -23,12 +23,13 @@ import {
   Avatar,
   Icon,
 } from '@chakra-ui/react';
-import { FiMenu, FiSun, FiMoon, FiHeart, FiUser, FiSettings, FiLogOut, FiLogIn, FiCalendar, FiMessageSquare } from 'react-icons/fi';
+import { FiMenu, FiSun, FiMoon, FiHeart, FiUser, FiSettings, FiLogOut, FiLogIn, FiCalendar, FiMessageSquare, FiBarChart2 } from 'react-icons/fi';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Container } from './index';
 import useUIStore from '../stores/useUIStore';
 import useRentalStore from '../stores/useRentalStore';
 import useChatStore from '../stores/useChatStore';
+import useCompareStore from '../stores/useCompareStore';
 import { useAuth } from '../../app/providers/AuthProvider';
 
 const navLinks = [
@@ -49,6 +50,7 @@ const Navbar = () => {
   const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useUIStore();
   const { favorites = [] } = useRentalStore();
   const { unreadCount } = useChatStore();
+  const compareCount = useCompareStore((state) => state.getCompareCount)();
   const { user, isAuthenticated, logout } = useAuth();
 
   const bg = useColorModeValue('white', 'gray.800');
@@ -152,6 +154,31 @@ const Navbar = () => {
               />
             )}
 
+            {/* Compare Properties */}
+            <IconButton
+              icon={
+                <Box position="relative">
+                  <FiBarChart2 />
+                  {compareCount > 0 && (
+                    <Badge
+                      position="absolute"
+                      top="-8px"
+                      right="-8px"
+                      colorScheme="blue"
+                      borderRadius="full"
+                      fontSize="xs"
+                    >
+                      {compareCount}
+                    </Badge>
+                  )}
+                </Box>
+              }
+              variant="ghost"
+              aria-label="Compare Properties"
+              onClick={() => navigate('/compare')}
+              display={{ base: 'none', md: 'flex' }}
+            />
+
             {/* Favorites */}
             <IconButton
               icon={
@@ -215,6 +242,14 @@ const Navbar = () => {
                     {unreadCount > 0 && (
                       <Badge ml={2} colorScheme="red" borderRadius="full">
                         {unreadCount}
+                      </Badge>
+                    )}
+                  </MenuItem>
+                  <MenuItem icon={<Icon as={FiBarChart2} />} onClick={() => navigate('/compare')}>
+                    Compare
+                    {compareCount > 0 && (
+                      <Badge ml={2} colorScheme="blue" borderRadius="full">
+                        {compareCount}
                       </Badge>
                     )}
                   </MenuItem>
@@ -370,6 +405,30 @@ const Navbar = () => {
                       {unreadCount > 0 && (
                         <Badge colorScheme="red" borderRadius="full">
                           {unreadCount}
+                        </Badge>
+                      )}
+                    </HStack>
+                  </Box>
+
+                  {/* Compare in Mobile */}
+                  <Box
+                    p={3}
+                    borderRadius="md"
+                    _hover={{ bg: 'gray.100', _dark: { bg: 'gray.700' } }}
+                    cursor="pointer"
+                    onClick={() => {
+                      navigate('/compare');
+                      closeMobileMenu();
+                    }}
+                  >
+                    <HStack justify="space-between">
+                      <HStack>
+                        <Icon as={FiBarChart2} />
+                        <Text fontWeight="medium">Compare</Text>
+                      </HStack>
+                      {compareCount > 0 && (
+                        <Badge colorScheme="blue" borderRadius="full">
+                          {compareCount}
                         </Badge>
                       )}
                     </HStack>

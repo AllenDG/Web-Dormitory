@@ -8,6 +8,7 @@ import {
   Icon,
   IconButton,
   Tooltip,
+  useToast,
 } from '@chakra-ui/react';
 import {
   FiHeart,
@@ -18,12 +19,15 @@ import {
   FiShield,
   FiCheckCircle,
   FiAward,
+  FiBarChart2,
 } from 'react-icons/fi';
+import useCompareStore from '../../../shared/stores/useCompareStore';
 
 /**
- * PropertyGridCard Component v2.0
+ * PropertyGridCard Component v2.1
  * Enhanced vertical card for grid view with better UX
  * Optimized for mobile and tablet
+ * Added compare functionality with visual feedback
  */
 const PropertyGridCard = ({
   property,
@@ -31,12 +35,54 @@ const PropertyGridCard = ({
   onFavoriteToggle,
   isFavorite = false,
 }) => {
+  const toast = useToast();
+  const isInCompare = useCompareStore((state) => state.isInCompare)(property.id);
+  const addToCompare = useCompareStore((state) => state.addToCompare);
+  const removeFromCompare = useCompareStore((state) => state.removeFromCompare);
+  const isLimitReached = useCompareStore((state) => state.isLimitReached)();
+
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-PH', {
       style: 'currency',
       currency: 'PHP',
       minimumFractionDigits: 0,
     }).format(price);
+  };
+
+  const handleCompareToggle = (e) => {
+    e.stopPropagation();
+    
+    if (isInCompare) {
+      removeFromCompare(property.id);
+      toast({
+        title: 'Removed from comparison',
+        status: 'info',
+        duration: 2000,
+        isClosable: true,
+      });
+    } else {
+      if (isLimitReached) {
+        toast({
+          title: 'Comparison limit reached',
+          description: 'You can compare up to 4 properties. Remove one to add another.',
+          status: 'warning',
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
+      
+      const success = addToCompare(property.id);
+      if (success) {
+        toast({
+          title: 'Added to comparison',
+          description: 'Click the compare button at the bottom to view',
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+        });
+      }
+    }
   };
 
   const isBestMatch = property.id % 4 === 0;
@@ -69,28 +115,45 @@ const PropertyGridCard = ({
           objectFit="cover"
         />
 
-        {/* Favorite Button */}
-        <Tooltip label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}>
-          <IconButton
-            icon={<Icon as={FiHeart} fill={isFavorite ? 'currentColor' : 'none'} />}
-            position="absolute"
-            top={3}
-            right={3}
-            size="sm"
-            borderRadius="full"
-            bg={isFavorite ? 'error.500' : 'whiteAlpha.900'}
-            color={isFavorite ? 'white' : 'gray.700'}
-            _hover={{
-              bg: isFavorite ? 'error.600' : 'white',
-              transform: 'scale(1.1)',
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onFavoriteToggle();
-            }}
-            aria-label="Add to favorites"
-          />
-        </Tooltip>
+        {/* Action Buttons */}
+        <VStack position="absolute" top={3} right={3} spacing={2}>
+          {/* Compare Button */}
+          <Tooltip label={isInCompare ? 'Remove from comparison' : 'Add to comparison'}>
+            <IconButton
+              icon={<Icon as={FiBarChart2} />}
+              size="sm"
+              borderRadius="full"
+              bg={isInCompare ? 'primary.500' : 'whiteAlpha.900'}
+              color={isInCompare ? 'white' : 'gray.700'}
+              _hover={{
+                bg: isInCompare ? 'primary.600' : 'white',
+                transform: 'scale(1.1)',
+              }}
+              onClick={handleCompareToggle}
+              aria-label={isInCompare ? 'Remove from comparison' : 'Add to comparison'}
+            />
+          </Tooltip>
+          
+          {/* Favorite Button */}
+          <Tooltip label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}>
+            <IconButton
+              icon={<Icon as={FiHeart} fill={isFavorite ? 'currentColor' : 'none'} />}
+              size="sm"
+              borderRadius="full"
+              bg={isFavorite ? 'error.500' : 'whiteAlpha.900'}
+              color={isFavorite ? 'white' : 'gray.700'}
+              _hover={{
+                bg: isFavorite ? 'error.600' : 'white',
+                transform: 'scale(1.1)',
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onFavoriteToggle();
+              }}
+              aria-label="Add to favorites"
+            />
+          </Tooltip>
+        </VStack>
 
         {/* Badges */}
         <VStack position="absolute" top={3} left={3} spacing={2} align="start">
