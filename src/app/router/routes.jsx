@@ -1,52 +1,17 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { Spinner, Center, Box } from '@chakra-ui/react';
-import TenantLayout from '../../shared/layouts/TenantLayout';
-import OwnerLayout from '../../shared/layouts/OwnerLayout';
-import ProtectedRoute from './ProtectedRoute';
+import ProtectedRoute from './protected-routes';
 import { ROLES } from '../providers/AuthProvider';
 
-// Tenant Pages (Lazy loaded)
-const LandingPage = lazy(() => import('../../features/home/LandingPage'));
-const AboutPage = lazy(() => import('../../features/about/AboutPage'));
-const HowItWorksPage = lazy(() => import('../../features/how-it-works/HowItWorksPage'));
-const ContactPage = lazy(() => import('../../features/contact/ContactPage'));
-const FindRentalsPage = lazy(() => import('../../features/rentals/FindRentalsPage'));
-const RentalDetailPage = lazy(() => import('../../features/rentals/RentalDetailPage'));
-const FavoritesPage = lazy(() => import('../../features/favorites/FavoritesPage'));
-const ScheduleVisitPage = lazy(() => import('../../features/appointments/ScheduleVisitPage'));
-const MyVisitsPage = lazy(() => import('../../features/appointments/MyVisitsPage'));
-const ProfilePage = lazy(() => import('../../features/profile/ProfilePage'));
-const ChatPage = lazy(() => import('../../features/chat/ChatPage'));
+// Import layouts
+import TenantLayout from '../../shared/layouts/TenantLayout';
+import OwnerLayout from '../../shared/layouts/OwnerLayout';
 
-// Booking Pages (Lazy loaded)
-const BookingPage = lazy(() => import('../../features/booking/BookingPage'));
-const PaymentPage = lazy(() => import('../../features/booking/PaymentPage'));
-const BookingConfirmationPage = lazy(() => import('../../features/booking/BookingConfirmationPage'));
-const MyBookingsPage = lazy(() => import('../../features/booking/MyBookingsPage'));
-const ContractPage = lazy(() => import('../../features/booking/ContractPage'));
-
-// Compare Page (Lazy loaded)
-const ComparePropertiesPage = lazy(() => import('../../features/compare/ComparePropertiesPage'));
-
-// Auth Pages
-const LoginPage = lazy(() => import('../../features/auth/LoginPage'));
-const SignUpPage = lazy(() => import('../../features/auth/SignUpPage'));
-
-// Owner Pages (Lazy loaded)
-const OwnerDashboard = lazy(() => import('../../features/owner/dashboard/DashboardPage'));
-const PropertiesPage = lazy(() => import('../../features/owner/properties/PropertiesPage'));
-const AddPropertyPage = lazy(() => import('../../features/owner/properties/AddPropertyPage'));
-const EditPropertyPage = lazy(() => import('../../features/owner/properties/EditPropertyPage'));
-const BookingsPage = lazy(() => import('../../features/owner/bookings/BookingsPage'));
-const TenantsPage = lazy(() => import('../../features/owner/tenants/TenantsPage'));
-const SettingsPage = lazy(() => import('../../features/owner/settings/SettingsPage'));
-
-// Admin Pages (Lazy loaded)
-const AdminDashboard = lazy(() => import('../../features/admin/AdminDashboard'));
-const AdminDashboardEnhanced = lazy(() => import('../../features/admin/AdminDashboardEnhanced'));
-
-// Error Pages
-const NotFoundPage = lazy(() => import('../../features/error/NotFoundPage'));
+// Import route modules
+import * as TenantRoutes from './tenant-routes';
+import * as OwnerRoutes from './owner-routes';
+import * as AdminRoutes from './admin-routes';
+import * as AuthRoutes from './auth-routes';
 
 // Loading component
 const PageLoader = () => (
@@ -61,11 +26,13 @@ const LazyPage = ({ children }) => (
 );
 
 /**
- * Route Configuration v3.0
- * Separated Tenant and Owner portals with RBAC
+ * Route Configuration v4.0 - Enterprise Structure
+ * Clean separation: domains/ for business logic, modules/ for UI by role
  */
 export const routes = [
-  // Tenant Portal Routes
+  // ==========================================
+  // TENANT/GUEST PORTAL ROUTES
+  // ==========================================
   {
     path: '/',
     element: <TenantLayout />,
@@ -74,7 +41,7 @@ export const routes = [
         index: true,
         element: (
           <LazyPage>
-            <LandingPage />
+            <TenantRoutes.LandingPage />
           </LazyPage>
         ),
       },
@@ -82,7 +49,7 @@ export const routes = [
         path: 'find-rentals',
         element: (
           <LazyPage>
-            <FindRentalsPage />
+            <TenantRoutes.FindRentalsPage />
           </LazyPage>
         ),
       },
@@ -90,7 +57,7 @@ export const routes = [
         path: 'listing/:id',
         element: (
           <LazyPage>
-            <RentalDetailPage />
+            <TenantRoutes.RentalDetailPage />
           </LazyPage>
         ),
       },
@@ -98,7 +65,7 @@ export const routes = [
         path: 'schedule-visit',
         element: (
           <LazyPage>
-            <ScheduleVisitPage />
+            <TenantRoutes.ScheduleVisitPage />
           </LazyPage>
         ),
       },
@@ -106,7 +73,7 @@ export const routes = [
         path: 'schedule-visit/:propertyId',
         element: (
           <LazyPage>
-            <ScheduleVisitPage />
+            <TenantRoutes.ScheduleVisitPage />
           </LazyPage>
         ),
       },
@@ -114,7 +81,7 @@ export const routes = [
         path: 'my-visits',
         element: (
           <LazyPage>
-            <MyVisitsPage />
+            <TenantRoutes.MyVisitsPage />
           </LazyPage>
         ),
       },
@@ -122,7 +89,7 @@ export const routes = [
         path: 'favorites',
         element: (
           <LazyPage>
-            <FavoritesPage />
+            <TenantRoutes.FavoritesPage />
           </LazyPage>
         ),
       },
@@ -130,7 +97,7 @@ export const routes = [
         path: 'profile',
         element: (
           <LazyPage>
-            <ProfilePage />
+            <TenantRoutes.ProfilePage />
           </LazyPage>
         ),
       },
@@ -138,7 +105,7 @@ export const routes = [
         path: 'chat',
         element: (
           <LazyPage>
-            <ChatPage />
+            <TenantRoutes.ChatPage />
           </LazyPage>
         ),
       },
@@ -146,7 +113,7 @@ export const routes = [
         path: 'compare',
         element: (
           <LazyPage>
-            <ComparePropertiesPage />
+            <TenantRoutes.ComparePropertiesPage />
           </LazyPage>
         ),
       },
@@ -154,7 +121,7 @@ export const routes = [
         path: 'booking/:propertyId',
         element: (
           <LazyPage>
-            <BookingPage />
+            <TenantRoutes.BookingPage />
           </LazyPage>
         ),
       },
@@ -162,7 +129,7 @@ export const routes = [
         path: 'booking/:bookingId/payment',
         element: (
           <LazyPage>
-            <PaymentPage />
+            <TenantRoutes.PaymentPage />
           </LazyPage>
         ),
       },
@@ -170,7 +137,7 @@ export const routes = [
         path: 'booking/:bookingId/confirmation',
         element: (
           <LazyPage>
-            <BookingConfirmationPage />
+            <TenantRoutes.BookingConfirmationPage />
           </LazyPage>
         ),
       },
@@ -178,7 +145,7 @@ export const routes = [
         path: 'my-bookings',
         element: (
           <LazyPage>
-            <MyBookingsPage />
+            <TenantRoutes.MyBookingsPage />
           </LazyPage>
         ),
       },
@@ -186,7 +153,7 @@ export const routes = [
         path: 'booking/:bookingId/contract',
         element: (
           <LazyPage>
-            <ContractPage />
+            <TenantRoutes.ContractPage />
           </LazyPage>
         ),
       },
@@ -194,7 +161,7 @@ export const routes = [
         path: 'how-it-works',
         element: (
           <LazyPage>
-            <HowItWorksPage />
+            <TenantRoutes.HowItWorksPage />
           </LazyPage>
         ),
       },
@@ -202,7 +169,7 @@ export const routes = [
         path: 'about-us',
         element: (
           <LazyPage>
-            <AboutPage />
+            <TenantRoutes.AboutPage />
           </LazyPage>
         ),
       },
@@ -210,19 +177,21 @@ export const routes = [
         path: 'contact',
         element: (
           <LazyPage>
-            <ContactPage />
+            <TenantRoutes.ContactPage />
           </LazyPage>
         ),
       },
     ],
   },
-  
-  // Auth Routes (No layout)
+
+  // ==========================================
+  // AUTH ROUTES (No layout)
+  // ==========================================
   {
     path: '/login',
     element: (
       <LazyPage>
-        <LoginPage />
+        <AuthRoutes.LoginPage />
       </LazyPage>
     ),
   },
@@ -230,17 +199,17 @@ export const routes = [
     path: '/signup',
     element: (
       <LazyPage>
-        <SignUpPage />
+        <AuthRoutes.SignUpPage />
       </LazyPage>
     ),
   },
-  
-  // Owner Auth Routes (No layout)
+
+  // Owner Auth Routes
   {
     path: '/owner/login',
     element: (
       <LazyPage>
-        <LoginPage />
+        <AuthRoutes.LoginPage />
       </LazyPage>
     ),
   },
@@ -248,29 +217,31 @@ export const routes = [
     path: '/owner/signup',
     element: (
       <LazyPage>
-        <SignUpPage />
+        <AuthRoutes.SignUpPage />
       </LazyPage>
     ),
   },
-  
-  // Admin Auth Routes (No layout)
+
+  // Admin Auth Routes
   {
     path: '/admin/login',
     element: (
       <LazyPage>
-        <LoginPage />
+        <AuthRoutes.LoginPage />
       </LazyPage>
     ),
   },
-  
-  // Admin Portal Routes (Protected)
+
+  // ==========================================
+  // ADMIN PORTAL ROUTES (Protected)
+  // ==========================================
   {
     path: '/admin',
     element: (
       <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
         <Box minH="100vh">
           <LazyPage>
-            <AdminDashboardEnhanced />
+            <AdminRoutes.AdminDashboardEnhanced />
           </LazyPage>
         </Box>
       </ProtectedRoute>
@@ -282,14 +253,16 @@ export const routes = [
       <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
         <Box minH="100vh">
           <LazyPage>
-            <AdminDashboardEnhanced />
+            <AdminRoutes.AdminDashboardEnhanced />
           </LazyPage>
         </Box>
       </ProtectedRoute>
     ),
   },
-  
-  // Owner Portal Routes (Protected)
+
+  // ==========================================
+  // OWNER PORTAL ROUTES (Protected)
+  // ==========================================
   {
     path: '/owner',
     element: (
@@ -302,7 +275,7 @@ export const routes = [
         index: true,
         element: (
           <LazyPage>
-            <OwnerDashboard />
+            <OwnerRoutes.OwnerDashboard />
           </LazyPage>
         ),
       },
@@ -310,7 +283,7 @@ export const routes = [
         path: 'dashboard',
         element: (
           <LazyPage>
-            <OwnerDashboard />
+            <OwnerRoutes.OwnerDashboard />
           </LazyPage>
         ),
       },
@@ -318,7 +291,7 @@ export const routes = [
         path: 'properties',
         element: (
           <LazyPage>
-            <PropertiesPage />
+            <OwnerRoutes.PropertiesPage />
           </LazyPage>
         ),
       },
@@ -326,7 +299,7 @@ export const routes = [
         path: 'properties/add',
         element: (
           <LazyPage>
-            <AddPropertyPage />
+            <OwnerRoutes.AddPropertyPage />
           </LazyPage>
         ),
       },
@@ -334,7 +307,7 @@ export const routes = [
         path: 'properties/edit/:id',
         element: (
           <LazyPage>
-            <EditPropertyPage />
+            <OwnerRoutes.EditPropertyPage />
           </LazyPage>
         ),
       },
@@ -342,7 +315,7 @@ export const routes = [
         path: 'bookings',
         element: (
           <LazyPage>
-            <BookingsPage />
+            <OwnerRoutes.BookingsPage />
           </LazyPage>
         ),
       },
@@ -350,7 +323,7 @@ export const routes = [
         path: 'tenants',
         element: (
           <LazyPage>
-            <TenantsPage />
+            <OwnerRoutes.TenantsPage />
           </LazyPage>
         ),
       },
@@ -358,21 +331,22 @@ export const routes = [
         path: 'settings',
         element: (
           <LazyPage>
-            <SettingsPage />
+            <OwnerRoutes.SettingsPage />
           </LazyPage>
         ),
       },
     ],
   },
-  
-  // 404 Not Found
+
+  // ==========================================
+  // ERROR ROUTES
+  // ==========================================
   {
     path: '*',
     element: (
       <LazyPage>
-        <NotFoundPage />
+        <TenantRoutes.NotFoundPage />
       </LazyPage>
     ),
   },
 ];
-
