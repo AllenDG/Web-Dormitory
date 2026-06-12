@@ -56,7 +56,12 @@ const RecentlyViewed = ({ limit = 6, showHeader = true, showClearButton = false 
 
       <SimpleGrid columns={[1, 2, 3]} spacing={6}>
         {recentlyViewed.map((property) => (
-          <PropertyCard key={property.id} property={property} />
+          <PropertyCard 
+            key={property.id} 
+            property={property}
+            isFavorite={false}
+            onToggleFavorite={() => {}}
+          />
         ))}
       </SimpleGrid>
     </Box>

@@ -62,6 +62,14 @@ export const routes = [
         ),
       },
       {
+        path: 'listing/:id/review',
+        element: (
+          <LazyPage>
+            <TenantRoutes.ReviewPage />
+          </LazyPage>
+        ),
+      },
+      {
         path: 'schedule-visit',
         element: (
           <LazyPage>
@@ -88,9 +96,11 @@ export const routes = [
       {
         path: 'favorites',
         element: (
-          <LazyPage>
-            <TenantRoutes.FavoritesPage />
-          </LazyPage>
+          <ProtectedRoute allowedRoles={[ROLES.TENANT, ROLES.OWNER, ROLES.ADMIN]}>
+            <LazyPage>
+              <TenantRoutes.FavoritesPage />
+            </LazyPage>
+          </ProtectedRoute>
         ),
       },
       {
@@ -112,9 +122,11 @@ export const routes = [
       {
         path: 'compare',
         element: (
-          <LazyPage>
-            <TenantRoutes.ComparePropertiesPage />
-          </LazyPage>
+          <ProtectedRoute allowedRoles={[ROLES.TENANT, ROLES.OWNER, ROLES.ADMIN]}>
+            <LazyPage>
+              <TenantRoutes.ComparePropertiesPage />
+            </LazyPage>
+          </ProtectedRoute>
         ),
       },
       {

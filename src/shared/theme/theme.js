@@ -1,7 +1,7 @@
 import { extendTheme } from '@chakra-ui/react';
 
 /**
- * Dormy - Chakra UI Theme Configuration
+ * RentMe - Chakra UI Theme Configuration
  * Custom theme with brand colors and component overrides
  */
 

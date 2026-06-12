@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
+import { Autocomplete, LoadScript } from '@react-google-maps/api';
 import {
   Box,
   Input,
@@ -14,65 +15,53 @@ import {
 import { FiMapPin, FiNavigation } from 'react-icons/fi';
 import { colors, spacing, borderRadius, typography, shadows } from '../styles/tokens';
 
+const libraries = ['places'];
+
 /**
  * LocationAutocomplete Component
- * Provides location search with autocomplete suggestions
- * TODO: Integrate with Mapbox or OpenStreetMap API
+ * Provides location search with Google Places autocomplete for Philippines
+ * Replaced mock data with real Google Places API integration
  */
 const LocationAutocomplete = ({
-  placeholder = 'Search location...',
+  placeholder = 'Search location in Philippines...',
   onSelect,
   showCurrentLocation = true,
   ...props
 }) => {
-  const [query, setQuery] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
+  const [autocomplete, setAutocomplete] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef(null);
-  const listRef = useRef(null);
 
-  // Mock suggestions - Replace with actual API call
-  const mockSuggestions = [
-    { id: 1, name: 'Quezon City', type: 'City', coordinates: { lat: 14.6760, lng: 121.0437 } },
-    { id: 2, name: 'Manila', type: 'City', coordinates: { lat: 14.5995, lng: 120.9842 } },
-    { id: 3, name: 'Makati', type: 'City', coordinates: { lat: 14.5547, lng: 121.0244 } },
-    { id: 4, name: 'Taguig', type: 'City', coordinates: { lat: 14.5176, lng: 121.0509 } },
-    { id: 5, name: 'Pasig', type: 'City', coordinates: { lat: 14.5764, lng: 121.0851 } },
-    { id: 6, name: 'University of the Philippines Diliman', type: 'University', coordinates: { lat: 14.6537, lng: 121.0685 } },
-    { id: 7, name: 'Ateneo de Manila University', type: 'University', coordinates: { lat: 14.6392, lng: 121.0779 } },
-    { id: 8, name: 'De La Salle University', type: 'University', coordinates: { lat: 14.5648, lng: 120.9932 } },
-  ];
-
-  useEffect(() => {
-    if (query.length > 2) {
-      setIsLoading(true);
-      // Simulate API call
-      setTimeout(() => {
-        const filtered = mockSuggestions.filter((item) =>
-          item.name.toLowerCase().includes(query.toLowerCase())
-        );
-        setSuggestions(filtered);
-        setIsLoading(false);
-        setIsOpen(true);
-      }, 300);
-    } else {
-      setSuggestions([]);
-      setIsOpen(false);
-    }
-  }, [query]);
-
-  const handleInputChange = (e) => {
-    setQuery(e.target.value);
-    setSelectedIndex(-1);
+  const onLoad = (autocompleteInstance) => {
+    setAutocomplete(autocompleteInstance);
   };
 
-  const handleSelect = (suggestion) => {
-    setQuery(suggestion.name);
-    setIsOpen(false);
-    if (onSelect) {
-      onSelect(suggestion);
+  const onPlaceChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+
+      if (place.geometry) {
+        const location = {
+          id: place.place_id,
+          name: place.name || place.formatted_address,
+          address: place.formatted_address,
+          city: place.address_components?.find(
+            (c) => c.types.includes('locality') || c.types.includes('administrative_area_level_2')
+          )?.long_name || '',
+          type: place.types?.[0] || 'location',
+          coordinates: {
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng(),
+          },
+          latitude: place.geometry.location.lat(),
+          longitude: place.geometry.location.lng(),
+          placeId: place.place_id,
+        };
+
+        if (onSelect) {
+          onSelect(location);
+        }
+      }
     }
   };
 
@@ -82,16 +71,55 @@ const LocationAutocomplete = ({
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          // TODO: Reverse geocode to get location name
-          setQuery('Current Location');
-          setIsLoading(false);
-          if (onSelect) {
-            onSelect({
-              name: 'Current Location',
-              type: 'Current',
-              coordinates: { lat: latitude, lng: longitude },
-            });
-          }
+          
+          // Reverse geocode to get location name using Geocoding API
+          const geocoder = new window.google.maps.Geocoder();
+          geocoder.geocode(
+            { location: { lat: latitude, lng: longitude } },
+            (results, status) => {
+              setIsLoading(false);
+              
+              if (status === 'OK' && results[0]) {
+                const result = results[0];
+                const city = result.address_components?.find(
+                  (c) => c.types.includes('locality')
+                )?.long_name || '';
+
+                if (inputRef.current) {
+                  inputRef.current.value = result.formatted_address;
+                }
+
+                if (onSelect) {
+                  onSelect({
+                    id: result.place_id,
+                    name: 'Current Location',
+                    address: result.formatted_address,
+                    city: city,
+                    type: 'Current',
+                    coordinates: { lat: latitude, lng: longitude },
+                    latitude: latitude,
+                    longitude: longitude,
+                    placeId: result.place_id,
+                  });
+                }
+              } else {
+                // Fallback if geocoding fails
+                if (inputRef.current) {
+                  inputRef.current.value = 'Current Location';
+                }
+                
+                if (onSelect) {
+                  onSelect({
+                    name: 'Current Location',
+                    type: 'Current',
+                    coordinates: { lat: latitude, lng: longitude },
+                    latitude: latitude,
+                    longitude: longitude,
+                  });
+                }
+              }
+            }
+          );
         },
         (error) => {
           console.error('Error getting location:', error);
@@ -101,149 +129,92 @@ const LocationAutocomplete = ({
     }
   };
 
-  const handleKeyDown = (e) => {
-    if (!isOpen) return;
-
-    switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault();
-        setSelectedIndex((prev) =>
-          prev < suggestions.length - 1 ? prev + 1 : prev
-        );
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1));
-        break;
-      case 'Enter':
-        e.preventDefault();
-        if (selectedIndex >= 0 && suggestions[selectedIndex]) {
-          handleSelect(suggestions[selectedIndex]);
-        }
-        break;
-      case 'Escape':
-        setIsOpen(false);
-        break;
-      default:
-        break;
-    }
-  };
-
   return (
     <Box position="relative" width="100%" {...props}>
-      <InputGroup>
-        <InputLeftElement pointerEvents="none">
-          <Icon as={FiMapPin} color={colors.gray[400]} />
-        </InputLeftElement>
-        <Input
-          ref={inputRef}
-          value={query}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          onFocus={() => suggestions.length > 0 && setIsOpen(true)}
-          placeholder={placeholder}
-          bg="white"
-          borderColor={colors.gray[200]}
-          borderRadius={borderRadius.lg}
-          fontSize={typography.fontSize.base}
-          _focus={{
-            borderColor: colors.primary[500],
-            boxShadow: `0 0 0 1px ${colors.primary[500]}`,
-          }}
-          _placeholder={{
-            color: colors.gray[400],
-          }}
-        />
-      </InputGroup>
-
-      {/* Suggestions Dropdown */}
-      {isOpen && (
-        <Box
-          ref={listRef}
-          position="absolute"
-          top="calc(100% + 8px)"
-          left={0}
-          right={0}
-          bg="white"
-          borderRadius={borderRadius.lg}
-          boxShadow={shadows.lg}
-          border={`1px solid ${colors.gray[200]}`}
-          maxHeight="300px"
-          overflowY="auto"
-          zIndex={1000}
-        >
-          {showCurrentLocation && (
-            <ListItem
-              px={spacing[4]}
-              py={spacing[3]}
+      <LoadScript
+        googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+        libraries={libraries}
+      >
+        {showCurrentLocation && (
+          <Box mb={spacing[2]}>
+            <Flex
+              as="button"
+              type="button"
+              alignItems="center"
+              gap={spacing[2]}
+              px={spacing[3]}
+              py={spacing[2]}
+              bg="white"
+              border={`1px solid ${colors.gray[200]}`}
+              borderRadius={borderRadius.lg}
               cursor="pointer"
-              transition="background 0.2s"
-              _hover={{ bg: colors.gray[50] }}
+              transition="all 0.2s"
+              width="100%"
               onClick={handleCurrentLocation}
-              borderBottom={`1px solid ${colors.gray[100]}`}
+              disabled={isLoading}
+              _hover={{
+                bg: colors.gray[50],
+                borderColor: colors.primary[300],
+              }}
+              _active={{
+                bg: colors.gray[100],
+              }}
             >
-              <Flex alignItems="center" gap={spacing[3]}>
+              {isLoading ? (
+                <Spinner size="sm" color={colors.primary[500]} />
+              ) : (
                 <Icon as={FiNavigation} color={colors.primary[500]} />
-                <Box>
-                  <Text
-                    fontSize={typography.fontSize.sm}
-                    fontWeight={typography.fontWeight.medium}
-                    color={colors.primary[700]}
-                  >
-                    Use Current Location
-                  </Text>
-                </Box>
-              </Flex>
-            </ListItem>
-          )}
-
-          {isLoading ? (
-            <Flex justifyContent="center" py={spacing[6]}>
-              <Spinner size="sm" color={colors.primary[500]} />
-            </Flex>
-          ) : suggestions.length > 0 ? (
-            <List>
-              {suggestions.map((suggestion, index) => (
-                <ListItem
-                  key={suggestion.id}
-                  px={spacing[4]}
-                  py={spacing[3]}
-                  cursor="pointer"
-                  bg={selectedIndex === index ? colors.gray[50] : 'transparent'}
-                  transition="background 0.2s"
-                  _hover={{ bg: colors.gray[50] }}
-                  onClick={() => handleSelect(suggestion)}
-                >
-                  <Flex alignItems="center" gap={spacing[3]}>
-                    <Icon as={FiMapPin} color={colors.gray[400]} />
-                    <Box flex="1">
-                      <Text
-                        fontSize={typography.fontSize.sm}
-                        fontWeight={typography.fontWeight.medium}
-                        color={colors.gray[900]}
-                      >
-                        {suggestion.name}
-                      </Text>
-                      <Text
-                        fontSize={typography.fontSize.xs}
-                        color={colors.gray[500]}
-                      >
-                        {suggestion.type}
-                      </Text>
-                    </Box>
-                  </Flex>
-                </ListItem>
-              ))}
-            </List>
-          ) : (
-            <Box px={spacing[4]} py={spacing[6]} textAlign="center">
-              <Text fontSize={typography.fontSize.sm} color={colors.gray[500]}>
-                No locations found
+              )}
+              <Text
+                fontSize={typography.fontSize.sm}
+                fontWeight={typography.fontWeight.medium}
+                color={colors.primary[700]}
+              >
+                {isLoading ? 'Getting your location...' : 'Use Current Location'}
               </Text>
-            </Box>
-          )}
-        </Box>
-      )}
+            </Flex>
+          </Box>
+        )}
+
+        <Autocomplete
+          onLoad={onLoad}
+          onPlaceChanged={onPlaceChanged}
+          options={{
+            componentRestrictions: { country: 'ph' }, // Philippines only
+            types: ['geocode', 'establishment'],
+            fields: [
+              'place_id',
+              'geometry',
+              'name',
+              'formatted_address',
+              'address_components',
+              'types',
+            ],
+          }}
+        >
+          <InputGroup>
+            <InputLeftElement pointerEvents="none">
+              <Icon as={FiMapPin} color={colors.gray[400]} />
+            </InputLeftElement>
+            <Input
+              ref={inputRef}
+              type="text"
+              placeholder={placeholder}
+              bg="white"
+              borderColor={colors.gray[200]}
+              borderRadius={borderRadius.lg}
+              fontSize={typography.fontSize.base}
+              _focus={{
+                borderColor: colors.primary[500],
+                boxShadow: `0 0 0 1px ${colors.primary[500]}`,
+              }}
+              _placeholder={{
+                color: colors.gray[400],
+              }}
+            />
+          </InputGroup>
+        </Autocomplete>
+      </LoadScript>
     </Box>
   );
 };

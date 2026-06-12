@@ -14,22 +14,26 @@ import {
   Button,
   Grid,
   useBreakpointValue,
+  Heading,
 } from '@chakra-ui/react';
-import { FiMap, FiList, FiSliders } from 'react-icons/fi';
+import { FiMap, FiList, FiSliders, FiArrowRight, FiX } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import FilterSidebar from '../components/FilterSidebar';
-import { PropertyListCard, PropertyGridCard } from '../components';
+import { PropertyGridCard } from '../components';
 import { MapView } from '../../../shared/components';
 import { BudgetMatches, PopularNearby } from '../../../domains/recommendations';
 import useRentalStore from '../../../shared/stores/useRentalStore';
 import useRecommendationStore from '../../../shared/stores/useRecommendationStore';
 import { CompareFloatingButton } from '../components';
+import { useAuth } from '../../../app/providers/AuthProvider';
 
 /**
- * Find Rentals Page v6.0 - With Recommendations
+ * Find Rentals Page v7.0 - With Auth Gate
  * 
  * Features:
+ * - Auth gate: Blurs content for non-authenticated users
+ * - User-friendly prompts to sign in or register
  * - 2-column grid layout for better property viewing
  * - Split view with interactive map
  * - Advanced filtering and sorting
@@ -44,6 +48,7 @@ const FindRentalsPage = () => {
   const [searchParams] = useSearchParams();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { userPreferences } = useRecommendationStore();
+  const { user } = useAuth();
   
   const {
     filters,
@@ -55,7 +60,7 @@ const FindRentalsPage = () => {
   } = useRentalStore();
 
   const [sortBy, setSortBy] = useState('relevance');
-  const [viewMode, setViewMode] = useState('split'); // 'grid', 'split'
+  const [viewMode, setViewMode] = useState('grid'); // 'grid', 'split' - Changed default to 'grid'
   const [hoveredProperty, setHoveredProperty] = useState(null);
   const [selectedProperty, setSelectedProperty] = useState(null);
 
@@ -101,7 +106,115 @@ const FindRentalsPage = () => {
   });
 
   return (
-    <Flex minH="100vh" bg="gray.50">
+    <Flex minH="100vh" bg="gray.50" position="relative">
+      {/* Auth Gate Overlay - Only for Find Rentals */}
+      {!user && (
+        <Box
+          position="fixed"
+          top="0"
+          left="0"
+          right="0"
+          bottom="0"
+          bg="whiteAlpha.50"
+          backdropFilter="blur(8px)"
+          zIndex="overlay"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          p={4}
+        >
+          <Box
+            bg="white"
+            borderRadius="24px"
+            p={{ base: 6, md: 10 }}
+            maxW="500px"
+            w="full"
+            boxShadow="2xl"
+            textAlign="center"
+            position="relative"
+          >
+            {/* Close Button */}
+            <IconButton
+              icon={<Icon as={FiX} />}
+              position="absolute"
+              top={4}
+              right={4}
+              variant="ghost"
+              size="sm"
+              aria-label="Close"
+              onClick={() => navigate('/')}
+            />
+
+            <VStack spacing={5}>
+              <Box
+                bg="linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)"
+                p={5}
+                borderRadius="20px"
+              >
+                <Text fontSize="5xl">🏠</Text>
+              </Box>
+              
+              <VStack spacing={2}>
+                <Heading fontSize={{ base: 'xl', md: '2xl' }} fontWeight="700">
+                  Ready to Find Your Home?
+                </Heading>
+                <Text color="gray.600" fontSize={{ base: 'sm', md: 'md' }}>
+                  Sign in to browse thousands of verified properties, save favorites, and connect with owners
+                </Text>
+              </VStack>
+
+              <VStack spacing={3} w="full" pt={2}>
+                <Button
+                  size="lg"
+                  colorScheme="primary"
+                  w="full"
+                  h="56px"
+                  borderRadius="12px"
+                  fontWeight="700"
+                  rightIcon={<Icon as={FiArrowRight} />}
+                  onClick={() => {
+                    sessionStorage.setItem('rentme_redirect_after_login', '/find-rentals');
+                    navigate('/login');
+                  }}
+                >
+                  Sign In to Continue
+                </Button>
+                
+                <Button
+                  size="lg"
+                  variant="outline"
+                  w="full"
+                  h="56px"
+                  borderRadius="12px"
+                  fontWeight="600"
+                  borderWidth="2px"
+                  onClick={() => {
+                    sessionStorage.setItem('rentme_redirect_after_login', '/find-rentals');
+                    navigate('/signup');
+                  }}
+                >
+                  Create Free Account
+                </Button>
+
+                <Button
+                  size="md"
+                  variant="ghost"
+                  w="full"
+                  mt={2}
+                  onClick={() => navigate('/')}
+                >
+                  Go Back Home
+                </Button>
+              </VStack>
+
+              <Text fontSize="xs" color="gray.500" pt={2}>
+                Join thousands of happy renters finding their perfect home
+              </Text>
+            </VStack>
+          </Box>
+        </Box>
+      )}
+
       {/* Desktop Sidebar */}
       <Box display={{ base: 'none', lg: 'block' }}>
         <FilterSidebar

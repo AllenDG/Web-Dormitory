@@ -28,10 +28,9 @@ import {
   CommuteCalculator,
   PageContainer,
 } from '../../../shared/components';
-import { SendInquiryModal } from '../components';
 import { LoginPromptModal } from '../../auth';
 import { SimilarProperties } from '../../recommendations';
-import { ReviewsList, HouseRulesDisplay } from '../../reviews';
+import { ReviewsList, HouseRulesDisplay, CSATModal } from '../../reviews';
 import { TYPOGRAPHY, LAYOUT } from '../../../shared/styles/layoutConstants';
 import useRentalStore from '../../../shared/stores/useRentalStore';
 import useChatStore from '../../../shared/stores/useChatStore';
@@ -67,7 +66,18 @@ const RentalDetailPage = () => {
   const { addToViewingHistory } = useRecommendationStore();
   const { getPropertyRules, initializeDefaultRules } = useHouseRulesStore();
   const { isInCompare, toggleCompare, isLimitReached, maxCompare } = useCompareStore();
-  const rental = getRentalById(id);
+  
+  // Debug logging
+  console.log('RentalDetailPage - ID from URL:', id);
+  
+  // Get rental - ensure we handle both string and potential undefined
+  const rental = getRentalById(id?.toString());
+  
+  // More debug logging
+  console.log('RentalDetailPage - Rental found:', rental);
+  console.log('RentalDetailPage - Rental ID:', rental?.id);
+  console.log('RentalDetailPage - Has imageUrl:', !!rental?.imageUrl);
+  console.log('RentalDetailPage - Has amenities:', !!rental?.amenities);
   
   // Guest restrictions for different features
   const bookingRestriction = useGuestRestriction('book this property', `/booking/${id}`);
@@ -76,11 +86,11 @@ const RentalDetailPage = () => {
   const favoriteRestriction = useGuestRestriction('save favorites');
 
   const [selectedImage, setSelectedImage] = useState(0);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isCSATOpen, onOpen: onCSATOpen, onClose: onCSATClose } = useDisclosure();
 
   // Track property view
   useEffect(() => {
-    if (rental) {
+    if (rental && rental.id) {
       addToViewingHistory(rental);
       
       // Initialize house rules if not set
@@ -160,7 +170,7 @@ const RentalDetailPage = () => {
     }
   };
 
-  if (!rental) {
+  if (!rental || !rental.id) {
     return (
       <Box py={LAYOUT.sectionSpacing}>
         <PageContainer>
@@ -168,7 +178,7 @@ const RentalDetailPage = () => {
             <VStack spacing={4}>
               <Heading fontSize={TYPOGRAPHY.h2}>Property Not Found</Heading>
               <Text color="gray.600" fontSize={TYPOGRAPHY.body.regular}>
-                The property you're looking for doesn't exist.
+                The property you're looking for doesn't exist or ID is invalid (ID: {id}).
               </Text>
               <Button onClick={() => navigate('/find-rentals')} colorScheme="primary">
                 Browse Properties
@@ -214,15 +224,16 @@ const RentalDetailPage = () => {
               <Card padding={0} overflow="hidden">
                 <AspectRatio ratio={16 / 9}>
                   <Image
-                    src={rental.imageUrl[selectedImage]}
+                    src={rental.imageUrl && rental.imageUrl[selectedImage] ? rental.imageUrl[selectedImage] : rental.imageUrl[0]}
                     alt={rental.title}
                     objectFit="cover"
+                    fallbackSrc="https://via.placeholder.com/800x450?text=Property+Image"
                   />
                 </AspectRatio>
               </Card>
 
               {/* Thumbnail Images */}
-              {rental.imageUrl.length > 1 && (
+              {rental.imageUrl && rental.imageUrl.length > 1 && (
                 <SimpleGrid columns={4} spacing={3}>
                   {rental.imageUrl.map((img, index) => (
                     <Card
@@ -237,7 +248,12 @@ const RentalDetailPage = () => {
                       }
                     >
                       <AspectRatio ratio={4 / 3}>
-                        <Image src={img} alt={`View ${index + 1}`} objectFit="cover" />
+                        <Image 
+                          src={img} 
+                          alt={`View ${index + 1}`} 
+                          objectFit="cover"
+                          fallbackSrc="https://via.placeholder.com/200x150?text=View"
+                        />
                       </AspectRatio>
                     </Card>
                   ))}
@@ -258,14 +274,20 @@ const RentalDetailPage = () => {
               <Card padding={6}>
                 <VStack spacing={4} align="stretch">
                   <Heading fontSize={TYPOGRAPHY.h3}>Amenities</Heading>
-                  <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={3}>
-                    {rental.amenities.map((amenity) => (
-                      <HStack key={amenity}>
-                        <Icon as={FiCheck} color="green.500" />
-                        <Text fontSize={TYPOGRAPHY.body.small}>{amenity}</Text>
-                      </HStack>
-                    ))}
-                  </SimpleGrid>
+                  {rental.amenities && rental.amenities.length > 0 ? (
+                    <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={3}>
+                      {rental.amenities.map((amenity, index) => (
+                        <HStack key={`${amenity}-${index}`}>
+                          <Icon as={FiCheck} color="green.500" />
+                          <Text fontSize={TYPOGRAPHY.body.small}>{amenity}</Text>
+                        </HStack>
+                      ))}
+                    </SimpleGrid>
+                  ) : (
+                    <Text fontSize={TYPOGRAPHY.body.small} color="gray.500">
+                      No amenities listed
+                    </Text>
+                  )}
                 </VStack>
               </Card>
 
@@ -339,8 +361,9 @@ const RentalDetailPage = () => {
                     propertyId={rental.id}
                     isOwner={false}
                     onWriteReview={() => {
-                      // Navigate to review form or open modal
-                      navigate(`/listing/${rental.id}/review`);
+                      // Allow both authenticated and guest users to rate
+                      // Guest ratings will use anonymous user data
+                      onCSATOpen();
                     }}
                   />
                 </VStack>
@@ -470,7 +493,7 @@ const RentalDetailPage = () => {
                       Need help?
                     </Text>
                     <Text fontSize={TYPOGRAPHY.body.small} color="gray.600">
-                      Contact us at support@dormy.ph or call +63 912 345 6789
+                      Contact us at support@rentme.ph or call +63 912 345 6789
                     </Text>
                   </VStack>
                 </VStack>
@@ -490,6 +513,14 @@ const RentalDetailPage = () => {
       <LoginPromptModal {...visitRestriction} />
       <LoginPromptModal {...chatRestriction} />
       <LoginPromptModal {...favoriteRestriction} />
+
+      {/* CSAT Modal */}
+      <CSATModal
+        isOpen={isCSATOpen}
+        onClose={onCSATClose}
+        propertyId={rental.id}
+        propertyTitle={rental.title}
+      />
     </Box>
   );
 };

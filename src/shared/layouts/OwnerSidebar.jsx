@@ -62,7 +62,7 @@ const OwnerSidebar = ({ onClose }) => {
       {/* Logo/Brand */}
       <Box p={6} borderBottom="1px" borderColor="gray.200">
         <Heading size="lg" color="primary.600" fontWeight="bold">
-          Dormy
+          RentMe
         </Heading>
         <Text fontSize="sm" color="gray.600" mt={1}>
           Owner Portal
@@ -125,7 +125,7 @@ const OwnerSidebar = ({ onClose }) => {
       {/* Footer */}
       <Box p={4} borderTop="1px" borderColor="gray.200">
         <Text fontSize="xs" color="gray.500" textAlign="center">
-          Dormy v3.0 © 2026
+          RentMe v3.0 © 2026
         </Text>
       </Box>
     </Box>

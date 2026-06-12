@@ -22,6 +22,7 @@ import {
   FiBarChart2,
 } from 'react-icons/fi';
 import useCompareStore from '../../../shared/stores/useCompareStore';
+import useReviewStore from '../../../shared/stores/useReviewStore';
 
 /**
  * PropertyGridCard Component v2.1
@@ -40,6 +41,10 @@ const PropertyGridCard = ({
   const addToCompare = useCompareStore((state) => state.addToCompare);
   const removeFromCompare = useCompareStore((state) => state.removeFromCompare);
   const isLimitReached = useCompareStore((state) => state.isLimitReached)();
+
+  // Get property ratings
+  const getPropertyRatings = useReviewStore((state) => state.getPropertyRatings);
+  const ratings = getPropertyRatings(property.id);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-PH', {
@@ -208,14 +213,16 @@ const PropertyGridCard = ({
               {property.city}
             </Text>
           </HStack>
-          <Tooltip label="Average rating from tenants">
-            <HStack spacing={1}>
-              <Icon as={FiStar} boxSize={3} color="warning.500" />
-              <Text fontSize="sm" fontWeight="medium">
-                4.8
-              </Text>
-            </HStack>
-          </Tooltip>
+          {ratings && ratings.totalReviews > 0 && (
+            <Tooltip label={`${ratings.totalReviews} ${ratings.totalReviews === 1 ? 'review' : 'reviews'}`}>
+              <HStack spacing={1}>
+                <Icon as={FiStar} boxSize={3} color="yellow.400" />
+                <Text fontSize="sm" fontWeight="semibold">
+                  {ratings.overallRating}
+                </Text>
+              </HStack>
+            </Tooltip>
+          )}
         </HStack>
 
         {/* Title */}

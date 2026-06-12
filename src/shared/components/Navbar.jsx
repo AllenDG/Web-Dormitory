@@ -4,8 +4,6 @@ import {
   HStack,
   IconButton,
   Button,
-  useColorMode,
-  useColorModeValue,
   Drawer,
   DrawerBody,
   DrawerHeader,
@@ -23,7 +21,7 @@ import {
   Avatar,
   Icon,
 } from '@chakra-ui/react';
-import { FiMenu, FiSun, FiMoon, FiHeart, FiUser, FiSettings, FiLogOut, FiLogIn, FiCalendar, FiMessageSquare, FiBarChart2 } from 'react-icons/fi';
+import { FiMenu, FiHeart, FiUser, FiSettings, FiLogOut, FiLogIn, FiCalendar, FiMessageSquare, FiBarChart2 } from 'react-icons/fi';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Container } from './index';
 import useUIStore from '../stores/useUIStore';
@@ -41,21 +39,22 @@ const navLinks = [
 ];
 
 /**
- * Modern Navbar Component
+ * Modern Navbar Component - Light Mode Only
  */
 const Navbar = () => {
-  const { colorMode, toggleColorMode } = useColorMode();
   const location = useLocation();
   const navigate = useNavigate();
   const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useUIStore();
   const { favorites = [] } = useRentalStore();
   const { unreadCount } = useChatStore();
-  const compareCount = useCompareStore((state) => state.getCompareCount)();
+  const compareList = useCompareStore((state) => state.compareList);
+  const compareCount = compareList.length;
   const { user, isAuthenticated, logout } = useAuth();
 
-  const bg = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const activeLinkColor = useColorModeValue('primary.500', 'primary.300');
+  // Light mode colors only
+  const bg = 'white';
+  const borderColor = 'gray.200';
+  const activeLinkColor = 'primary.500';
 
   const isActive = (path) => location.pathname === path;
 
@@ -87,7 +86,7 @@ const Navbar = () => {
               cursor="pointer"
               onClick={() => navigate('/')}
             >
-              Dormy
+              RentMe
             </Text>
 
             {/* Desktop Navigation - Next to Logo */}
@@ -98,9 +97,6 @@ const Navbar = () => {
                     fontSize="sm"
                     fontWeight="medium"
                     color={isActive(link.path) ? activeLinkColor : 'gray.600'}
-                    _dark={{
-                      color: isActive(link.path) ? activeLinkColor : 'gray.300',
-                    }}
                     _hover={{ color: activeLinkColor }}
                     transition="color 0.2s"
                     position="relative"
@@ -202,14 +198,6 @@ const Navbar = () => {
               aria-label="Favorites"
               onClick={() => navigate('/favorites')}
               display={{ base: 'none', md: 'flex' }}
-            />
-
-            {/* Theme Toggle */}
-            <IconButton
-              icon={colorMode === 'light' ? <FiMoon /> : <FiSun />}
-              onClick={toggleColorMode}
-              variant="ghost"
-              aria-label="Toggle theme"
             />
 
             {/* User Menu (Desktop) */}
@@ -350,10 +338,7 @@ const Navbar = () => {
                     p={3}
                     borderRadius="md"
                     bg={isActive(link.path) ? 'primary.50' : 'transparent'}
-                    _dark={{
-                      bg: isActive(link.path) ? 'primary.900' : 'transparent',
-                    }}
-                    _hover={{ bg: 'gray.100', _dark: { bg: 'gray.700' } }}
+                    _hover={{ bg: 'gray.100' }}
                   >
                     <Text
                       fontWeight={isActive(link.path) ? 'bold' : 'medium'}
@@ -373,7 +358,7 @@ const Navbar = () => {
                   <Box
                     p={3}
                     borderRadius="md"
-                    _hover={{ bg: 'gray.100', _dark: { bg: 'gray.700' } }}
+                    _hover={{ bg: 'gray.100' }}
                     cursor="pointer"
                     onClick={() => {
                       navigate('/profile');
@@ -390,7 +375,7 @@ const Navbar = () => {
                   <Box
                     p={3}
                     borderRadius="md"
-                    _hover={{ bg: 'gray.100', _dark: { bg: 'gray.700' } }}
+                    _hover={{ bg: 'gray.100' }}
                     cursor="pointer"
                     onClick={() => {
                       navigate('/chat');
@@ -414,7 +399,7 @@ const Navbar = () => {
                   <Box
                     p={3}
                     borderRadius="md"
-                    _hover={{ bg: 'gray.100', _dark: { bg: 'gray.700' } }}
+                    _hover={{ bg: 'gray.100' }}
                     cursor="pointer"
                     onClick={() => {
                       navigate('/compare');
@@ -438,7 +423,7 @@ const Navbar = () => {
                   <Box
                     p={3}
                     borderRadius="md"
-                    _hover={{ bg: 'gray.100', _dark: { bg: 'gray.700' } }}
+                    _hover={{ bg: 'gray.100' }}
                     cursor="pointer"
                     onClick={() => {
                       navigate('/favorites');
@@ -462,7 +447,7 @@ const Navbar = () => {
                   <Box
                     p={3}
                     borderRadius="md"
-                    _hover={{ bg: 'gray.100', _dark: { bg: 'gray.700' } }}
+                    _hover={{ bg: 'gray.100' }}
                     cursor="pointer"
                     onClick={() => {
                       navigate('/my-bookings');
@@ -479,7 +464,7 @@ const Navbar = () => {
                   <Box
                     p={3}
                     borderRadius="md"
-                    _hover={{ bg: 'gray.100', _dark: { bg: 'gray.700' } }}
+                    _hover={{ bg: 'gray.100' }}
                     cursor="pointer"
                     onClick={() => {
                       navigate('/my-visits');
@@ -498,7 +483,7 @@ const Navbar = () => {
                   <Box
                     p={3}
                     borderRadius="md"
-                    _hover={{ bg: 'red.50', _dark: { bg: 'red.900' } }}
+                    _hover={{ bg: 'red.50' }}
                     cursor="pointer"
                     onClick={() => {
                       handleLogout();

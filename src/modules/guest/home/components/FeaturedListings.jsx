@@ -17,6 +17,7 @@ import { FiMapPin, FiStar, FiHeart, FiArrowRight } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useRef } from 'react';
 import useRentalStore from '../../../../shared/stores/useRentalStore';
+import useReviewStore from '../../../../shared/stores/useReviewStore';
 
 /**
  * Featured Listings v3.0
@@ -27,6 +28,10 @@ import useRentalStore from '../../../../shared/stores/useRentalStore';
 const PropertyCard = ({ property, onToggleFavorite, isFavorite }) => {
   const navigate = useNavigate();
   const cardBg = useColorModeValue('white', 'gray.800');
+  
+  // Get property ratings from review store
+  const getPropertyRatings = useReviewStore((state) => state.getPropertyRatings);
+  const ratings = getPropertyRatings(property.id);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-PH', {
@@ -121,15 +126,21 @@ const PropertyCard = ({ property, onToggleFavorite, isFavorite }) => {
         </HStack>
 
         {/* Rating */}
-        <HStack spacing={1}>
-          <Icon as={FiStar} color="warning.500" boxSize={4} />
-          <Text fontSize="sm" fontWeight="semibold">
-            4.8
-          </Text>
+        {ratings && ratings.totalReviews > 0 ? (
+          <HStack spacing={1}>
+            <Icon as={FiStar} color="yellow.400" boxSize={4} />
+            <Text fontSize="sm" fontWeight="semibold">
+              {ratings.overallRating}
+            </Text>
+            <Text fontSize="sm" color="gray.500">
+              ({ratings.totalReviews} {ratings.totalReviews === 1 ? 'review' : 'reviews'})
+            </Text>
+          </HStack>
+        ) : (
           <Text fontSize="sm" color="gray.500">
-            (24 reviews)
+            No reviews yet
           </Text>
-        </HStack>
+        )}
 
         {/* Description */}
         <Text

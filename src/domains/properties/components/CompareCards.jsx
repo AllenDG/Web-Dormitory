@@ -38,8 +38,11 @@ const CompareCards = () => {
   const toast = useToast();
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const properties = useCompareStore((state) => state.getCompareProperties());
+  const getCompareProperties = useCompareStore((state) => state.getCompareProperties);
   const removeFromCompare = useCompareStore((state) => state.removeFromCompare);
+  
+  // Call the function to get properties
+  const properties = getCompareProperties();
 
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');

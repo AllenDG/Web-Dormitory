@@ -372,7 +372,7 @@ const useVisitStore = create(
       },
     }),
     {
-      name: 'dormy-visit-storage',
+      name: 'rentme-visit-storage',
       partialize: (state) => ({
         visits: state.visits,
       }),

@@ -28,7 +28,7 @@ export const ROLES = {
 const MOCK_USERS = {
   tenant: {
     id: '1',
-    email: 'tenant@dormy.ph',
+    email: 'tenant@rentme.ph',
     name: 'Juan Dela Cruz',
     role: ROLES.TENANT,
     avatar: null,
@@ -40,7 +40,7 @@ const MOCK_USERS = {
   },
   owner: {
     id: '2',
-    email: 'owner@dormy.ph',
+    email: 'owner@rentme.ph',
     name: 'Maria Santos',
     role: ROLES.OWNER,
     avatar: null,
@@ -48,7 +48,7 @@ const MOCK_USERS = {
   },
   admin: {
     id: '3',
-    email: 'admin@dormy.ph',
+    email: 'admin@rentme.ph',
     name: 'Admin User',
     role: ROLES.ADMIN,
     avatar: null,
@@ -65,8 +65,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initAuth = () => {
       try {
-        const storedUser = localStorage.getItem('dormy_user');
-        const storedToken = localStorage.getItem('dormy_token');
+        const storedUser = localStorage.getItem('rentme_user');
+        const storedToken = localStorage.getItem('rentme_token');
         
         if (storedUser && storedToken) {
           const parsedUser = JSON.parse(storedUser);
@@ -75,8 +75,8 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
-        localStorage.removeItem('dormy_user');
-        localStorage.removeItem('dormy_token');
+        localStorage.removeItem('rentme_user');
+        localStorage.removeItem('rentme_token');
       } finally {
         setLoading(false);
       }
@@ -106,8 +106,8 @@ export const AuthProvider = ({ children }) => {
       const mockToken = `mock_token_${Date.now()}`;
       
       // Store in localStorage
-      localStorage.setItem('dormy_user', JSON.stringify(mockUser));
-      localStorage.setItem('dormy_token', mockToken);
+      localStorage.setItem('rentme_user', JSON.stringify(mockUser));
+      localStorage.setItem('rentme_token', mockToken);
       
       setUser(mockUser);
       setIsAuthenticated(true);
@@ -137,8 +137,8 @@ export const AuthProvider = ({ children }) => {
       
       const mockToken = `mock_token_${Date.now()}`;
       
-      localStorage.setItem('dormy_user', JSON.stringify(newUser));
-      localStorage.setItem('dormy_token', mockToken);
+      localStorage.setItem('rentme_user', JSON.stringify(newUser));
+      localStorage.setItem('rentme_token', mockToken);
       
       setUser(newUser);
       setIsAuthenticated(true);
@@ -154,8 +154,8 @@ export const AuthProvider = ({ children }) => {
 
   // Logout function
   const logout = () => {
-    localStorage.removeItem('dormy_user');
-    localStorage.removeItem('dormy_token');
+    localStorage.removeItem('rentme_user');
+    localStorage.removeItem('rentme_token');
     setUser(null);
     setIsAuthenticated(false);
   };
@@ -164,7 +164,7 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = async (updates) => {
     try {
       const updatedUser = { ...user, ...updates };
-      localStorage.setItem('dormy_user', JSON.stringify(updatedUser));
+      localStorage.setItem('rentme_user', JSON.stringify(updatedUser));
       setUser(updatedUser);
       return { success: true, user: updatedUser };
     } catch (error) {

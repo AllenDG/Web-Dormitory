@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import {
   Box,
   Container,
@@ -7,7 +7,6 @@ import {
   HStack,
   Icon,
   useBreakpointValue,
-  useColorModeValue,
   useToast,
   Modal,
   ModalOverlay,
@@ -33,18 +32,22 @@ const ComparePropertiesPage = () => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const hasProperties = useCompareStore((state) => state.hasProperties());
-  const compareCount = useCompareStore((state) => state.getCompareCount());
+  // Get compare list to derive properties
+  const compareList = useCompareStore((state) => state.compareList);
   const clearCompare = useCompareStore((state) => state.clearCompare);
   const cleanupDeletedProperties = useCompareStore((state) => state.cleanupDeletedProperties);
 
-  const headerBg = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const headerBg = 'white';
+  const borderColor = 'gray.200';
+
+  // Derive values from compareList
+  const hasProperties = compareList.length > 0;
+  const compareCount = compareList.length;
 
   // Determine layout based on screen size
   const isMobile = useBreakpointValue({ base: true, md: false });
 
-  // Cleanup deleted properties on mount
+  // Cleanup deleted properties on mount only
   useEffect(() => {
     const removedCount = cleanupDeletedProperties();
     if (removedCount > 0) {
@@ -56,7 +59,8 @@ const ComparePropertiesPage = () => {
         isClosable: true,
       });
     }
-  }, [cleanupDeletedProperties, toast]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run only on mount
 
   const handleClearAll = () => {
     clearCompare();
@@ -88,7 +92,7 @@ const ComparePropertiesPage = () => {
                 Compare Properties
               </Heading>
               {hasProperties && (
-                <Box fontSize="sm" color="gray.600" _dark={{ color: 'gray.400' }}>
+                <Box fontSize="sm" color="gray.600">
                   Comparing {compareCount} {compareCount === 1 ? 'property' : 'properties'}
                 </Box>
               )}

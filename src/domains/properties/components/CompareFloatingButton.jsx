@@ -19,8 +19,11 @@ import useCompareStore from '../../../shared/stores/useCompareStore';
  */
 const CompareFloatingButton = () => {
   const navigate = useNavigate();
-  const compareCount = useCompareStore((state) => state.getCompareCount)();
-  const hasProperties = useCompareStore((state) => state.hasProperties)();
+  const compareList = useCompareStore((state) => state.compareList);
+  
+  // Derive values from compareList
+  const compareCount = compareList.length;
+  const hasProperties = compareList.length > 0;
 
   const bgColor = useColorModeValue('primary.600', 'primary.500');
   const hoverBg = useColorModeValue('primary.700', 'primary.600');

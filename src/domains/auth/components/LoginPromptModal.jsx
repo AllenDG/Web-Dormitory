@@ -11,22 +11,23 @@ import {
   Icon,
   Box,
   Divider,
+  Heading,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { FiLock, FiHeart, FiMessageSquare, FiCalendar, FiCreditCard } from 'react-icons/fi';
+import { FiHeart, FiMessageSquare, FiCalendar, FiCreditCard, FiArrowRight } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
 import { Button } from '../../../shared/components';
 
 /**
- * Login Prompt Modal
+ * Login Prompt Modal v2.0
  * 
- * Shown to guests when they try to access restricted features
+ * User-friendly authentication prompt with clear benefits and actions
  * 
  * Features:
- * - Clear explanation of why login is needed
- * - Google OAuth button
- * - List of features requiring authentication
- * - Option to continue as guest
+ * - Removed lock icon for friendlier appearance
+ * - Clear action-oriented text
+ * - Emphasis on benefits
+ * - Simplified UI
  * 
  * @component
  */
@@ -36,7 +37,7 @@ const LoginPromptModal = ({ isOpen, onClose, feature = 'this feature', redirectT
   const handleGoogleLogin = () => {
     // Store redirect path for after login
     if (redirectTo) {
-      sessionStorage.setItem('dormy_redirect_after_login', redirectTo);
+      sessionStorage.setItem('rentme_redirect_after_login', redirectTo);
     }
     
     // Navigate to login page
@@ -47,7 +48,7 @@ const LoginPromptModal = ({ isOpen, onClose, feature = 'this feature', redirectT
   const handleSignup = () => {
     // Store redirect path for after signup
     if (redirectTo) {
-      sessionStorage.setItem('dormy_redirect_after_login', redirectTo);
+      sessionStorage.setItem('rentme_redirect_after_login', redirectTo);
     }
     
     // Navigate to signup page
@@ -58,64 +59,69 @@ const LoginPromptModal = ({ isOpen, onClose, feature = 'this feature', redirectT
   const features = [
     {
       icon: FiHeart,
-      title: 'Save Favorites',
-      description: 'Keep track of properties you love',
+      title: 'Save your favorites',
+      description: 'Never lose track of properties you love',
     },
     {
       icon: FiMessageSquare,
-      title: 'Chat with Owners',
-      description: 'Ask questions and get instant responses',
+      title: 'Message property owners',
+      description: 'Get answers to your questions instantly',
     },
     {
       icon: FiCalendar,
-      title: 'Schedule Visits',
-      description: 'Book property viewings at your convenience',
+      title: 'Schedule property visits',
+      description: 'Book viewings at your convenience',
     },
     {
       icon: FiCreditCard,
-      title: 'Book Properties',
-      description: 'Secure your rental with easy booking',
+      title: 'Book and pay securely',
+      description: 'Reserve your perfect home with ease',
     },
   ];
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="md" isCentered>
-      <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(4px)" />
-      <ModalContent borderRadius="8px" mx={4}>
-        <ModalHeader>
-          <HStack spacing={3}>
-            <Box bg="primary.100" p={2} borderRadius="8px">
-              <Icon as={FiLock} boxSize={5} color="primary.600" />
+      <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(8px)" />
+      <ModalContent borderRadius="16px" mx={4}>
+        <ModalHeader pt={8} pb={4}>
+          <VStack align="center" spacing={3}>
+            <Box
+              bg="linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)"
+              p={4}
+              borderRadius="16px"
+            >
+              <Text fontSize="3xl">👋</Text>
             </Box>
-            <VStack align="start" spacing={0}>
-              <Text fontSize="lg" fontWeight="semibold">
-                Sign In Required
-              </Text>
-              <Text fontSize="sm" fontWeight="normal" color="gray.600">
-                To use {feature}
+            <VStack spacing={1}>
+              <Heading fontSize="2xl" fontWeight="700" textAlign="center">
+                Welcome to RentMe!
+              </Heading>
+              <Text fontSize="md" fontWeight="normal" color="gray.600" textAlign="center">
+                Sign in to {feature}
               </Text>
             </VStack>
-          </HStack>
+          </VStack>
         </ModalHeader>
-        <ModalCloseButton borderRadius="8px" />
+        <ModalCloseButton borderRadius="8px" top={4} right={4} />
 
-        <ModalBody pb={6}>
-          <VStack spacing={5} align="stretch">
+        <ModalBody pb={8} px={8}>
+          <VStack spacing={6} align="stretch">
             {/* Google Sign In Button */}
             <Button
               size="lg"
               leftIcon={<Icon as={FcGoogle} boxSize={5} />}
               onClick={handleGoogleLogin}
-              borderRadius="8px"
+              borderRadius="12px"
               bg="white"
               border="2px"
               borderColor="gray.300"
               color="gray.700"
-              fontWeight="semibold"
+              fontWeight="600"
+              h="56px"
               _hover={{ 
                 bg: 'gray.50', 
                 transform: 'translateY(-2px)', 
-                boxShadow: 'md' 
+                boxShadow: 'lg' 
               }}
               transition="all 0.2s"
             >
@@ -135,32 +141,34 @@ const LoginPromptModal = ({ isOpen, onClose, feature = 'this feature', redirectT
               size="lg"
               variant="outline"
               onClick={handleGoogleLogin}
-              borderRadius="8px"
-              fontWeight="semibold"
+              borderRadius="12px"
+              fontWeight="600"
+              h="56px"
+              borderWidth="2px"
+              rightIcon={<Icon as={FiArrowRight} />}
             >
-              Sign In with Email
+              Sign in with Email
             </Button>
 
-            <Divider />
-
-            {/* Features List */}
-            <Box>
-              <Text fontSize="sm" fontWeight="semibold" color="gray.700" mb={3}>
-                What you can do with an account:
+            {/* Benefits Section */}
+            <Box bg="gray.50" p={5} borderRadius="12px" mt={2}>
+              <Text fontSize="sm" fontWeight="600" color="gray.900" mb={3}>
+                ✨ What you'll unlock:
               </Text>
               <VStack spacing={3} align="stretch">
                 {features.map((item, index) => (
-                  <HStack key={index} spacing={3}>
+                  <HStack key={index} spacing={3} align="start">
                     <Box
-                      bg="primary.50"
+                      bg="white"
                       p={2}
                       borderRadius="8px"
                       flexShrink={0}
+                      boxShadow="sm"
                     >
-                      <Icon as={item.icon} boxSize={4} color="primary.600" />
+                      <Icon as={item.icon} boxSize={4} color="primary.500" />
                     </Box>
                     <VStack align="start" spacing={0}>
-                      <Text fontSize="sm" fontWeight="medium" color="gray.900">
+                      <Text fontSize="sm" fontWeight="600" color="gray.900">
                         {item.title}
                       </Text>
                       <Text fontSize="xs" color="gray.600">
@@ -172,35 +180,33 @@ const LoginPromptModal = ({ isOpen, onClose, feature = 'this feature', redirectT
               </VStack>
             </Box>
 
-            <Divider />
-
             {/* Sign Up Link */}
-            <Box textAlign="center">
+            <Box textAlign="center" pt={2}>
               <Text fontSize="sm" color="gray.600">
-                Don't have an account?{' '}
+                New here?{' '}
                 <Text
                   as="span"
                   color="primary.600"
-                  fontWeight="600"
+                  fontWeight="700"
                   cursor="pointer"
                   _hover={{ textDecoration: 'underline' }}
                   onClick={handleSignup}
                 >
-                  Sign up free
+                  Create a free account
                 </Text>
               </Text>
             </Box>
 
             {/* Continue as Guest */}
-            <Box textAlign="center" pt={2}>
+            <Box textAlign="center">
               <Text
                 fontSize="xs"
                 color="gray.500"
                 cursor="pointer"
-                _hover={{ color: 'gray.700', textDecoration: 'underline' }}
+                _hover={{ color: 'gray.700' }}
                 onClick={onClose}
               >
-                Continue browsing as guest
+                I'll do this later
               </Text>
             </Box>
           </VStack>
