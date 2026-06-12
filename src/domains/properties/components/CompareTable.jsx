@@ -39,8 +39,11 @@ const CompareTable = () => {
   const navigate = useNavigate();
   const toast = useToast();
   
-  const properties = useCompareStore((state) => state.getCompareProperties());
+  const getCompareProperties = useCompareStore((state) => state.getCompareProperties);
   const removeFromCompare = useCompareStore((state) => state.removeFromCompare);
+  
+  // Call the function to get properties
+  const properties = getCompareProperties();
 
   const headerBg = useColorModeValue('gray.50', 'gray.700');
   const rowBg = useColorModeValue('white', 'gray.800');

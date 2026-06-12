@@ -1,5 +1,5 @@
 /**
- * Dormy Design System v3.0 - Design Tokens
+ * RentMe Design System v3.0 - Design Tokens
  * WCAG AA/AAA Compliant Color System
  * Enterprise-grade, accessible, modern
  */

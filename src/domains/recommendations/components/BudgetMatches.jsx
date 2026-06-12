@@ -6,8 +6,9 @@ import useRecommendationStore from '../../../shared/stores/useRecommendationStor
 import useRentalStore from '../../../shared/stores/useRentalStore';
 
 /**
- * Budget Matches Component
+ * Budget Matches Component v3.0
  * Displays properties that match user's budget
+ * Note: Auth protection handled at route level, not component level
  * 
  * @component
  * @param {Object} props
@@ -47,7 +48,12 @@ const BudgetMatches = ({ limit = 6, showHeader = true }) => {
 
       <SimpleGrid columns={[1, 2, 3]} spacing={6}>
         {budgetProperties.map((property) => (
-          <PropertyCard key={property.id} property={property} />
+          <PropertyCard 
+            key={property.id} 
+            property={property}
+            isFavorite={false}
+            onToggleFavorite={() => {}}
+          />
         ))}
       </SimpleGrid>
     </Box>

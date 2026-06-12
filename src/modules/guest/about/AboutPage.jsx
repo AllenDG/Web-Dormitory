@@ -76,7 +76,7 @@ const AboutPage = () => {
               fontWeight="semibold"
               color="gray.900"
             >
-              About Dormy
+              About RentMe
             </Heading>
             <Text
               fontSize="md"
@@ -280,7 +280,7 @@ const AboutPage = () => {
           <Box w="full" bg="white" p={8} borderRadius="8px" border="1px" borderColor="gray.200">
             <VStack spacing={6} align="start">
               <Heading fontSize="2xl" fontWeight="semibold" color="gray.900">
-                Why Choose Dormy?
+                Why Choose RentMe?
               </Heading>
               <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} w="full">
                 <HStack align="start" spacing={4} p={4} borderRadius="8px" transition="all 0.2s" _hover={{ bg: 'gray.50' }}>

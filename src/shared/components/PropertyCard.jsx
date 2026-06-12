@@ -10,10 +10,11 @@ import {
   useColorModeValue,
   useToast,
 } from '@chakra-ui/react';
-import { FiHeart, FiMapPin, FiUsers, FiWifi, FiPlus, FiCheck } from 'react-icons/fi';
+import { FiHeart, FiMapPin, FiUsers, FiWifi, FiPlus, FiCheck, FiStar } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { Card } from './index';
 import useCompareStore from '../stores/useCompareStore';
+import useReviewStore from '../stores/useReviewStore';
 
 /**
  * Modern Property Card Component
@@ -34,6 +35,10 @@ const PropertyCard = ({
   const toggleCompare = useCompareStore((state) => state.toggleCompare);
   const isLimitReached = useCompareStore((state) => state.isLimitReached());
   const maxCompare = useCompareStore((state) => state.maxCompare);
+
+  // Review store - Get property ratings
+  const getPropertyRatings = useReviewStore((state) => state.getPropertyRatings);
+  const ratings = getPropertyRatings(property.id);
 
   const handleToggleCompare = (e) => {
     e.stopPropagation();
@@ -198,6 +203,19 @@ const PropertyCard = ({
             {property.city}
           </Text>
         </HStack>
+
+        {/* Ratings */}
+        {ratings && ratings.totalReviews > 0 && (
+          <HStack spacing={1}>
+            <Icon as={FiStar} color="yellow.400" boxSize={4} />
+            <Text fontSize="sm" fontWeight="600" color="gray.700" _dark={{ color: 'gray.300' }}>
+              {ratings.overallRating}
+            </Text>
+            <Text fontSize="sm" color="gray.500" _dark={{ color: 'gray.500' }}>
+              ({ratings.totalReviews} {ratings.totalReviews === 1 ? 'review' : 'reviews'})
+            </Text>
+          </HStack>
+        )}
 
         {/* Distance (if available) */}
         {showDistance && property.distance && (

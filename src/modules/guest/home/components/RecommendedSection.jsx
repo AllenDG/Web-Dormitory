@@ -113,7 +113,7 @@ const RecommendedSection = () => {
         {/* Section Header */}
         <VStack spacing={1} align="start">
           <HStack>
-            <Icon as={FiZap} color="purple.500" boxSize={5} />
+            <Icon as={FiZap} color="primary.500" boxSize={5} />
             <Heading fontSize={{ base: '2xl', md: '3xl' }} fontWeight="semibold">
               Recommended For You
             </Heading>
@@ -152,7 +152,7 @@ const RecommendedSection = () => {
                     position="absolute"
                     top={3}
                     left={3}
-                    colorScheme="purple"
+                    colorScheme="primary"
                     fontSize="xs"
                     px={2}
                     py={1}
@@ -218,7 +218,7 @@ const RecommendedSection = () => {
                     {/* AI Reasons */}
                     {reasons && reasons.length > 0 && (
                       <VStack align="start" spacing={1} w="full">
-                        <Text fontSize="xs" fontWeight="semibold" color="purple.600">
+                        <Text fontSize="xs" fontWeight="semibold" color="primary.600">
                           Why we recommend this:
                         </Text>
                         {reasons.slice(0, 2).map((reason, idx) => (

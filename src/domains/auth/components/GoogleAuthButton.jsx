@@ -78,8 +78,8 @@ const GoogleAuthButton = ({
         });
 
         // Handle redirect
-        const redirect = redirectTo || sessionStorage.getItem('dormy_redirect_after_login');
-        sessionStorage.removeItem('dormy_redirect_after_login');
+        const redirect = redirectTo || sessionStorage.getItem('rentme_redirect_after_login');
+        sessionStorage.removeItem('rentme_redirect_after_login');
 
         if (onSuccess) {
           onSuccess(result.user);

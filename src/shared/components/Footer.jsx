@@ -66,16 +66,16 @@ const Footer = () => {
               bgGradient="linear(to-r, primary.500, purple.500)"
               bgClip="text"
             >
-              Dormy
+              RentMe
             </Text>
             <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.400' }}>
-              Making student accommodation search simple, safe, and stress-free.
+              Making rental search simple, safe, and stress-free.
               Find your perfect home away from home.
             </Text>
             <Stack spacing={2}>
               <HStack>
                 <Icon as={FiMail} color="primary.500" />
-                <Text fontSize="sm">support@dormy.ph</Text>
+                <Text fontSize="sm">support@rentme.ph</Text>
               </HStack>
               <HStack>
                 <Icon as={FiPhone} color="primary.500" />
@@ -126,7 +126,7 @@ const Footer = () => {
           spacing={4}
         >
           <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.400' }}>
-            © {new Date().getFullYear()} Dormy. All rights reserved.
+            © {new Date().getFullYear()} RentMe. All rights reserved.
           </Text>
 
           {/* Social Links */}

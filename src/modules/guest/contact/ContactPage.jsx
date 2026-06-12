@@ -36,8 +36,8 @@ const contactInfo = [
   {
     icon: FiMail,
     title: 'Email',
-    value: 'support@dormy.ph',
-    link: 'mailto:support@dormy.ph',
+    value: 'support@rentme.ph',
+    link: 'mailto:support@rentme.ph',
   },
   {
     icon: FiPhone,
@@ -68,7 +68,7 @@ const faqs = [
   },
   {
     question: 'Is there a booking fee?',
-    answer: 'Dormy is free to use for tenants. Property owners pay a small commission only when they successfully rent out their property.',
+    answer: 'RentMe is free to use for tenants. Property owners pay a small commission only when they successfully rent out their property.',
   },
 ];
 

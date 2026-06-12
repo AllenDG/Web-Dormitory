@@ -79,7 +79,12 @@ const RecommendedForYou = ({ limit = 6, showHeader = true }) => {
 
       <SimpleGrid columns={[1, 2, 3]} spacing={6}>
         {displayedRecommendations.map((property) => (
-          <PropertyCard key={property.id} property={property} />
+          <PropertyCard 
+            key={property.id} 
+            property={property}
+            isFavorite={false}
+            onToggleFavorite={() => {}}
+          />
         ))}
       </SimpleGrid>
     </Box>

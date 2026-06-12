@@ -31,3 +31,6 @@ export const PaymentPage = lazy(() => import('../../domains/bookings/pages/Payme
 export const BookingConfirmationPage = lazy(() => import('../../domains/bookings/pages/BookingConfirmationPage'));
 export const MyBookingsPage = lazy(() => import('../../domains/bookings/pages/MyBookingsPage'));
 export const ContractPage = lazy(() => import('../../domains/bookings/pages/ContractPage'));
+
+// Reviews (Domain-driven)
+export const ReviewPage = lazy(() => import('../../domains/reviews/pages/ReviewPage'));

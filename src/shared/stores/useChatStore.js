@@ -326,7 +326,7 @@ const useChatStore = create(
       },
     }),
     {
-      name: 'dormy-chat-storage',
+      name: 'rentme-chat-storage',
       partialize: (state) => ({
         conversations: state.conversations,
         messages: state.messages,

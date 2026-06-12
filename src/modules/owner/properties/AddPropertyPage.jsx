@@ -16,12 +16,25 @@ import {
   CheckboxGroup,
   useToast,
   Badge,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  Spinner,
+  Alert,
+  AlertIcon,
 } from '@chakra-ui/react';
-import { FiSave, FiX, FiZap } from 'react-icons/fi';
+import { FiSave, FiX, FiZap, FiMapPin, FiCheck } from 'react-icons/fi';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { listingWriterService } from '../../../services/ai';
+import geocodingService from '../../../services/geocoding/geocodingService';
+import LocationPicker from '../../../shared/components/LocationPicker';
+import LocationAutocomplete from '../../../shared/components/LocationAutocomplete';
 
 /**
  * Add Property Page
@@ -35,6 +48,10 @@ const AddPropertyPage = () => {
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedAmenities, setSelectedAmenities] = useState([]);
+  const [location, setLocation] = useState(null); // Stores geocoded coordinates
+  const [isGeocoding, setIsGeocoding] = useState(false);
+  const [geocodingError, setGeocodingError] = useState(null);
+  const { isOpen: isLocationPickerOpen, onOpen: openLocationPicker, onClose: closeLocationPicker } = useDisclosure();
 
   const amenitiesList = [
     'Wifi / Internet',
@@ -122,13 +139,147 @@ const AddPropertyPage = () => {
     }
   };
 
+  // Handle geocoding when address changes
+  const handleAddressBlur = async () => {
+    const city = watchedFields.city;
+    const address = watchedFields.address;
+
+    if (!city || !address) {
+      return;
+    }
+
+    const fullAddress = `${address}, ${city}, Philippines`;
+    await geocodeAddress(fullAddress);
+  };
+
+  // Geocode address to get coordinates
+  const geocodeAddress = async (address) => {
+    if (!geocodingService.isAvailable()) {
+      toast({
+        title: 'Google Maps Not Configured',
+        description: 'Please add your Google Maps API key to use geocoding.',
+        status: 'warning',
+        duration: 5000,
+      });
+      return;
+    }
+
+    setIsGeocoding(true);
+    setGeocodingError(null);
+
+    try {
+      const result = await geocodingService.validatePhilippinesAddress(address);
+
+      if (result.isValid) {
+        setLocation(result.location);
+        toast({
+          title: 'Location Found! ✓',
+          description: 'Address has been geocoded successfully.',
+          status: 'success',
+          duration: 3000,
+        });
+      } else {
+        setGeocodingError(result.message);
+        toast({
+          title: 'Invalid Address',
+          description: result.message,
+          status: 'error',
+          duration: 5000,
+        });
+      }
+    } catch (error) {
+      setGeocodingError(error.message);
+      toast({
+        title: 'Geocoding Failed',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+      });
+    } finally {
+      setIsGeocoding(false);
+    }
+  };
+
+  // Handle location selection from autocomplete
+  const handleLocationSelect = (selectedLocation) => {
+    if (selectedLocation.city) {
+      setValue('city', selectedLocation.city);
+    }
+    if (selectedLocation.address) {
+      setValue('address', selectedLocation.address);
+    }
+    if (selectedLocation.latitude && selectedLocation.longitude) {
+      setLocation({
+        address: selectedLocation.address,
+        latitude: selectedLocation.latitude,
+        longitude: selectedLocation.longitude,
+        placeId: selectedLocation.placeId,
+        addressComponents: {
+          city: selectedLocation.city,
+        },
+      });
+      setGeocodingError(null);
+    }
+  };
+
+  // Handle location selection from location picker
+  const handleLocationPickerConfirm = (selectedLocation) => {
+    setLocation({
+      address: selectedLocation.address,
+      latitude: selectedLocation.latitude,
+      longitude: selectedLocation.longitude,
+    });
+    
+    // Update form fields if available
+    if (selectedLocation.address) {
+      setValue('address', selectedLocation.address);
+    }
+    
+    setGeocodingError(null);
+    closeLocationPicker();
+    
+    toast({
+      title: 'Location Updated! ✓',
+      description: 'Exact location has been set.',
+      status: 'success',
+      duration: 3000,
+    });
+  };
+
   const onSubmit = async (data) => {
+    // Validate location is set
+    if (!location) {
+      toast({
+        title: 'Location Required',
+        description: 'Please geocode the address or pick a location on the map.',
+        status: 'error',
+        duration: 5000,
+      });
+      return;
+    }
+
+    // Prepare property data with geocoded location
+    const propertyData = {
+      ...data,
+      amenities: selectedAmenities,
+      location: {
+        address: location.address,
+        city: data.city,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        placeId: location.placeId,
+      },
+    };
+
+    // TODO: Replace with actual API call to backend
+    console.log('Property data with geocoded location:', propertyData);
+
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     toast({
-      title: 'Property Added!',
-      description: 'Your property has been successfully listed.',
+      title: 'Property Data Ready!',
+      description: 'Property has been prepared with accurate GPS coordinates. Check console for details.',
       status: 'success',
       duration: 3000,
     });
@@ -220,12 +371,26 @@ const AddPropertyPage = () => {
           {/* Location */}
           <Box>
             <Heading size="md" mb={4}>Location</Heading>
+            
+            {/* Location Autocomplete */}
+            <FormControl mb={4}>
+              <FormLabel>Search Location</FormLabel>
+              <LocationAutocomplete
+                placeholder="Search for your property location..."
+                onSelect={handleLocationSelect}
+                showCurrentLocation={false}
+              />
+              <Text fontSize="xs" color="gray.500" mt={2}>
+                💡 Use autocomplete to quickly find and fill in the address
+              </Text>
+            </FormControl>
+
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
               <FormControl isInvalid={errors.city}>
                 <FormLabel>City *</FormLabel>
                 <Input
                   {...register('city', { required: 'City is required' })}
-                  placeholder="e.g., Dagupan"
+                  placeholder="e.g., Quezon City"
                 />
               </FormControl>
 
@@ -234,9 +399,85 @@ const AddPropertyPage = () => {
                 <Input
                   {...register('address', { required: 'Address is required' })}
                   placeholder="e.g., 123 Main St, Barangay..."
+                  onBlur={handleAddressBlur}
                 />
+                {errors.address && (
+                  <Text color="error.500" fontSize="sm" mt={1}>
+                    {errors.address.message}
+                  </Text>
+                )}
               </FormControl>
             </SimpleGrid>
+
+            {/* Geocoding Status */}
+            {isGeocoding && (
+              <Alert status="info" mt={4}>
+                <Spinner size="sm" mr={2} />
+                <Text fontSize="sm">Geocoding address...</Text>
+              </Alert>
+            )}
+
+            {location && !geocodingError && (
+              <Alert status="success" mt={4}>
+                <AlertIcon as={FiCheck} />
+                <VStack align="start" spacing={1} flex={1}>
+                  <Text fontSize="sm" fontWeight="semibold">
+                    ✓ Location Verified
+                  </Text>
+                  <Text fontSize="xs" color="gray.700">
+                    {location.address}
+                  </Text>
+                  <Text fontSize="xs" color="gray.600">
+                    📍 {geocodingService.formatCoordinates(location.latitude, location.longitude)}
+                  </Text>
+                </VStack>
+                <Button
+                  size="sm"
+                  leftIcon={<Icon as={FiMapPin} />}
+                  onClick={openLocationPicker}
+                  ml={2}
+                >
+                  Adjust on Map
+                </Button>
+              </Alert>
+            )}
+
+            {geocodingError && (
+              <Alert status="error" mt={4}>
+                <AlertIcon />
+                <VStack align="start" spacing={1} flex={1}>
+                  <Text fontSize="sm" fontWeight="semibold">
+                    Geocoding Failed
+                  </Text>
+                  <Text fontSize="xs">{geocodingError}</Text>
+                </VStack>
+                <Button
+                  size="sm"
+                  leftIcon={<Icon as={FiMapPin} />}
+                  onClick={openLocationPicker}
+                  ml={2}
+                >
+                  Pick on Map
+                </Button>
+              </Alert>
+            )}
+
+            {!location && !isGeocoding && !geocodingError && (
+              <Alert status="warning" mt={4}>
+                <AlertIcon />
+                <Text fontSize="sm" flex={1}>
+                  Enter address and click outside the field to geocode, or pick location on map
+                </Text>
+                <Button
+                  size="sm"
+                  leftIcon={<Icon as={FiMapPin} />}
+                  onClick={openLocationPicker}
+                  ml={2}
+                >
+                  Pick on Map
+                </Button>
+              </Alert>
+            )}
           </Box>
 
           {/* Description with AI Assist */}
@@ -318,6 +559,26 @@ const AddPropertyPage = () => {
           </HStack>
         </VStack>
       </Box>
+
+      {/* Location Picker Modal */}
+      <Modal isOpen={isLocationPickerOpen} onClose={closeLocationPicker} size="3xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Pick Exact Location</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            <LocationPicker
+              initialLocation={location ? {
+                lat: location.latitude,
+                lng: location.longitude,
+              } : null}
+              onLocationSelect={handleLocationPickerConfirm}
+              onCancel={closeLocationPicker}
+              height="500px"
+            />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
