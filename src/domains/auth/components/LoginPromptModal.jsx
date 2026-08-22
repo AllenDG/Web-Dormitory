@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { FiHeart, FiMessageSquare, FiCalendar, FiCreditCard, FiArrowRight } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
 import { Button } from '../../../shared/components';
+import { heroGradient } from '../../../shared/theme/theme';
 
 /**
  * Login Prompt Modal v2.0
@@ -86,7 +87,7 @@ const LoginPromptModal = ({ isOpen, onClose, feature = 'this feature', redirectT
         <ModalHeader pt={8} pb={4}>
           <VStack align="center" spacing={3}>
             <Box
-              bg="linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)"
+              bg={heroGradient}
               p={4}
               borderRadius="16px"
             >

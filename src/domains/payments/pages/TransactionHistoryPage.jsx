@@ -13,11 +13,6 @@ import {
   InputGroup,
   InputLeftElement,
   Select,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
   Avatar,
   Divider,
   useToast,
@@ -25,7 +20,6 @@ import {
 import {
   FiSearch,
   FiDownload,
-  FiFilter,
   FiCalendar,
   FiDollarSign,
   FiCheckCircle,
@@ -35,6 +29,8 @@ import {
 } from 'react-icons/fi';
 import { useState } from 'react';
 import { format } from 'date-fns';
+import useBookingStore from '../../../shared/stores/useBookingStore';
+import { useAuth } from '../../../app/providers/AuthProvider';
 
 /**
  * Transaction History Page
@@ -182,63 +178,27 @@ const TransactionCard = ({ transaction, onViewReceipt }) => {
 
 const TransactionHistoryPage = () => {
   const toast = useToast();
+  const { user } = useAuth();
+  const bookings = useBookingStore((state) => state.bookings);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPeriod, setFilterPeriod] = useState('all');
 
-  // Mock data
-  const transactions = [
-    {
-      id: 1,
-      property: 'Modern Studio Room',
-      type: 'Monthly Rent Payment',
-      amount: 8000,
-      date: '2026-06-01T10:00:00',
-      method: 'GCash',
-      reference: 'TXN-20260601-001',
-      status: 'completed',
-    },
-    {
-      id: 2,
-      property: 'Premium Condo Unit',
-      type: 'Security Deposit',
-      amount: 16000,
-      date: '2026-05-28T14:30:00',
-      method: 'Credit Card',
-      reference: 'TXN-20260528-002',
-      status: 'completed',
-    },
-    {
-      id: 3,
-      property: 'Cozy Single Room',
-      type: 'Monthly Rent Payment',
-      amount: 6000,
-      date: '2026-05-25T09:15:00',
-      method: 'PayMaya',
-      reference: 'TXN-20260525-003',
-      status: 'pending',
-    },
-    {
-      id: 4,
-      property: 'Deluxe Double Room',
-      type: 'Booking Fee',
-      amount: 2000,
-      date: '2026-05-20T16:45:00',
-      method: 'Bank Transfer',
-      reference: 'TXN-20260520-004',
-      status: 'failed',
-    },
-    {
-      id: 5,
-      property: 'Budget Shared Room',
-      type: 'Monthly Rent Payment',
-      amount: 4500,
-      date: '2026-05-15T11:20:00',
-      method: 'GCash',
-      reference: 'TXN-20260515-005',
-      status: 'completed',
-    },
-  ];
+  const isOwnerView = user?.role === 'owner';
+  const relevantBookings = bookings.filter((booking) =>
+    isOwnerView ? booking.ownerEmail === user?.email : booking.userId === user?.id
+  );
+
+  const transactions = relevantBookings.map((booking) => ({
+    id: booking.id,
+    property: booking.propertyTitle || 'Untitled Property',
+    type: 'Rental Booking Payment',
+    amount: booking.totalWithDeposit ?? booking.totalAmount ?? 0,
+    date: booking.paidAt || booking.createdAt,
+    method: booking.paymentMethod || '—',
+    reference: booking.transactionId || booking.id,
+    status: booking.paymentStatus,
+  }));
 
   const filteredTransactions = transactions.filter((txn) => {
     const matchesSearch =

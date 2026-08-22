@@ -29,28 +29,33 @@ import { useAuth } from '../../../app/providers/AuthProvider';
  * Owner can manage profile, notifications, security, and payment settings
  */
 
+const DEFAULT_NOTIFICATION_PREFS = {
+  emailBookings: true,
+  emailInquiries: true,
+  emailMessages: true,
+  smsBookings: false,
+  smsInquiries: false,
+};
+
 const SettingsPage = () => {
   const toast = useToast();
-  const { user } = useAuth();
-  
+  const { user, updateProfile } = useAuth();
+
   // Profile Settings
   const [profileData, setProfileData] = useState({
-    name: user?.name || 'John Doe',
-    email: user?.email || 'john@example.com',
-    phone: '+63 912 345 6789',
-    address: '123 Main St, Dagupan City',
+    name: user?.name || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    address: user?.address || '',
   });
 
   // Notification Settings
-  const [notifications, setNotifications] = useState({
-    emailBookings: true,
-    emailInquiries: true,
-    emailMessages: true,
-    smsBookings: false,
-    smsInquiries: false,
-  });
+  const [notifications, setNotifications] = useState(
+    user?.notificationPreferences || DEFAULT_NOTIFICATION_PREFS
+  );
 
-  const handleProfileSave = () => {
+  const handleProfileSave = async () => {
+    await updateProfile(profileData);
     toast({
       title: 'Profile Updated',
       description: 'Your profile information has been saved.',
@@ -59,7 +64,8 @@ const SettingsPage = () => {
     });
   };
 
-  const handleNotificationsSave = () => {
+  const handleNotificationsSave = async () => {
+    await updateProfile({ notificationPreferences: notifications });
     toast({
       title: 'Preferences Saved',
       description: 'Your notification preferences have been updated.',

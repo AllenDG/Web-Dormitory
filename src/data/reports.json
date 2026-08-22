@@ -1,0 +1,46 @@
+[
+  {
+    "id": "1",
+    "type": "property",
+    "title": "Misleading Property Information",
+    "description": "Property photos do not match actual condition.",
+    "reporter": "Juan Dela Cruz",
+    "reportedItem": "Cozy Studio Near University",
+    "status": "open",
+    "priority": "high",
+    "created": "2 hours ago"
+  },
+  {
+    "id": "2",
+    "type": "user",
+    "title": "Inappropriate Behavior",
+    "description": "Owner was rude and unprofessional during visit.",
+    "reporter": "Maria Santos",
+    "reportedItem": "Pedro Garcia",
+    "status": "investigating",
+    "priority": "medium",
+    "created": "1 day ago"
+  },
+  {
+    "id": "3",
+    "type": "payment",
+    "title": "Payment Issue",
+    "description": "Payment was deducted but booking not confirmed.",
+    "reporter": "Ana Reyes",
+    "reportedItem": "Transaction #12345",
+    "status": "open",
+    "priority": "high",
+    "created": "3 hours ago"
+  },
+  {
+    "id": "4",
+    "type": "property",
+    "title": "Safety Concerns",
+    "description": "Property has safety issues not mentioned in listing.",
+    "reporter": "Carlos Ramos",
+    "reportedItem": "Modern Apartment",
+    "status": "resolved",
+    "priority": "high",
+    "created": "2 days ago"
+  }
+]

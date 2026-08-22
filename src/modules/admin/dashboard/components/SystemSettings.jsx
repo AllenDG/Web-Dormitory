@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Box,
   VStack,
@@ -16,6 +17,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { FiSave } from 'react-icons/fi';
+import useAdminStore from '../../../../shared/stores/useAdminStore';
 
 /**
  * SystemSettings Component
@@ -26,7 +28,24 @@ export function SystemSettings() {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
+  const settings = useAdminStore((state) => state.settings);
+  const updateSettings = useAdminStore((state) => state.updateSettings);
+  const [draft, setDraft] = useState(settings);
+
+  const setField = (path, value) => {
+    setDraft((prev) => {
+      const next = { ...prev };
+      if (path.length === 1) {
+        next[path[0]] = value;
+      } else {
+        next[path[0]] = { ...prev[path[0]], [path[1]]: value };
+      }
+      return next;
+    });
+  };
+
   const handleSave = () => {
+    updateSettings(draft);
     toast({
       title: 'Settings Saved',
       description: 'System settings have been updated successfully.',
@@ -53,23 +72,34 @@ export function SystemSettings() {
         <VStack spacing={4} align="stretch">
           <FormControl>
             <FormLabel>Platform Name</FormLabel>
-            <Input defaultValue="Dormy" />
+            <Input
+              value={draft.platformName}
+              onChange={(e) => setField(['platformName'], e.target.value)}
+            />
           </FormControl>
 
           <FormControl>
             <FormLabel>Support Email</FormLabel>
-            <Input type="email" defaultValue="support@dormy.ph" />
+            <Input
+              type="email"
+              value={draft.supportEmail}
+              onChange={(e) => setField(['supportEmail'], e.target.value)}
+            />
           </FormControl>
 
           <FormControl>
             <FormLabel>Contact Phone</FormLabel>
-            <Input defaultValue="+63 912 345 6789" />
+            <Input
+              value={draft.contactPhone}
+              onChange={(e) => setField(['contactPhone'], e.target.value)}
+            />
           </FormControl>
 
           <FormControl>
             <FormLabel>Platform Description</FormLabel>
             <Textarea
-              defaultValue="Modern student accommodation platform in the Philippines"
+              value={draft.platformDescription}
+              onChange={(e) => setField(['platformDescription'], e.target.value)}
               rows={3}
             />
           </FormControl>
@@ -96,7 +126,12 @@ export function SystemSettings() {
                 Allow new users to register on the platform
               </Text>
             </Box>
-            <Switch defaultChecked colorScheme="green" size="lg" />
+            <Switch
+              isChecked={draft.features.userRegistration}
+              onChange={(e) => setField(['features', 'userRegistration'], e.target.checked)}
+              colorScheme="green"
+              size="lg"
+            />
           </HStack>
 
           <Divider />
@@ -108,7 +143,12 @@ export function SystemSettings() {
                 Allow owners to create new property listings
               </Text>
             </Box>
-            <Switch defaultChecked colorScheme="green" size="lg" />
+            <Switch
+              isChecked={draft.features.propertyListings}
+              onChange={(e) => setField(['features', 'propertyListings'], e.target.checked)}
+              colorScheme="green"
+              size="lg"
+            />
           </HStack>
 
           <Divider />
@@ -120,7 +160,12 @@ export function SystemSettings() {
                 Enable online booking functionality
               </Text>
             </Box>
-            <Switch defaultChecked colorScheme="green" size="lg" />
+            <Switch
+              isChecked={draft.features.onlineBooking}
+              onChange={(e) => setField(['features', 'onlineBooking'], e.target.checked)}
+              colorScheme="green"
+              size="lg"
+            />
           </HStack>
 
           <Divider />
@@ -132,7 +177,12 @@ export function SystemSettings() {
                 Enable payment gateway for transactions
               </Text>
             </Box>
-            <Switch defaultChecked colorScheme="green" size="lg" />
+            <Switch
+              isChecked={draft.features.paymentProcessing}
+              onChange={(e) => setField(['features', 'paymentProcessing'], e.target.checked)}
+              colorScheme="green"
+              size="lg"
+            />
           </HStack>
 
           <Divider />
@@ -144,7 +194,12 @@ export function SystemSettings() {
                 Allow users to communicate via chat
               </Text>
             </Box>
-            <Switch defaultChecked colorScheme="green" size="lg" />
+            <Switch
+              isChecked={draft.features.chatMessaging}
+              onChange={(e) => setField(['features', 'chatMessaging'], e.target.checked)}
+              colorScheme="green"
+              size="lg"
+            />
           </HStack>
 
           <Divider />
@@ -156,7 +211,12 @@ export function SystemSettings() {
                 Allow tenants to leave reviews
               </Text>
             </Box>
-            <Switch defaultChecked colorScheme="green" size="lg" />
+            <Switch
+              isChecked={draft.features.reviewsRatings}
+              onChange={(e) => setField(['features', 'reviewsRatings'], e.target.checked)}
+              colorScheme="green"
+              size="lg"
+            />
           </HStack>
         </VStack>
       </Box>
@@ -181,7 +241,12 @@ export function SystemSettings() {
                 Automatically approve new property listings
               </Text>
             </Box>
-            <Switch colorScheme="green" size="lg" />
+            <Switch
+              isChecked={draft.moderation.autoApproveProperties}
+              onChange={(e) => setField(['moderation', 'autoApproveProperties'], e.target.checked)}
+              colorScheme="green"
+              size="lg"
+            />
           </HStack>
 
           <Divider />
@@ -193,14 +258,22 @@ export function SystemSettings() {
                 Require manual review for all new listings
               </Text>
             </Box>
-            <Switch defaultChecked colorScheme="green" size="lg" />
+            <Switch
+              isChecked={draft.moderation.manualReviewRequired}
+              onChange={(e) => setField(['moderation', 'manualReviewRequired'], e.target.checked)}
+              colorScheme="green"
+              size="lg"
+            />
           </HStack>
 
           <Divider />
 
           <FormControl>
             <FormLabel>Approval Time Limit</FormLabel>
-            <Select defaultValue="48">
+            <Select
+              value={draft.moderation.approvalTimeLimit}
+              onChange={(e) => setField(['moderation', 'approvalTimeLimit'], e.target.value)}
+            >
               <option value="24">24 hours</option>
               <option value="48">48 hours</option>
               <option value="72">72 hours</option>
@@ -233,7 +306,12 @@ export function SystemSettings() {
                 Send email notifications to users
               </Text>
             </Box>
-            <Switch defaultChecked colorScheme="green" size="lg" />
+            <Switch
+              isChecked={draft.email.emailNotifications}
+              onChange={(e) => setField(['email', 'emailNotifications'], e.target.checked)}
+              colorScheme="green"
+              size="lg"
+            />
           </HStack>
 
           <Divider />
@@ -245,7 +323,12 @@ export function SystemSettings() {
                 Send promotional and marketing emails
               </Text>
             </Box>
-            <Switch defaultChecked colorScheme="green" size="lg" />
+            <Switch
+              isChecked={draft.email.marketingEmails}
+              onChange={(e) => setField(['email', 'marketingEmails'], e.target.checked)}
+              colorScheme="green"
+              size="lg"
+            />
           </HStack>
         </VStack>
       </Box>

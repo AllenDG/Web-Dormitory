@@ -15,15 +15,18 @@ import {
   Checkbox,
   CheckboxGroup,
   useToast,
-  Image,
-  IconButton,
+  Alert,
+  AlertIcon,
 } from '@chakra-ui/react';
-import { FiSave, FiX, FiZap, FiTrash2 } from 'react-icons/fi';
+import { FiSave, FiX, FiZap } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import useRentalStore from '../../../shared/stores/useRentalStore';
 import { listingWriterService } from '../../../services/ai';
+import { useDraftAutosave, readDraft, clearDraft } from '../../../shared/hooks/useDraftAutosave';
+import ImageUploadField from '../../../shared/components/ImageUploadField';
+import UnitsManager from './UnitsManager';
 
 /**
  * Edit Property Page
@@ -35,10 +38,45 @@ const EditPropertyPage = () => {
   const toast = useToast();
   const { id } = useParams();
   const { rentals = [] } = useRentalStore();
+  const updateRental = useRentalStore((state) => state.updateRental);
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedAmenities, setSelectedAmenities] = useState([]);
+  const [images, setImages] = useState([]);
   const [property, setProperty] = useState(null);
+  const [hasDraft, setHasDraft] = useState(false);
+  const draftKey = `rentme_draft_edit_property_${id}`;
+
+  useEffect(() => {
+    setHasDraft(Boolean(readDraft(draftKey)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  const restoreDraft = () => {
+    const draft = readDraft(draftKey);
+    if (!draft) return;
+
+    ['title', 'bedType', 'price', 'availablePerson', 'city', 'address', 'description'].forEach(
+      (field) => {
+        if (draft.fields?.[field] !== undefined) {
+          setValue(field, draft.fields[field]);
+        }
+      }
+    );
+    if (draft.selectedAmenities) setSelectedAmenities(draft.selectedAmenities);
+    setHasDraft(false);
+
+    toast({
+      title: 'Draft Restored',
+      status: 'info',
+      duration: 2000,
+    });
+  };
+
+  const discardDraft = () => {
+    clearDraft(draftKey);
+    setHasDraft(false);
+  };
 
   const amenitiesList = [
     'Wifi / Internet',
@@ -68,6 +106,7 @@ const EditPropertyPage = () => {
       setValue('address', foundProperty.address);
       setValue('description', foundProperty.description);
       setSelectedAmenities(foundProperty.amenities || []);
+      setImages(foundProperty.imageUrl || []);
     } else {
       toast({
         title: 'Property Not Found',
@@ -80,6 +119,12 @@ const EditPropertyPage = () => {
   }, [id, rentals, setValue, navigate, toast]);
 
   const watchedFields = watch();
+
+  useDraftAutosave(
+    draftKey,
+    { fields: watchedFields, selectedAmenities },
+    { enabled: Boolean(property) && !hasDraft }
+  );
 
   const handleAIAssist = async () => {
     // Check if AI service is available
@@ -151,16 +196,26 @@ const EditPropertyPage = () => {
   };
 
   const onSubmit = async (data) => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    updateRental(id, {
+      title: data.title,
+      bedType: data.bedType,
+      price: parseFloat(data.price),
+      availablePerson: parseInt(data.availablePerson, 10),
+      city: data.city,
+      address: data.address,
+      description: data.description,
+      amenities: selectedAmenities,
+      imageUrl: images,
+    });
+    clearDraft(draftKey);
+
     toast({
       title: 'Property Updated!',
       description: 'Your property has been successfully updated.',
       status: 'success',
       duration: 3000,
     });
-    
+
     navigate('/owner/properties');
   };
 
@@ -170,6 +225,21 @@ const EditPropertyPage = () => {
 
   return (
     <Box>
+      {hasDraft && (
+        <Alert status="info" borderRadius="lg" mb={6}>
+          <AlertIcon />
+          <Text flex={1} fontSize="sm">
+            You have an unsaved draft of these edits.
+          </Text>
+          <Button size="sm" colorScheme="primary" mr={2} onClick={restoreDraft}>
+            Restore Draft
+          </Button>
+          <Button size="sm" variant="ghost" onClick={discardDraft}>
+            Discard
+          </Button>
+        </Alert>
+      )}
+
       {/* Page Header */}
       <HStack justify="space-between" mb={8}>
         <VStack align="start" spacing={2}>
@@ -294,7 +364,7 @@ const EditPropertyPage = () => {
                 rows={6}
               />
               <Text fontSize="xs" color="gray.500" mt={2}>
-                💡 Tip: Click "AI Assist" to regenerate a professional description
+                💡 Tip: Click &quot;AI Assist&quot; to regenerate a professional description
               </Text>
             </FormControl>
           </Box>
@@ -313,48 +383,18 @@ const EditPropertyPage = () => {
             </CheckboxGroup>
           </Box>
 
-          {/* Current Images */}
+          {/* Images */}
           <Box>
-            <Heading size="md" mb={4}>Current Images</Heading>
-            <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
-              {property.imageUrl?.map((img, index) => (
-                <Box key={index} position="relative">
-                  <Image
-                    src={img}
-                    alt={`Property ${index + 1}`}
-                    borderRadius="lg"
-                    objectFit="cover"
-                    h="150px"
-                    w="full"
-                  />
-                  <IconButton
-                    icon={<Icon as={FiTrash2} />}
-                    size="sm"
-                    colorScheme="red"
-                    position="absolute"
-                    top={2}
-                    right={2}
-                    aria-label="Delete image"
-                  />
-                </Box>
-              ))}
-            </SimpleGrid>
+            <Heading size="md" mb={4}>Images</Heading>
+            <FormControl>
+              <ImageUploadField value={images} onChange={setImages} />
+            </FormControl>
           </Box>
 
-          {/* Add New Images */}
+          {/* Units */}
           <Box>
-            <Heading size="md" mb={4}>Add New Images</Heading>
-            <FormControl>
-              <Input
-                type="file"
-                accept="image/*"
-                multiple
-                p={1}
-              />
-              <Text fontSize="xs" color="gray.500" mt={2}>
-                Upload additional images (JPG, PNG)
-              </Text>
-            </FormControl>
+            <Heading size="md" mb={4}>Units</Heading>
+            <UnitsManager rentalId={id} />
           </Box>
 
           {/* Submit Buttons */}

@@ -1,20 +1,18 @@
 /**
  * Anthropic AI Service
- * Core service for interacting with Claude API via backend proxy
- * 
- * NOTE: Direct browser usage of Anthropic SDK is not recommended for production.
- * This service uses a backend proxy approach for security and compatibility.
+ *
+ * This app runs entirely client-side with no backend, so AI features are an
+ * intentional, permanent simulation: `generateMockResponse` returns
+ * template-based text so the "AI Assist" UX is demoable without a real
+ * Claude API key or server. This is not a stub awaiting a backend — options
+ * to change that live in `options`, not the constructor.
  */
 
 class AnthropicService {
   constructor() {
     this.isInitialized = false;
     this.config = {
-      apiBaseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
-      model: import.meta.env.VITE_AI_MODEL || 'claude-3-5-sonnet-20241022',
-      maxTokens: parseInt(import.meta.env.VITE_AI_MAX_TOKENS) || 1024,
-      temperature: parseFloat(import.meta.env.VITE_AI_TEMPERATURE) || 0.7,
-      useMockData: import.meta.env.VITE_USE_MOCK_AI === 'true' || true, // Default to mock for now
+      useMockData: true,
     };
     this.isInitialized = true;
   }
@@ -31,7 +29,7 @@ class AnthropicService {
    * Send a message to Claude and get a response
    * @param {string} systemPrompt - System instructions for Claude
    * @param {string} userMessage - User's message/prompt
-   * @param {Object} options - Additional options (temperature, maxTokens, etc.)
+   * @param {Object} options - Additional options (unused in mock mode, kept for API-shape parity)
    * @returns {Promise<string>} - Claude's response
    */
   async sendMessage(systemPrompt, userMessage, options = {}) {
@@ -39,38 +37,8 @@ class AnthropicService {
       throw new Error('AI service is not available.');
     }
 
-    // Use mock data for development
-    if (this.config.useMockData) {
-      return this.generateMockResponse(systemPrompt, userMessage);
-    }
-
-    try {
-      // Call backend proxy endpoint
-      const response = await fetch(`${this.config.apiBaseUrl}/ai/generate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          systemPrompt,
-          userMessage,
-          model: options.model || this.config.model,
-          maxTokens: options.maxTokens || this.config.maxTokens,
-          temperature: options.temperature || this.config.temperature,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'AI service error');
-      }
-
-      const data = await response.json();
-      return data.text || '';
-    } catch (error) {
-      console.error('Anthropic API error:', error);
-      throw new Error(`AI service error: ${error.message}`);
-    }
+    void options;
+    return this.generateMockResponse(systemPrompt, userMessage);
   }
 
   /**
@@ -143,33 +111,25 @@ This is more than just a place to stay—it's a community where you can thrive. 
    * @param {Object} options - Additional options
    */
   async sendStreamingMessage(systemPrompt, userMessage, onChunk, options = {}) {
-    // For mock data, simulate streaming
-    if (this.config.useMockData) {
-      const fullText = await this.generateMockResponse(systemPrompt, userMessage);
-      const words = fullText.split(' ');
-      let accumulated = '';
+    void options;
+    const fullText = await this.generateMockResponse(systemPrompt, userMessage);
+    const words = fullText.split(' ');
+    let accumulated = '';
 
-      for (const word of words) {
-        accumulated += (accumulated ? ' ' : '') + word;
-        onChunk(word + ' ', accumulated);
-        await new Promise(resolve => setTimeout(resolve, 50));
-      }
-
-      return fullText;
+    for (const word of words) {
+      accumulated += (accumulated ? ' ' : '') + word;
+      onChunk(word + ' ', accumulated);
+      await new Promise(resolve => setTimeout(resolve, 50));
     }
 
-    // Backend streaming implementation would go here
-    throw new Error('Streaming not yet implemented for backend proxy');
+    return fullText;
   }
 
   /**
    * Get current configuration
    */
   getConfig() {
-    return {
-      ...this.config,
-      useMockData: this.config.useMockData,
-    };
+    return { ...this.config };
   }
 }
 

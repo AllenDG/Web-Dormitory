@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
+import useNotificationStore from './useNotificationStore';
 
 /**
  * Booking Store using Zustand
@@ -62,7 +63,7 @@ const useBookingStore = create(
          */
         createBooking: (bookingData) => {
           const newBooking = {
-            id: `BK${Date.now()}`,
+            id: `BK-${crypto.randomUUID()}`,
             ...bookingData,
             status: BOOKING_STATUS.PENDING,
             paymentStatus: PAYMENT_STATUS.PENDING,
@@ -118,22 +119,46 @@ const useBookingStore = create(
           // Simulate payment processing (replace with actual payment gateway)
           await new Promise((resolve) => setTimeout(resolve, 2000));
 
+          const transactionId = `TXN-${crypto.randomUUID()}`;
+          const completedAt = new Date().toISOString();
+
           // Update payment status to completed
           get().updatePaymentStatus(bookingId, PAYMENT_STATUS.COMPLETED);
           get().updateBookingStatus(bookingId, BOOKING_STATUS.PAID);
 
           set((state) => ({
+            bookings: state.bookings.map((booking) =>
+              booking.id === bookingId
+                ? {
+                    ...booking,
+                    paymentMethod: paymentData.method,
+                    transactionId,
+                    paidAt: completedAt,
+                  }
+                : booking
+            ),
             paymentInfo: {
               bookingId,
               ...paymentData,
-              transactionId: `TXN${Date.now()}`,
-              completedAt: new Date().toISOString(),
+              transactionId,
+              completedAt,
             },
           }));
 
+          const booking = get().getBookingById(bookingId);
+          if (booking?.guestEmail) {
+            useNotificationStore.getState().addNotification({
+              recipientEmail: booking.guestEmail,
+              type: 'payment',
+              title: 'Payment Successful',
+              message: `Your payment for ${booking.propertyTitle || 'the property'} has been processed successfully.`,
+              actionUrl: `/bookings/${bookingId}`,
+            });
+          }
+
           return {
             success: true,
-            transactionId: `TXN${Date.now()}`,
+            transactionId,
           };
         },
 
@@ -162,7 +187,7 @@ const useBookingStore = create(
          * @param {string} bookingId - Booking ID
          * @param {string} ownerNotes - Optional notes from owner
          */
-        approveBooking: (bookingId, ownerNotes = '') =>
+        approveBooking: (bookingId, ownerNotes = '') => {
           set((state) => ({
             bookings: state.bookings.map((booking) =>
               booking.id === bookingId
@@ -175,14 +200,26 @@ const useBookingStore = create(
                   }
                 : booking
             ),
-          })),
+          }));
+
+          const booking = get().getBookingById(bookingId);
+          if (booking?.guestEmail) {
+            useNotificationStore.getState().addNotification({
+              recipientEmail: booking.guestEmail,
+              type: 'booking',
+              title: 'Booking Approved',
+              message: `Your booking for ${booking.propertyTitle || 'the property'} has been approved.`,
+              actionUrl: `/bookings/${bookingId}`,
+            });
+          }
+        },
 
         /**
          * Reject a booking (Owner action)
          * @param {string} bookingId - Booking ID
          * @param {string} rejectionReason - Reason for rejection
          */
-        rejectBooking: (bookingId, rejectionReason) =>
+        rejectBooking: (bookingId, rejectionReason) => {
           set((state) => ({
             bookings: state.bookings.map((booking) =>
               booking.id === bookingId
@@ -195,14 +232,26 @@ const useBookingStore = create(
                   }
                 : booking
             ),
-          })),
+          }));
+
+          const booking = get().getBookingById(bookingId);
+          if (booking?.guestEmail) {
+            useNotificationStore.getState().addNotification({
+              recipientEmail: booking.guestEmail,
+              type: 'alert',
+              title: 'Booking Rejected',
+              message: `Your booking for ${booking.propertyTitle || 'the property'} was rejected.${rejectionReason ? ` Reason: ${rejectionReason}` : ''}`,
+              actionUrl: `/bookings/${bookingId}`,
+            });
+          }
+        },
 
         /**
          * Verify payment (Owner action)
          * @param {string} bookingId - Booking ID
          * @param {Object} verificationData - Payment verification details
          */
-        verifyPayment: (bookingId, verificationData) =>
+        verifyPayment: (bookingId, verificationData) => {
           set((state) => ({
             bookings: state.bookings.map((booking) =>
               booking.id === bookingId
@@ -216,7 +265,19 @@ const useBookingStore = create(
                   }
                 : booking
             ),
-          })),
+          }));
+
+          const booking = get().getBookingById(bookingId);
+          if (booking?.guestEmail) {
+            useNotificationStore.getState().addNotification({
+              recipientEmail: booking.guestEmail,
+              type: 'payment',
+              title: 'Payment Verified',
+              message: `Your payment for ${booking.propertyTitle || 'the property'} has been verified. Your booking is confirmed.`,
+              actionUrl: `/bookings/${bookingId}`,
+            });
+          }
+        },
 
         /**
          * Get booking by ID

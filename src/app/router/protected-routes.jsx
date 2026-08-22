@@ -2,12 +2,20 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../providers/AuthProvider';
 import { Center, Spinner, Box, Text, Button, VStack } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { hasPermission, hasAnyPermission } from '../config/permissions';
 
 /**
  * Protected Route Component
- * Ensures user is authenticated and has required role(s)
+ * Ensures user is authenticated and, optionally, has an allowed role and/or
+ * required permission(s). `allowedRoles` and `requiredPermission(s)` are
+ * independent checks — a route can use either, both, or neither.
  */
-const ProtectedRoute = ({ children, allowedRoles = [] }) => {
+const ProtectedRoute = ({
+  children,
+  allowedRoles = [],
+  requiredPermission = null,
+  requiredPermissions = null,
+}) => {
   const { user, loading, isAuthenticated } = useAuth();
   const location = useLocation();
 
@@ -25,8 +33,14 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Check if user has required role
-  if (allowedRoles.length > 0 && !allowedRoles.includes(user?.role)) {
+  const hasRequiredRole =
+    allowedRoles.length === 0 || allowedRoles.includes(user?.role);
+  const hasRequiredPermission =
+    !requiredPermission || hasPermission(user?.role, requiredPermission);
+  const hasRequiredPermissions =
+    !requiredPermissions || hasAnyPermission(user?.role, requiredPermissions);
+
+  if (!hasRequiredRole || !hasRequiredPermission || !hasRequiredPermissions) {
     return (
       <Center h="100vh">
         <Box textAlign="center" p={8}>
@@ -56,6 +70,8 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
 ProtectedRoute.propTypes = {
   children: PropTypes.node.isRequired,
   allowedRoles: PropTypes.arrayOf(PropTypes.string),
+  requiredPermission: PropTypes.string,
+  requiredPermissions: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default ProtectedRoute;

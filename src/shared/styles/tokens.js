@@ -5,19 +5,24 @@
  */
 
 // Primary Color Palette
+// Kept in sync with the active Chakra theme (src/shared/theme/theme.js) —
+// this file is consumed directly as literal hex values by several
+// components, so it must match rather than diverge from what Chakra renders
+// everywhere else via colorScheme="primary".
 export const colors = {
-  // Primary - Blue (#2563EB base)
   primary: {
-    50: '#EFF6FF',
-    200: '#BFDBFE',
-    400: '#60A5FA',
-    500: '#2563EB',  // 8.59:1 on white (AAA)
-    600: '#1D4ED8',  // 10.2:1 on white (AAA)
-    700: '#1D4ED8',
-    800: '#1E3A8A',
-    900: '#1E3A8A',
+    50: '#e3f2fd',
+    100: '#bbdefb',
+    200: '#90caf9',
+    300: '#64b5f6',
+    400: '#42a5f5',
+    500: '#2196f3',
+    600: '#1e88e5',
+    700: '#1976d2',
+    800: '#1565c0',
+    900: '#0d47a1',
   },
-  
+
   // Neutral Grays
   gray: {
     50: '#F9FAFB',
@@ -32,11 +37,11 @@ export const colors = {
     900: '#111827',
   },
   
-  // Semantic Colors
-  success: '#059669',  // 4.52:1 (AA)
-  warning: '#D97706',
-  error: '#DC2626',
-  info: '#2563EB',
+  // Semantic Colors (match theme.js's success/warning/error/info .500 shades)
+  success: '#38A169',
+  warning: '#DD6B20',
+  error: '#E53E3E',
+  info: '#3182ce',
 };
 
 // Typography Scale

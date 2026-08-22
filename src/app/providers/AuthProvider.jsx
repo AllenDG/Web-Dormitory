@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { ROLES } from '../config/permissions';
 
 /**
  * Authentication Context
@@ -16,13 +17,10 @@ export const useAuth = () => {
   return context;
 };
 
-// User roles
-export const ROLES = {
-  TENANT: 'tenant',
-  OWNER: 'owner',
-  ADMIN: 'admin',
-  GUEST: 'guest',
-};
+// Re-exported for backwards compatibility — permissions.js is now the
+// canonical source of ROLES (it also owns PERMISSIONS/ROLE_PERMISSIONS,
+// which need to stay in sync with these role names).
+export { ROLES };
 
 // Mock user data (replace with actual API calls)
 const MOCK_USERS = {

@@ -1,0 +1,52 @@
+[
+  {
+    "id": "1",
+    "name": "Juan Dela Cruz",
+    "email": "juan@email.com",
+    "role": "tenant",
+    "status": "active",
+    "joined": "Jan 15, 2026",
+    "lastActive": "2 hours ago",
+    "bookings": 3
+  },
+  {
+    "id": "2",
+    "name": "Maria Santos",
+    "email": "maria@email.com",
+    "role": "owner",
+    "status": "active",
+    "joined": "Feb 20, 2026",
+    "lastActive": "1 day ago",
+    "properties": 5
+  },
+  {
+    "id": "3",
+    "name": "Pedro Garcia",
+    "email": "pedro@email.com",
+    "role": "tenant",
+    "status": "suspended",
+    "joined": "Mar 10, 2026",
+    "lastActive": "2 weeks ago",
+    "bookings": 1
+  },
+  {
+    "id": "4",
+    "name": "Ana Reyes",
+    "email": "ana@email.com",
+    "role": "owner",
+    "status": "active",
+    "joined": "Apr 5, 2026",
+    "lastActive": "3 hours ago",
+    "properties": 2
+  },
+  {
+    "id": "5",
+    "name": "Carlos Ramos",
+    "email": "carlos@email.com",
+    "role": "tenant",
+    "status": "inactive",
+    "joined": "May 12, 2026",
+    "lastActive": "1 month ago",
+    "bookings": 0
+  }
+]

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import rentalListingData from '../../data/rentalListing.json';
+import useNotificationStore from './useNotificationStore';
 
 /**
  * Modern Rental Store using Zustand
@@ -27,7 +28,7 @@ const useRentalStore = create(
 
         addRental: (rental) =>
           set((state) => ({
-            rentals: [...state.rentals, { ...rental, id: Date.now().toString() }],
+            rentals: [...state.rentals, { ...rental, id: crypto.randomUUID() }],
           })),
 
         updateRental: (id, updates) =>
@@ -40,6 +41,84 @@ const useRentalStore = create(
         deleteRental: (id) =>
           set((state) => ({
             rentals: state.rentals.filter((rental) => rental.id !== id),
+          })),
+
+        approveProperty: (id) => {
+          set((state) => ({
+            rentals: state.rentals.map((rental) =>
+              rental.id === id ? { ...rental, moderationStatus: 'approved' } : rental
+            ),
+          }));
+
+          const rental = get().getRentalById(id);
+          if (rental?.ownerEmail) {
+            useNotificationStore.getState().addNotification({
+              recipientEmail: rental.ownerEmail,
+              type: 'alert',
+              title: 'Property Approved',
+              message: `${rental.title} has been approved and is now live.`,
+              actionUrl: '/owner/properties',
+            });
+          }
+        },
+
+        rejectProperty: (id, reason = '') => {
+          set((state) => ({
+            rentals: state.rentals.map((rental) =>
+              rental.id === id
+                ? { ...rental, moderationStatus: 'rejected', rejectionReason: reason }
+                : rental
+            ),
+          }));
+
+          const rental = get().getRentalById(id);
+          if (rental?.ownerEmail) {
+            useNotificationStore.getState().addNotification({
+              recipientEmail: rental.ownerEmail,
+              type: 'alert',
+              title: 'Property Rejected',
+              message: `${rental.title} was rejected.${reason ? ` Reason: ${reason}` : ''}`,
+              actionUrl: '/owner/properties',
+            });
+          }
+        },
+
+        // Units — optional per-property sub-listings (e.g. a dorm building
+        // with several rooms at different prices). A rental with no `units`
+        // is treated as a single-unit property everywhere else in the app.
+        addUnit: (rentalId, unit) =>
+          set((state) => ({
+            rentals: state.rentals.map((rental) =>
+              rental.id === rentalId
+                ? {
+                    ...rental,
+                    units: [...(rental.units || []), { ...unit, id: crypto.randomUUID() }],
+                  }
+                : rental
+            ),
+          })),
+
+        updateUnit: (rentalId, unitId, updates) =>
+          set((state) => ({
+            rentals: state.rentals.map((rental) =>
+              rental.id === rentalId
+                ? {
+                    ...rental,
+                    units: (rental.units || []).map((unit) =>
+                      unit.id === unitId ? { ...unit, ...updates } : unit
+                    ),
+                  }
+                : rental
+            ),
+          })),
+
+        deleteUnit: (rentalId, unitId) =>
+          set((state) => ({
+            rentals: state.rentals.map((rental) =>
+              rental.id === rentalId
+                ? { ...rental, units: (rental.units || []).filter((unit) => unit.id !== unitId) }
+                : rental
+            ),
           })),
 
         // Filters
@@ -125,6 +204,7 @@ const useRentalStore = create(
         name: 'rental-storage',
         partialize: (state) => ({
           favorites: state.favorites,
+          rentals: state.rentals,
         }),
       }
     ),

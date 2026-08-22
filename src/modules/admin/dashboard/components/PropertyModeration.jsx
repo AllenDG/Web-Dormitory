@@ -28,6 +28,7 @@ import {
   FiEye,
   FiFlag,
 } from 'react-icons/fi';
+import useRentalStore from '../../../../shared/stores/useRentalStore';
 
 /**
  * PropertyModeration Component
@@ -41,51 +42,30 @@ export function PropertyModeration() {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
-  // Mock data - will be replaced with API
-  const properties = [
-    {
-      id: 1,
-      title: 'Cozy Studio Near University',
-      owner: 'Maria Santos',
-      price: 8000,
-      location: 'Dagupan City',
-      status: 'pending',
-      submitted: '2 hours ago',
-      image: 'https://via.placeholder.com/300x200',
-    },
-    {
-      id: 2,
-      title: 'Modern Apartment with WiFi',
-      owner: 'Ana Reyes',
-      price: 12000,
-      location: 'Manila',
-      status: 'pending',
-      submitted: '5 hours ago',
-      image: 'https://via.placeholder.com/300x200',
-    },
-    {
-      id: 3,
-      title: 'Spacious Room for Students',
-      owner: 'Pedro Garcia',
-      price: 6500,
-      location: 'Quezon City',
-      status: 'pending',
-      submitted: '1 day ago',
-      image: 'https://via.placeholder.com/300x200',
-    },
-    {
-      id: 4,
-      title: 'Affordable Dorm Room',
-      owner: 'Carlos Ramos',
-      price: 5000,
-      location: 'Baguio City',
-      status: 'pending',
-      submitted: '2 days ago',
-      image: 'https://via.placeholder.com/300x200',
-    },
-  ];
+  const rentals = useRentalStore((state) => state.rentals);
+  const approveProperty = useRentalStore((state) => state.approveProperty);
+  const rejectProperty = useRentalStore((state) => state.rejectProperty);
+
+  const properties = rentals
+    .map((r) => ({
+      id: r.id,
+      title: r.title,
+      owner: r.ownerName,
+      price: r.price,
+      location: r.city,
+      status: r.moderationStatus || 'approved',
+      submitted: r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '—',
+      image: r.imageUrl?.[0] || 'https://via.placeholder.com/300x200',
+    }))
+    .filter((property) => {
+      const matchesSearch =
+        !searchQuery || property.title.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || property.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
 
   const handleApprove = (property) => {
+    approveProperty(property.id);
     toast({
       title: 'Property Approved',
       description: `${property.title} has been approved and published.`,
@@ -96,6 +76,7 @@ export function PropertyModeration() {
   };
 
   const handleReject = (property) => {
+    rejectProperty(property.id);
     toast({
       title: 'Property Rejected',
       description: `${property.title} has been rejected.`,
@@ -146,6 +127,11 @@ export function PropertyModeration() {
       </HStack>
 
       {/* Property Cards */}
+      {properties.length === 0 && (
+        <Text textAlign="center" color="gray.500" py={12}>
+          No properties match this filter.
+        </Text>
+      )}
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
         {properties.map((property) => (
           <Box
@@ -183,6 +169,7 @@ export function PropertyModeration() {
                     icon={<FiMoreVertical />}
                     variant="ghost"
                     size="sm"
+                    aria-label={`More actions for ${property.title}`}
                   />
                   <MenuList>
                     <MenuItem icon={<FiEye />}>View Details</MenuItem>

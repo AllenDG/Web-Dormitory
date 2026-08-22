@@ -15,7 +15,6 @@ import {
   Checkbox,
   CheckboxGroup,
   useToast,
-  Badge,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -28,13 +27,19 @@ import {
   AlertIcon,
 } from '@chakra-ui/react';
 import { FiSave, FiX, FiZap, FiMapPin, FiCheck } from 'react-icons/fi';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { listingWriterService } from '../../../services/ai';
 import geocodingService from '../../../services/geocoding/geocodingService';
 import LocationPicker from '../../../shared/components/LocationPicker';
 import LocationAutocomplete from '../../../shared/components/LocationAutocomplete';
+import { useAuth } from '../../../app/providers/AuthProvider';
+import useRentalStore from '../../../shared/stores/useRentalStore';
+import { useDraftAutosave, readDraft, clearDraft } from '../../../shared/hooks/useDraftAutosave';
+import ImageUploadField from '../../../shared/components/ImageUploadField';
+
+const DRAFT_KEY = 'rentme_draft_add_property';
 
 /**
  * Add Property Page
@@ -45,13 +50,48 @@ import LocationAutocomplete from '../../../shared/components/LocationAutocomplet
 const AddPropertyPage = () => {
   const navigate = useNavigate();
   const toast = useToast();
+  const { user } = useAuth();
+  const addRental = useRentalStore((state) => state.addRental);
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedAmenities, setSelectedAmenities] = useState([]);
+  const [images, setImages] = useState([]);
   const [location, setLocation] = useState(null); // Stores geocoded coordinates
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [geocodingError, setGeocodingError] = useState(null);
   const { isOpen: isLocationPickerOpen, onOpen: openLocationPicker, onClose: closeLocationPicker } = useDisclosure();
+  const [hasDraft, setHasDraft] = useState(false);
+
+  useEffect(() => {
+    setHasDraft(Boolean(readDraft(DRAFT_KEY)));
+  }, []);
+
+  const restoreDraft = () => {
+    const draft = readDraft(DRAFT_KEY);
+    if (!draft) return;
+
+    ['title', 'bedType', 'price', 'availablePerson', 'city', 'address', 'description'].forEach(
+      (field) => {
+        if (draft.fields?.[field] !== undefined) {
+          setValue(field, draft.fields[field]);
+        }
+      }
+    );
+    if (draft.selectedAmenities) setSelectedAmenities(draft.selectedAmenities);
+    if (draft.location) setLocation(draft.location);
+    setHasDraft(false);
+
+    toast({
+      title: 'Draft Restored',
+      status: 'info',
+      duration: 2000,
+    });
+  };
+
+  const discardDraft = () => {
+    clearDraft(DRAFT_KEY);
+    setHasDraft(false);
+  };
 
   const amenitiesList = [
     'Wifi / Internet',
@@ -69,6 +109,12 @@ const AddPropertyPage = () => {
   ];
 
   const watchedFields = watch();
+
+  useDraftAutosave(
+    DRAFT_KEY,
+    { fields: watchedFields, selectedAmenities, location },
+    { enabled: !hasDraft }
+  );
 
   const handleAIAssist = async () => {
     // Check if AI service is available
@@ -258,37 +304,59 @@ const AddPropertyPage = () => {
       return;
     }
 
-    // Prepare property data with geocoded location
+    // Prepare property data matching the rental store's schema
     const propertyData = {
-      ...data,
+      title: data.title,
+      description: data.description,
+      city: data.city,
+      address: location.address || data.address,
+      latitude: location.latitude,
+      longitude: location.longitude,
+      price: parseFloat(data.price),
+      availablePerson: parseInt(data.availablePerson, 10),
+      bedType: data.bedType,
+      imageUrl: images,
       amenities: selectedAmenities,
-      location: {
-        address: location.address,
-        city: data.city,
-        latitude: location.latitude,
-        longitude: location.longitude,
-        placeId: location.placeId,
-      },
+      ownerEmail: user.email,
+      ownerName: user.name,
+      ownerPhone: user.phone || '',
+      status: 'active',
+      moderationStatus: 'pending',
+      availableDates: [],
+      createdAt: new Date().toISOString(),
     };
 
-    // TODO: Replace with actual API call to backend
-    console.log('Property data with geocoded location:', propertyData);
+    addRental(propertyData);
+    clearDraft(DRAFT_KEY);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
     toast({
-      title: 'Property Data Ready!',
-      description: 'Property has been prepared with accurate GPS coordinates. Check console for details.',
+      title: 'Property Added!',
+      description: 'Your property has been listed and is pending review.',
       status: 'success',
       duration: 3000,
+      isClosable: true,
     });
-    
+
     navigate('/owner/properties');
   };
 
   return (
     <Box>
+      {hasDraft && (
+        <Alert status="info" borderRadius="lg" mb={6}>
+          <AlertIcon />
+          <Text flex={1} fontSize="sm">
+            You have an unsaved draft of this form.
+          </Text>
+          <Button size="sm" colorScheme="primary" mr={2} onClick={restoreDraft}>
+            Restore Draft
+          </Button>
+          <Button size="sm" variant="ghost" onClick={discardDraft}>
+            Discard
+          </Button>
+        </Alert>
+      )}
+
       {/* Page Header */}
       <HStack justify="space-between" mb={8}>
         <VStack align="start" spacing={2}>
@@ -503,7 +571,7 @@ const AddPropertyPage = () => {
                 rows={6}
               />
               <Text fontSize="xs" color="gray.500" mt={2}>
-                💡 Tip: Click "AI Assist" to generate a professional description based on your property details
+                💡 Tip: Click &quot;AI Assist&quot; to generate a professional description based on your property details
               </Text>
             </FormControl>
           </Box>
@@ -527,15 +595,7 @@ const AddPropertyPage = () => {
             <Heading size="md" mb={4}>Images</Heading>
             <FormControl>
               <FormLabel>Property Images</FormLabel>
-              <Input
-                type="file"
-                accept="image/*"
-                multiple
-                p={1}
-              />
-              <Text fontSize="xs" color="gray.500" mt={2}>
-                Upload up to 10 images (JPG, PNG). First image will be the cover photo.
-              </Text>
+              <ImageUploadField value={images} onChange={setImages} />
             </FormControl>
           </Box>
 

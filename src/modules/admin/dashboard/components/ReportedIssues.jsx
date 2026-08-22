@@ -24,6 +24,7 @@ import {
   FiMessageSquare,
   FiTrash2,
 } from 'react-icons/fi';
+import useAdminStore from '../../../../shared/stores/useAdminStore';
 
 /**
  * ReportedIssues Component
@@ -37,55 +38,19 @@ export function ReportedIssues() {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
-  // Mock data - will be replaced with API
-  const reports = [
-    {
-      id: 1,
-      type: 'property',
-      title: 'Misleading Property Information',
-      description: 'Property photos do not match actual condition.',
-      reporter: 'Juan Dela Cruz',
-      reportedItem: 'Cozy Studio Near University',
-      status: 'open',
-      priority: 'high',
-      created: '2 hours ago',
-    },
-    {
-      id: 2,
-      type: 'user',
-      title: 'Inappropriate Behavior',
-      description: 'Owner was rude and unprofessional during visit.',
-      reporter: 'Maria Santos',
-      reportedItem: 'Pedro Garcia',
-      status: 'investigating',
-      priority: 'medium',
-      created: '1 day ago',
-    },
-    {
-      id: 3,
-      type: 'payment',
-      title: 'Payment Issue',
-      description: 'Payment was deducted but booking not confirmed.',
-      reporter: 'Ana Reyes',
-      reportedItem: 'Transaction #12345',
-      status: 'open',
-      priority: 'high',
-      created: '3 hours ago',
-    },
-    {
-      id: 4,
-      type: 'property',
-      title: 'Safety Concerns',
-      description: 'Property has safety issues not mentioned in listing.',
-      reporter: 'Carlos Ramos',
-      reportedItem: 'Modern Apartment',
-      status: 'resolved',
-      priority: 'high',
-      created: '2 days ago',
-    },
-  ];
+  const allReports = useAdminStore((state) => state.reports);
+  const resolveReport = useAdminStore((state) => state.resolveReport);
+  const investigateReport = useAdminStore((state) => state.investigateReport);
+  const deleteReport = useAdminStore((state) => state.deleteReport);
+
+  const reports = allReports.filter((report) => {
+    const matchesType = typeFilter === 'all' || report.type === typeFilter;
+    const matchesStatus = statusFilter === 'all' || report.status === statusFilter;
+    return matchesType && matchesStatus;
+  });
 
   const handleResolve = (report) => {
+    resolveReport(report.id);
     toast({
       title: 'Issue Resolved',
       description: `Report #${report.id} has been marked as resolved.`,
@@ -96,9 +61,21 @@ export function ReportedIssues() {
   };
 
   const handleInvestigate = (report) => {
+    investigateReport(report.id);
     toast({
       title: 'Investigation Started',
       description: `Report #${report.id} is now under investigation.`,
+      status: 'info',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+
+  const handleDelete = (report) => {
+    deleteReport(report.id);
+    toast({
+      title: 'Report Deleted',
+      description: `Report #${report.id} has been removed.`,
       status: 'info',
       duration: 3000,
       isClosable: true,
@@ -173,6 +150,11 @@ export function ReportedIssues() {
 
       {/* Reports List */}
       <VStack spacing={4} align="stretch">
+        {reports.length === 0 && (
+          <Text textAlign="center" color="gray.500" py={12}>
+            No reports match this filter.
+          </Text>
+        )}
         {reports.map((report) => (
           <Box
             key={report.id}
@@ -207,9 +189,22 @@ export function ReportedIssues() {
                   icon={<FiMoreVertical />}
                   variant="ghost"
                   size="sm"
+                  aria-label={`More actions for report #${report.id}`}
                 />
                 <MenuList>
-                  <MenuItem icon={<FiMessageSquare />}>Contact Reporter</MenuItem>
+                  <MenuItem
+                    icon={<FiMessageSquare />}
+                    onClick={() =>
+                      toast({
+                        title: 'Contact Reporter',
+                        description: `Opening a message thread with ${report.reporter}...`,
+                        status: 'info',
+                        duration: 3000,
+                      })
+                    }
+                  >
+                    Contact Reporter
+                  </MenuItem>
                   <MenuItem
                     icon={<FiCheckCircle />}
                     onClick={() => handleResolve(report)}
@@ -222,7 +217,11 @@ export function ReportedIssues() {
                   >
                     Start Investigation
                   </MenuItem>
-                  <MenuItem icon={<FiTrash2 />} color="red.500">
+                  <MenuItem
+                    icon={<FiTrash2 />}
+                    color="red.500"
+                    onClick={() => handleDelete(report)}
+                  >
                     Delete Report
                   </MenuItem>
                 </MenuList>

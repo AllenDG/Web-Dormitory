@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { FiMenu } from 'react-icons/fi';
 import OwnerSidebar from './OwnerSidebar';
 import OwnerHeader from './OwnerHeader';
+import { Breadcrumbs } from '../components';
 
 /**
  * Owner Layout
@@ -83,6 +84,7 @@ const OwnerLayout = () => {
 
         {/* Page Content */}
         <Box flex="1" overflowY="auto" p={6}>
+          <Breadcrumbs />
           <Outlet />
         </Box>
       </Flex>

@@ -1,0 +1,54 @@
+[
+  {
+    "id": "1",
+    "tenantName": "Juan Dela Cruz",
+    "tenantEmail": "juan@example.com",
+    "tenantPhone": "+63 912 345 6789",
+    "propertyId": "1",
+    "propertyTitle": "Modern Studio Room with City View",
+    "ownerEmail": "owner1@dormy.ph",
+    "message": "Hi! I'm interested in this property. Is it still available? Can I schedule a visit this weekend?",
+    "status": "new",
+    "createdAt": "2026-05-29T10:30:00"
+  },
+  {
+    "id": "2",
+    "tenantName": "Maria Santos",
+    "tenantEmail": "maria@example.com",
+    "tenantPhone": "+63 912 345 6790",
+    "propertyId": "6",
+    "propertyTitle": "Premium Condo with Pool View",
+    "ownerEmail": "owner1@dormy.ph",
+    "message": "Does this property allow pets? I have a small dog.",
+    "status": "replied",
+    "createdAt": "2026-05-28T14:20:00",
+    "replyMessage": "Yes, small pets are allowed with a small deposit.",
+    "repliedAt": "2026-05-28T16:00:00"
+  },
+  {
+    "id": "3",
+    "tenantName": "Pedro Garcia",
+    "tenantEmail": "pedro@example.com",
+    "tenantPhone": "+63 912 345 6791",
+    "propertyId": "3",
+    "propertyTitle": "Spacious Studio with Kitchenette",
+    "ownerEmail": "owner1@dormy.ph",
+    "message": "What are the payment terms? Do you require a deposit?",
+    "status": "new",
+    "createdAt": "2026-05-27T09:15:00"
+  },
+  {
+    "id": "4",
+    "tenantName": "Ana Reyes",
+    "tenantEmail": "ana@example.com",
+    "tenantPhone": "+63 912 345 6792",
+    "propertyId": "1",
+    "propertyTitle": "Modern Studio Room with City View",
+    "ownerEmail": "owner1@dormy.ph",
+    "message": "Thank you for the information. I've decided to go with another property.",
+    "status": "closed",
+    "createdAt": "2026-05-26T16:45:00",
+    "replyMessage": "No problem, thanks for letting us know. Good luck!",
+    "repliedAt": "2026-05-26T18:00:00"
+  }
+]

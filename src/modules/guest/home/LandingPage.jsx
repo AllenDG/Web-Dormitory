@@ -11,6 +11,7 @@ import {
 import { PreferenceWizard, RecommendedForYou, RecentlyViewed, NewListings } from '../../../domains/recommendations';
 import useRecommendationStore from '../../../shared/stores/useRecommendationStore';
 import { Card } from '../../../shared/components';
+import { heroGradient } from '../../../shared/theme/theme';
 
 /**
  * Landing Page v6.0
@@ -35,7 +36,7 @@ const LandingPage = () => {
         {!userPreferences.hasCompletedWizard && (
           <Box mb={12} mt={{ base: 8, md: 12 }}>
             <Card
-              bg="linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)"
+              bg={heroGradient}
               borderRadius="16px"
               p={{ base: 6, md: 8 }}
               textAlign="center"

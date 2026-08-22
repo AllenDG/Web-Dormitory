@@ -32,6 +32,7 @@ import {
   FiUserCheck,
   FiMail,
 } from 'react-icons/fi';
+import useAdminStore from '../../../../shared/stores/useAdminStore';
 
 /**
  * UserManagement Component
@@ -46,64 +47,29 @@ export function UserManagement({ onViewDetails }) {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
-  // Mock data - will be replaced with API
-  const users = [
-    {
-      id: 1,
-      name: 'Juan Dela Cruz',
-      email: 'juan@email.com',
-      role: 'tenant',
-      status: 'active',
-      joined: 'Jan 15, 2026',
-      lastActive: '2 hours ago',
-      bookings: 3,
-    },
-    {
-      id: 2,
-      name: 'Maria Santos',
-      email: 'maria@email.com',
-      role: 'owner',
-      status: 'active',
-      joined: 'Feb 20, 2026',
-      lastActive: '1 day ago',
-      properties: 5,
-    },
-    {
-      id: 3,
-      name: 'Pedro Garcia',
-      email: 'pedro@email.com',
-      role: 'tenant',
-      status: 'suspended',
-      joined: 'Mar 10, 2026',
-      lastActive: '2 weeks ago',
-      bookings: 1,
-    },
-    {
-      id: 4,
-      name: 'Ana Reyes',
-      email: 'ana@email.com',
-      role: 'owner',
-      status: 'active',
-      joined: 'Apr 5, 2026',
-      lastActive: '3 hours ago',
-      properties: 2,
-    },
-    {
-      id: 5,
-      name: 'Carlos Ramos',
-      email: 'carlos@email.com',
-      role: 'tenant',
-      status: 'inactive',
-      joined: 'May 12, 2026',
-      lastActive: '1 month ago',
-      bookings: 0,
-    },
-  ];
+  const allUsers = useAdminStore((state) => state.users);
+  const updateUserStatus = useAdminStore((state) => state.updateUserStatus);
+
+  const users = allUsers.filter((user) => {
+    const matchesSearch =
+      !searchQuery ||
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+    const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+    return matchesSearch && matchesRole && matchesStatus;
+  });
 
   const handleAction = (action, user) => {
+    if (action === 'Suspend') {
+      updateUserStatus(user.id, 'suspended');
+    } else if (action === 'Activate') {
+      updateUserStatus(user.id, 'active');
+    }
+
     toast({
       title: `${action} ${user.name}`,
-      description: `Action performed successfully`,
+      description: 'Action performed successfully',
       status: 'success',
       duration: 3000,
       isClosable: true,
@@ -195,6 +161,15 @@ export function UserManagement({ onViewDetails }) {
             </Tr>
           </Thead>
           <Tbody>
+            {users.length === 0 && (
+              <Tr>
+                <Td colSpan={7}>
+                  <Text textAlign="center" color="gray.500" py={6}>
+                    No users match your search or filters.
+                  </Text>
+                </Td>
+              </Tr>
+            )}
             {users.map((user) => (
               <Tr key={user.id}>
                 <Td>
@@ -246,6 +221,7 @@ export function UserManagement({ onViewDetails }) {
                       icon={<FiMoreVertical />}
                       variant="ghost"
                       size="sm"
+                      aria-label={`More actions for ${user.name}`}
                     />
                     <MenuList>
                       <MenuItem

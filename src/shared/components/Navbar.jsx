@@ -3,7 +3,6 @@ import {
   Flex,
   HStack,
   IconButton,
-  Button,
   Drawer,
   DrawerBody,
   DrawerHeader,
@@ -23,7 +22,7 @@ import {
 } from '@chakra-ui/react';
 import { FiMenu, FiHeart, FiUser, FiSettings, FiLogOut, FiLogIn, FiCalendar, FiMessageSquare, FiBarChart2 } from 'react-icons/fi';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Container } from './index';
+import { Container, Button } from './index';
 import useUIStore from '../stores/useUIStore';
 import useRentalStore from '../stores/useRentalStore';
 import useChatStore from '../stores/useChatStore';

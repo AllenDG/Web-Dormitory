@@ -23,6 +23,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { FiMail, FiUser, FiPhone, FiMessageSquare, FiSend } from 'react-icons/fi';
 import { Button } from '../../../shared/components';
+import useInquiryStore from '../../../shared/stores/useInquiryStore';
 
 // Validation schema
 const inquirySchema = z.object({
@@ -66,6 +67,7 @@ const messageTemplates = [
 const SendInquiryModal = ({ isOpen, onClose, property }) => {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const toast = useToast();
+  const addInquiry = useInquiryStore((state) => state.addInquiry);
 
   const {
     register,
@@ -80,18 +82,15 @@ const SendInquiryModal = ({ isOpen, onClose, property }) => {
   const messageValue = watch('message');
 
   const onSubmit = async (data) => {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    const inquiryData = {
-      ...data,
+    addInquiry({
+      tenantName: data.name,
+      tenantEmail: data.email,
+      tenantPhone: data.phone,
+      message: data.message,
       propertyId: property?.id,
       propertyTitle: property?.title,
       ownerEmail: property?.ownerEmail,
-      timestamp: new Date().toISOString(),
-    };
-
-    console.log('Inquiry data:', inquiryData);
+    });
 
     toast({
       title: 'Inquiry Sent!',

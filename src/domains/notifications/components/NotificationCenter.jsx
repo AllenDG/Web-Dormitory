@@ -6,7 +6,6 @@ import {
   Icon,
   IconButton,
   Badge,
-  Button,
   Drawer,
   DrawerBody,
   DrawerHeader,
@@ -26,14 +25,14 @@ import {
 } from '@chakra-ui/react';
 import {
   FiBell,
-  FiCheck,
   FiCheckCircle,
   FiTrash2,
   FiSettings,
   FiMoreVertical,
 } from 'react-icons/fi';
-import { useState } from 'react';
 import NotificationItem from './NotificationItem';
+import useNotificationStore from '../../../shared/stores/useNotificationStore';
+import { useAuth } from '../../../app/providers/AuthProvider';
 
 /**
  * Notification Center Component
@@ -43,73 +42,23 @@ import NotificationItem from './NotificationItem';
 
 const NotificationCenter = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: 'booking',
-      title: 'Booking Confirmed',
-      message: 'Your booking for Modern Studio Room has been confirmed.',
-      timestamp: '2026-06-03T10:30:00',
-      read: false,
-      actionUrl: '/bookings/1',
-    },
-    {
-      id: 2,
-      type: 'payment',
-      title: 'Payment Successful',
-      message: 'Your payment of ₱8,000 has been processed successfully.',
-      timestamp: '2026-06-03T09:15:00',
-      read: false,
-      actionUrl: '/transactions/1',
-    },
-    {
-      id: 3,
-      type: 'message',
-      title: 'New Message',
-      message: 'Juan Dela Cruz sent you a message about the property.',
-      timestamp: '2026-06-02T16:45:00',
-      read: true,
-      actionUrl: '/chat/1',
-    },
-    {
-      id: 4,
-      type: 'review',
-      title: 'New Review',
-      message: 'Maria Santos left a review for your property.',
-      timestamp: '2026-06-02T14:20:00',
-      read: true,
-      actionUrl: '/reviews',
-    },
-    {
-      id: 5,
-      type: 'reminder',
-      title: 'Visit Reminder',
-      message: 'Your property visit is scheduled for tomorrow at 2:00 PM.',
-      timestamp: '2026-06-01T10:00:00',
-      read: true,
-      actionUrl: '/visits/1',
-    },
-  ]);
+  const { user } = useAuth();
+  const allStoreNotifications = useNotificationStore((state) => state.notifications);
+  const markAsRead = useNotificationStore((state) => state.markAsRead);
+  const markAllAsRead = useNotificationStore((state) => state.markAllAsRead);
+  const deleteNotification = useNotificationStore((state) => state.deleteNotification);
+  const clearAll = useNotificationStore((state) => state.clearAll);
+
+  const notifications = allStoreNotifications.filter(
+    (n) => n.recipientEmail === user?.email
+  );
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const handleMarkAsRead = (id) => {
-    setNotifications(
-      notifications.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
-  };
-
-  const handleMarkAllAsRead = () => {
-    setNotifications(notifications.map((n) => ({ ...n, read: true })));
-  };
-
-  const handleDelete = (id) => {
-    setNotifications(notifications.filter((n) => n.id !== id));
-  };
-
-  const handleClearAll = () => {
-    setNotifications([]);
-  };
+  const handleMarkAsRead = (id) => markAsRead(id);
+  const handleMarkAllAsRead = () => markAllAsRead(user?.email);
+  const handleDelete = (id) => deleteNotification(id);
+  const handleClearAll = () => clearAll(user?.email);
 
   const allNotifications = notifications;
   const unreadNotifications = notifications.filter((n) => !n.read);

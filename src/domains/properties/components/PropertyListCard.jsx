@@ -28,6 +28,7 @@ import {
   FiBarChart2,
 } from 'react-icons/fi';
 import useCompareStore from '../../../shared/stores/useCompareStore';
+import { primaryColorHex } from '../../../shared/theme/theme';
 
 /**
  * PropertyListCard Component v2.1
@@ -109,13 +110,13 @@ const PropertyListCard = ({
     <Box
       bg="white"
       borderRadius="lg"
-      border={`2px solid ${isHighlighted ? '#2563EB' : '#E5E7EB'}`}
+      border={`2px solid ${isHighlighted ? primaryColorHex : '#E5E7EB'}`}
       overflow="hidden"
       transition="all 0.3s"
       _hover={{
         boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
         transform: 'translateY(-2px)',
-        borderColor: '#2563EB',
+        borderColor: primaryColorHex,
       }}
       cursor="pointer"
       onClick={onClick}

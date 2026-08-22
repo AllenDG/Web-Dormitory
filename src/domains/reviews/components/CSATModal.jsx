@@ -20,6 +20,7 @@ import { FiThumbsUp, FiThumbsDown } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 import useReviewStore from '../../../shared/stores/useReviewStore';
 import { useAuth } from '../../../app/providers/AuthProvider';
+import { primaryColorHex } from '../../../shared/theme/theme';
 
 /**
  * CSAT (Customer Satisfaction) Modal
@@ -111,7 +112,7 @@ const CSATModal = ({ isOpen, onClose, propertyId, propertyTitle }) => {
           `,
           icon: 'success',
           confirmButtonText: 'Great!',
-          confirmButtonColor: '#1e88e5',
+          confirmButtonColor: primaryColorHex,
           timer: 3000,
           timerProgressBar: true,
         });
@@ -131,7 +132,7 @@ const CSATModal = ({ isOpen, onClose, propertyId, propertyTitle }) => {
           text: 'Failed to submit your rating. Please try again.',
           icon: 'error',
           confirmButtonText: 'OK',
-          confirmButtonColor: '#1e88e5',
+          confirmButtonColor: primaryColorHex,
         });
       }, 100);
     } finally {

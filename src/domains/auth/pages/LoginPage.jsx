@@ -17,6 +17,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { heroGradient } from '../../../shared/theme/theme';
 import { FiEye, FiEyeOff, FiMail, FiMapPin, FiShield, FiTrendingUp } from 'react-icons/fi';
 import { Button } from '../../../shared/components';
 import { useAuth, ROLES } from '../../../app/providers/AuthProvider';
@@ -52,7 +53,8 @@ const LoginPage = () => {
 
   // Auto-detect user role from route
   const isOwnerLogin = location.pathname.includes('/owner');
-  const userRole = isOwnerLogin ? ROLES.OWNER : ROLES.TENANT;
+  const isAdminLogin = location.pathname.includes('/admin');
+  const userRole = isAdminLogin ? ROLES.ADMIN : isOwnerLogin ? ROLES.OWNER : ROLES.TENANT;
 
   // Carousel slides content
   const slides = isOwnerLogin ? [
@@ -136,7 +138,9 @@ const LoginPage = () => {
         // Small delay to show toast
         setTimeout(() => {
           // Redirect based on role
-          if (userRole === ROLES.OWNER) {
+          if (userRole === ROLES.ADMIN) {
+            navigate('/admin/dashboard');
+          } else if (userRole === ROLES.OWNER) {
             navigate('/owner/dashboard');
           } else {
             navigate('/');
@@ -173,7 +177,7 @@ const LoginPage = () => {
       <Box
         display={{ base: 'none', lg: 'flex' }}
         flex="1"
-        bg="linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)"
+        bg={heroGradient}
         position="relative"
         overflow="hidden"
         alignItems="center"

@@ -1,20 +1,21 @@
-import { 
-  Flex, 
-  Text, 
-  IconButton, 
-  Icon, 
+import {
+  Flex,
+  Box,
+  Text,
+  Icon,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
   MenuDivider,
   Avatar,
-  Badge,
   HStack,
 } from '@chakra-ui/react';
-import { FiBell, FiLogOut, FiUser, FiSettings } from 'react-icons/fi';
+import { FiLogOut, FiUser, FiSettings } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../app/providers/AuthProvider';
+import NotificationCenter from '../../domains/notifications/components/NotificationCenter';
+import GlobalSearch from '../../domains/search/components/GlobalSearch';
 
 /**
  * Owner Header
@@ -30,66 +31,27 @@ const OwnerHeader = () => {
   };
 
   return (
-    <Flex flex="1" justify="space-between" align="center">
+    <Flex flex="1" justify="space-between" align="center" gap={4}>
       {/* Page Title - Can be dynamic based on route */}
-      <Text fontSize="lg" fontWeight="semibold" color="gray.800">
+      <Text
+        fontSize="lg"
+        fontWeight="semibold"
+        color="gray.800"
+        display={{ base: 'none', xl: 'block' }}
+        whiteSpace="nowrap"
+      >
         Welcome back, {user?.name?.split(' ')[0] || 'Owner'}!
       </Text>
+
+      {/* Global Search */}
+      <Box display={{ base: 'none', md: 'block' }} flex={1}>
+        <GlobalSearch />
+      </Box>
 
       {/* Right Side Actions */}
       <HStack spacing={2}>
         {/* Notifications */}
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            icon={
-              <Box position="relative">
-                <Icon as={FiBell} boxSize={5} />
-                <Badge
-                  position="absolute"
-                  top="-4px"
-                  right="-4px"
-                  colorScheme="red"
-                  borderRadius="full"
-                  fontSize="xs"
-                  minW="18px"
-                  h="18px"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  3
-                </Badge>
-              </Box>
-            }
-            variant="ghost"
-            aria-label="Notifications"
-          />
-          <MenuList>
-            <MenuItem fontSize="sm">
-              <VStack align="start" spacing={0}>
-                <Text fontWeight="semibold">New booking request</Text>
-                <Text fontSize="xs" color="gray.600">2 hours ago</Text>
-              </VStack>
-            </MenuItem>
-            <MenuItem fontSize="sm">
-              <VStack align="start" spacing={0}>
-                <Text fontWeight="semibold">Property inquiry</Text>
-                <Text fontSize="xs" color="gray.600">5 hours ago</Text>
-              </VStack>
-            </MenuItem>
-            <MenuItem fontSize="sm">
-              <VStack align="start" spacing={0}>
-                <Text fontWeight="semibold">Payment received</Text>
-                <Text fontSize="xs" color="gray.600">1 day ago</Text>
-              </VStack>
-            </MenuItem>
-            <MenuDivider />
-            <MenuItem fontSize="sm" color="primary.600">
-              View all notifications
-            </MenuItem>
-          </MenuList>
-        </Menu>
+        <NotificationCenter />
 
         {/* User Menu */}
         <Menu>
@@ -137,8 +99,5 @@ const OwnerHeader = () => {
     </Flex>
   );
 };
-
-// Import Box and VStack for notifications
-import { Box, VStack } from '@chakra-ui/react';
 
 export default OwnerHeader;

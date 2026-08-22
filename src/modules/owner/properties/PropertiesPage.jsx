@@ -28,6 +28,7 @@ import { FiPlus, FiEdit, FiTrash2, FiMoreVertical, FiEye, FiEyeOff } from 'react
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useRentalStore from '../../../shared/stores/useRentalStore';
+import { useAuth } from '../../../app/providers/AuthProvider';
 
 /**
  * Properties Management Page
@@ -68,12 +69,12 @@ const PropertyCard = ({ property, onEdit, onDelete, onToggleStatus }) => {
           position="absolute"
           top={3}
           left={3}
-          colorScheme={property.status === 'active' ? 'green' : 'gray'}
+          colorScheme={(property.status || 'active') === 'active' ? 'green' : 'gray'}
           fontSize="xs"
           px={2}
           py={1}
         >
-          {property.status || 'Active'}
+          {property.status || 'active'}
         </Badge>
         <Menu>
           <MenuButton
@@ -94,7 +95,7 @@ const PropertyCard = ({ property, onEdit, onDelete, onToggleStatus }) => {
               Edit Property
             </MenuItem>
             <MenuItem icon={<Icon as={FiEyeOff} />} onClick={() => onToggleStatus(property)}>
-              {property.status === 'active' ? 'Deactivate' : 'Activate'}
+              {(property.status || 'active') === 'active' ? 'Deactivate' : 'Activate'}
             </MenuItem>
             <MenuItem icon={<Icon as={FiTrash2} />} color="error.500" onClick={() => onDelete(property)}>
               Delete Property
@@ -129,12 +130,16 @@ const PropertyCard = ({ property, onEdit, onDelete, onToggleStatus }) => {
 const PropertiesPage = () => {
   const navigate = useNavigate();
   const toast = useToast();
+  const { user } = useAuth();
   const { rentals = [] } = useRentalStore();
+  const deleteRental = useRentalStore((state) => state.deleteRental);
+  const updateRental = useRentalStore((state) => state.updateRental);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedProperty, setSelectedProperty] = useState(null);
 
-  // Mock: Filter properties by owner (in real app, filter by logged-in owner)
-  const ownerProperties = Array.isArray(rentals) ? rentals.slice(0, 5) : []; // Mock owner's properties
+  const ownerProperties = Array.isArray(rentals)
+    ? rentals.filter((r) => r.ownerEmail === user?.email)
+    : [];
 
   const handleEdit = (property) => {
     navigate(`/owner/properties/edit/${property.id}`);
@@ -146,6 +151,7 @@ const PropertiesPage = () => {
   };
 
   const confirmDelete = () => {
+    deleteRental(selectedProperty.id);
     toast({
       title: 'Property Deleted',
       description: `${selectedProperty.title} has been removed.`,
@@ -157,7 +163,8 @@ const PropertiesPage = () => {
   };
 
   const handleToggleStatus = (property) => {
-    const newStatus = property.status === 'active' ? 'inactive' : 'active';
+    const newStatus = (property.status || 'active') === 'active' ? 'inactive' : 'active';
+    updateRental(property.id, { status: newStatus });
     toast({
       title: 'Status Updated',
       description: `Property is now ${newStatus}.`,

@@ -27,6 +27,7 @@ import useRentalStore from '../../../shared/stores/useRentalStore';
 import useRecommendationStore from '../../../shared/stores/useRecommendationStore';
 import { CompareFloatingButton } from '../components';
 import { useAuth } from '../../../app/providers/AuthProvider';
+import { heroGradient } from '../../../shared/theme/theme';
 
 /**
  * Find Rentals Page v7.0 - With Auth Gate
@@ -147,7 +148,7 @@ const FindRentalsPage = () => {
 
             <VStack spacing={5}>
               <Box
-                bg="linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)"
+                bg={heroGradient}
                 p={5}
                 borderRadius="20px"
               >

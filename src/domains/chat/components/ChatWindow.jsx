@@ -169,6 +169,7 @@ const ChatWindow = ({ conversation, user }) => {
             icon={<Icon as={FiMoreVertical} />}
             variant="ghost"
             size="sm"
+            aria-label="Conversation options"
           />
           <MenuList>
             <MenuItem icon={<Icon as={FiHome} />} onClick={handleViewProperty}>
@@ -308,6 +309,7 @@ const ChatWindow = ({ conversation, user }) => {
             onClick={handleSendMessage}
             isDisabled={!messageText.trim()}
             borderRadius="8px"
+            aria-label="Send message"
           />
         </HStack>
       </Box>

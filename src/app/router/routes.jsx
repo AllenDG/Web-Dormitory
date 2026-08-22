@@ -1,7 +1,9 @@
 import { Suspense } from 'react';
-import { Spinner, Center, Box } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import ProtectedRoute from './protected-routes';
 import { ROLES } from '../providers/AuthProvider';
+import { PERMISSIONS } from '../config/permissions';
+import { FullPageLoader } from '../../shared/components/LoadingState';
 
 // Import layouts
 import TenantLayout from '../../shared/layouts/TenantLayout';
@@ -13,16 +15,9 @@ import * as OwnerRoutes from './owner-routes';
 import * as AdminRoutes from './admin-routes';
 import * as AuthRoutes from './auth-routes';
 
-// Loading component
-const PageLoader = () => (
-  <Center h="80vh">
-    <Spinner size="xl" color="primary.500" thickness="4px" />
-  </Center>
-);
-
 // Wrapper for lazy loaded components
 const LazyPage = ({ children }) => (
-  <Suspense fallback={<PageLoader />}>{children}</Suspense>
+  <Suspense fallback={<FullPageLoader />}>{children}</Suspense>
 );
 
 /**
@@ -250,7 +245,10 @@ export const routes = [
   {
     path: '/admin',
     element: (
-      <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+      <ProtectedRoute
+        allowedRoles={[ROLES.ADMIN]}
+        requiredPermission={PERMISSIONS.ACCESS_ADMIN_PANEL}
+      >
         <Box minH="100vh">
           <LazyPage>
             <AdminRoutes.AdminDashboardEnhanced />
@@ -262,7 +260,10 @@ export const routes = [
   {
     path: '/admin/dashboard',
     element: (
-      <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+      <ProtectedRoute
+        allowedRoles={[ROLES.ADMIN]}
+        requiredPermission={PERMISSIONS.ACCESS_ADMIN_PANEL}
+      >
         <Box minH="100vh">
           <LazyPage>
             <AdminRoutes.AdminDashboardEnhanced />
@@ -327,7 +328,7 @@ export const routes = [
         path: 'bookings',
         element: (
           <LazyPage>
-            <OwnerRoutes.BookingsPage />
+            <OwnerRoutes.BookingRequestsPage />
           </LazyPage>
         ),
       },
@@ -336,6 +337,22 @@ export const routes = [
         element: (
           <LazyPage>
             <OwnerRoutes.TenantsPage />
+          </LazyPage>
+        ),
+      },
+      {
+        path: 'payments',
+        element: (
+          <LazyPage>
+            <OwnerRoutes.TransactionHistoryPage />
+          </LazyPage>
+        ),
+      },
+      {
+        path: 'reports',
+        element: (
+          <LazyPage>
+            <OwnerRoutes.ReportsPage />
           </LazyPage>
         ),
       },

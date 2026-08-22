@@ -131,6 +131,7 @@ const ReviewCard = ({
               icon={<FaEllipsisV />}
               variant="ghost"
               size="sm"
+              aria-label="Review actions"
             />
             <MenuList>
               {!isOwner && (

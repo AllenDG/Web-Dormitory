@@ -18,6 +18,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { heroGradient } from '../../../shared/theme/theme';
 import { FiEye, FiEyeOff, FiMail, FiMapPin, FiShield, FiTrendingUp } from 'react-icons/fi';
 import { Button } from '../../../shared/components';
 import { useAuth, ROLES } from '../../../app/providers/AuthProvider';
@@ -186,7 +187,7 @@ const SignUpPage = () => {
       <Box
         display={{ base: 'none', lg: 'flex' }}
         flex="1"
-        bg="linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)"
+        bg={heroGradient}
         position="relative"
         overflow="hidden"
         alignItems="center"
