@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react';
-import { Box, Image, Flex, HStack, Text, Badge, Input, InputGroup, InputLeftElement, Select, Icon, NumberInput, NumberInputField } from '@chakra-ui/react';
+import { Box, Image, Flex, HStack, Text, Badge, Select, NumberInput, NumberInputField } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { FiSearch, FiCheckCircle, FiXCircle, FiEye, FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiCheckCircle, FiXCircle, FiEye, FiEdit, FiTrash2 } from 'react-icons/fi';
 import useRentalStore from '../../../../shared/stores/useRentalStore';
 import useAuditLogStore from '../../../../shared/stores/useAuditLogStore';
 import { useAuth } from '../../../../app/providers/AuthProvider';
 import DataTable from '../../../../shared/components/DataTable';
+import TableToolbar from '../../../../shared/components/TableToolbar';
 import { TableSkeleton } from '../../../../shared/components/LoadingState';
 import { useMinDisplayTime } from '../../../../shared/hooks/useMinDisplayTime';
 import { useAppToast } from '../../../../shared/hooks/useAppToast';
@@ -26,8 +27,9 @@ const formatPrice = (price) =>
  * that's what Reported Issues is for). "View Details" wires to the real
  * listing page.
  */
-export function PropertyModerationGrid({ onEditProperty }) {
+export function PropertyModerationGrid({ onEditProperty, addLabel, onAdd }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
   const [cityFilter, setCityFilter] = useState('all');
   const [priceMin, setPriceMin] = useState('');
@@ -124,30 +126,36 @@ export function PropertyModerationGrid({ onEditProperty }) {
 
   return (
     <Box>
-      <InputGroup mb={4} w="full">
-        <InputLeftElement pointerEvents="none"><Icon as={FiSearch} color="gray.500" /></InputLeftElement>
-        <Input placeholder="Search properties..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-      </InputGroup>
-      <Flex wrap="wrap" gap={4} mb={6}>
-        <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-          <option value="all">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
-        </Select>
-        <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={cityFilter} onChange={(e) => setCityFilter(e.target.value)}>
-          <option value="all">All Cities</option>
-          {cities.map((city) => (
-            <option key={city} value={city}>{city}</option>
-          ))}
-        </Select>
-        <NumberInput flex="1" minW={{ base: '100%', sm: '140px' }} min={0} value={priceMin} onChange={(val) => setPriceMin(val)}>
-          <NumberInputField placeholder="Min Price" />
-        </NumberInput>
-        <NumberInput flex="1" minW={{ base: '100%', sm: '140px' }} min={0} value={priceMax} onChange={(val) => setPriceMax(val)}>
-          <NumberInputField placeholder="Max Price" />
-        </NumberInput>
-      </Flex>
+      <TableToolbar
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search properties..."
+        filtersOpen={filtersOpen}
+        onToggleFilters={() => setFiltersOpen((prev) => !prev)}
+        addLabel={addLabel}
+        onAdd={onAdd}
+      >
+        <Flex wrap="wrap" gap={4}>
+          <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </Select>
+          <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={cityFilter} onChange={(e) => setCityFilter(e.target.value)}>
+            <option value="all">All Cities</option>
+            {cities.map((city) => (
+              <option key={city} value={city}>{city}</option>
+            ))}
+          </Select>
+          <NumberInput flex="1" minW={{ base: '100%', sm: '140px' }} min={0} value={priceMin} onChange={(val) => setPriceMin(val)}>
+            <NumberInputField placeholder="Min Price" />
+          </NumberInput>
+          <NumberInput flex="1" minW={{ base: '100%', sm: '140px' }} min={0} value={priceMax} onChange={(val) => setPriceMax(val)}>
+            <NumberInputField placeholder="Max Price" />
+          </NumberInput>
+        </Flex>
+      </TableToolbar>
 
       {isLoading ? (
         <TableSkeleton rows={5} columns={6} />

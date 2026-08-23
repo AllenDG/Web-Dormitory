@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Box, Icon, SimpleGrid } from '@chakra-ui/react';
+import { Box, SimpleGrid } from '@chakra-ui/react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { FiPlus, FiGrid, FiClock, FiCheckCircle, FiXCircle } from 'react-icons/fi';
+import { FiGrid, FiClock, FiCheckCircle, FiXCircle } from 'react-icons/fi';
 import PageBanner from '../../../shared/components/PageBanner';
-import Button from '../../../shared/components/Button';
 import StatCard from '../../../shared/components/StatCard';
 import useRentalStore from '../../../shared/stores/useRentalStore';
 import PropertyModerationGrid from './components/PropertyModerationGrid';
@@ -55,11 +54,6 @@ const PropertyModerationPage = () => {
       <PageBanner
         title="Property Management"
         subtitle="Review, approve, and manage every listing on the platform"
-        actions={
-          <Button leftIcon={<Icon as={FiPlus} />} onClick={() => setPanel({ isOpen: true, mode: 'add', propertyId: null })}>
-            Add Property
-          </Button>
-        }
       />
 
       <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={6} mb={8}>
@@ -69,7 +63,11 @@ const PropertyModerationPage = () => {
         <StatCard label="Rejected" value={statusCounts.rejected} icon={FiXCircle} color="error" />
       </SimpleGrid>
 
-      <PropertyModerationGrid onEditProperty={openEdit} />
+      <PropertyModerationGrid
+        onEditProperty={openEdit}
+        addLabel="Add Property"
+        onAdd={() => setPanel({ isOpen: true, mode: 'add', propertyId: null })}
+      />
       <AdminPropertyFormPanel isOpen={panel.isOpen} mode={panel.mode} propertyId={panel.propertyId} onClose={closePanel} />
     </Box>
   );

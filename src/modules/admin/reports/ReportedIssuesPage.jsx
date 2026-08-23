@@ -1,8 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Box, Icon, SimpleGrid, useDisclosure } from '@chakra-ui/react';
-import { FiPlus, FiAlertCircle, FiEye, FiCheckCircle } from 'react-icons/fi';
+import { Box, SimpleGrid, useDisclosure } from '@chakra-ui/react';
+import { FiAlertCircle, FiEye, FiCheckCircle } from 'react-icons/fi';
 import PageBanner from '../../../shared/components/PageBanner';
-import Button from '../../../shared/components/Button';
 import StatCard from '../../../shared/components/StatCard';
 import useAdminStore from '../../../shared/stores/useAdminStore';
 import ReportedIssuesList from './components/ReportedIssuesList';
@@ -40,11 +39,6 @@ const ReportedIssuesPage = () => {
       <PageBanner
         title="Reported Issues"
         subtitle="Triage complaints and platform reports"
-        actions={
-          <Button leftIcon={<Icon as={FiPlus} />} onClick={handleAddReport}>
-            Log Report
-          </Button>
-        }
       />
 
       <SimpleGrid columns={{ base: 1, sm: 3 }} spacing={6} mb={8}>
@@ -53,7 +47,7 @@ const ReportedIssuesPage = () => {
         <StatCard label="Resolved" value={statusCounts.resolved} icon={FiCheckCircle} color="success" />
       </SimpleGrid>
 
-      <ReportedIssuesList onEditReport={handleEditReport} />
+      <ReportedIssuesList onEditReport={handleEditReport} addLabel="Log Report" onAdd={handleAddReport} />
       <ReportFormPanel isOpen={isOpen} mode={panel.mode} report={panel.report} onClose={onClose} />
     </Box>
   );

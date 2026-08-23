@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Box, Icon, SimpleGrid, useDisclosure } from '@chakra-ui/react';
+import { Box, SimpleGrid, useDisclosure } from '@chakra-ui/react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FiPlus, FiUsers, FiHome, FiShield } from 'react-icons/fi';
+import { FiUsers, FiHome, FiShield } from 'react-icons/fi';
 import PageBanner from '../../../shared/components/PageBanner';
-import Button from '../../../shared/components/Button';
 import StatCard from '../../../shared/components/StatCard';
 import useAdminStore from '../../../shared/stores/useAdminStore';
 import UsersTable from './components/UsersTable';
@@ -59,11 +58,6 @@ const UsersPage = () => {
       <PageBanner
         title="User Management"
         subtitle="Manage every tenant, owner, and admin account on the platform"
-        actions={
-          <Button leftIcon={<Icon as={FiPlus} />} onClick={() => setFormPanel({ isOpen: true, mode: 'add', user: null })}>
-            Add User
-          </Button>
-        }
       />
 
       <SimpleGrid columns={{ base: 1, sm: 3 }} spacing={6} mb={8}>
@@ -72,7 +66,12 @@ const UsersPage = () => {
         <StatCard label="Admins" value={roleCounts.admin} icon={FiShield} color="warning" />
       </SimpleGrid>
 
-      <UsersTable onViewDetails={handleViewDetails} onEditUser={handleEditUser} />
+      <UsersTable
+        onViewDetails={handleViewDetails}
+        onEditUser={handleEditUser}
+        addLabel="Add User"
+        onAdd={() => setFormPanel({ isOpen: true, mode: 'add', user: null })}
+      />
       <UserDetailsPanel isOpen={isOpen} onClose={onClose} user={selectedUser} />
       <UserFormPanel isOpen={formPanel.isOpen} mode={formPanel.mode} user={formPanel.user} onClose={closeFormPanel} />
     </Box>

@@ -1,4 +1,4 @@
-import { Box, VStack, Heading, Text, Flex, Avatar } from '@chakra-ui/react';
+import { Box, VStack, Heading, Text } from '@chakra-ui/react';
 import {
   FiHome,
   FiUsers,
@@ -9,7 +9,6 @@ import {
   FiSettings,
   FiVolume2,
 } from 'react-icons/fi';
-import { useAuth } from '../../app/providers/AuthProvider';
 import SidebarNavItem from '../components/SidebarNavItem';
 import SidebarNavGroup from '../components/SidebarNavGroup';
 
@@ -56,23 +55,11 @@ const navItems = [
 
 /** Admin Sidebar — same shell/active-state pattern as OwnerSidebar. */
 const AdminSidebar = ({ onClose }) => {
-  const { user } = useAuth();
-
   return (
     <Box h="100%" display="flex" flexDirection="column">
       <Box p={6} borderBottom="1px" borderColor="gray.200">
         <Heading size="lg" color="primary.600" fontWeight="bold">RentMe</Heading>
         <Text fontSize="sm" color="gray.600" mt={1}>Super Admin</Text>
-      </Box>
-
-      <Box p={6} borderBottom="1px" borderColor="gray.200">
-        <Flex align="center" gap={3}>
-          <Avatar size="md" name={user?.name} bg="primary.500" color="white" />
-          <Box flex="1">
-            <Text fontWeight="semibold" fontSize="sm" noOfLines={1}>{user?.name || 'Admin'}</Text>
-            <Text fontSize="xs" color="gray.600" noOfLines={1}>{user?.email}</Text>
-          </Box>
-        </Flex>
       </Box>
 
       <VStack spacing={1} align="stretch" p={4} flex="1">

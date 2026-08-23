@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Box, SimpleGrid, Badge, Input, InputGroup, InputLeftElement, Icon, Flex, Select, useDisclosure } from '@chakra-ui/react';
-import { FiDollarSign, FiTrendingUp, FiActivity, FiHash, FiSearch, FiRefreshCw } from 'react-icons/fi';
+import { Box, SimpleGrid, Badge, Input, Flex, Select, useDisclosure } from '@chakra-ui/react';
+import { FiDollarSign, FiTrendingUp, FiActivity, FiHash, FiRefreshCw } from 'react-icons/fi';
 import useBookingStore, { BOOKING_STATUS, PAYMENT_STATUS } from '../../../shared/stores/useBookingStore';
 import PageBanner from '../../../shared/components/PageBanner';
 import StatCard from '../../../shared/components/StatCard';
 import DataTable from '../../../shared/components/DataTable';
+import TableToolbar from '../../../shared/components/TableToolbar';
 import { StatCardSkeleton, TableSkeleton } from '../../../shared/components/LoadingState';
 import { useMinDisplayTime } from '../../../shared/hooks/useMinDisplayTime';
 import RefundPanel from './components/RefundPanel';
@@ -38,6 +39,7 @@ const VIEW_SUBTITLES = {
  */
 const RevenuePage = ({ view = 'overview' }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
@@ -101,39 +103,42 @@ const RevenuePage = ({ view = 'overview' }) => {
     <Box>
       <PageBanner title={VIEW_TITLES[view]} subtitle={VIEW_SUBTITLES[view]} />
 
-      <InputGroup mb={4} w="full">
-        <InputLeftElement pointerEvents="none"><Icon as={FiSearch} color="gray.500" /></InputLeftElement>
-        <Input placeholder="Search by property, owner, or tenant..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-      </InputGroup>
-
-      <Flex wrap="wrap" gap={4} mb={6}>
-        <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-          <option value="all">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="paid">Paid</option>
-          <option value="confirmed">Confirmed</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
-          <option value="rejected">Rejected</option>
-        </Select>
-        <Input
-          type="date"
-          aria-label="From date"
-          flex="1"
-          minW={{ base: '100%', sm: '150px' }}
-          value={dateFrom}
-          onChange={(e) => setDateFrom(e.target.value)}
-        />
-        <Input
-          type="date"
-          aria-label="To date"
-          flex="1"
-          minW={{ base: '100%', sm: '150px' }}
-          value={dateTo}
-          onChange={(e) => setDateTo(e.target.value)}
-        />
-      </Flex>
+      <TableToolbar
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search by property, owner, or tenant..."
+        filtersOpen={filtersOpen}
+        onToggleFilters={() => setFiltersOpen((prev) => !prev)}
+      >
+        <Flex wrap="wrap" gap={4}>
+          <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="paid">Paid</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="rejected">Rejected</option>
+          </Select>
+          <Input
+            type="date"
+            aria-label="From date"
+            flex="1"
+            minW={{ base: '100%', sm: '150px' }}
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+          />
+          <Input
+            type="date"
+            aria-label="To date"
+            flex="1"
+            minW={{ base: '100%', sm: '150px' }}
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+          />
+        </Flex>
+      </TableToolbar>
 
       {view === 'overview' && (
         isLoading ? (

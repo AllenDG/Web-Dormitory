@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
-import { Box, Avatar, Badge, HStack, Flex, Text, Input, InputGroup, InputLeftElement, Select, Icon } from '@chakra-ui/react';
-import { FiSearch, FiEye, FiEdit, FiUserX, FiUserCheck, FiMail, FiTrash2 } from 'react-icons/fi';
+import { Box, Avatar, Badge, HStack, Flex, Text, Input, Select } from '@chakra-ui/react';
+import { FiEye, FiEdit, FiUserX, FiUserCheck, FiMail, FiTrash2 } from 'react-icons/fi';
 import useAdminStore from '../../../../shared/stores/useAdminStore';
 import useAuditLogStore from '../../../../shared/stores/useAuditLogStore';
 import { useAuth } from '../../../../app/providers/AuthProvider';
 import DataTable from '../../../../shared/components/DataTable';
+import TableToolbar from '../../../../shared/components/TableToolbar';
 import { TableSkeleton } from '../../../../shared/components/LoadingState';
 import { useMinDisplayTime } from '../../../../shared/hooks/useMinDisplayTime';
 import { useAppToast } from '../../../../shared/hooks/useAppToast';
@@ -41,8 +42,9 @@ const enrichUsers = (users) =>
     lastActiveBucket: parseLastActiveBucket(user.lastActive),
   }));
 
-export function UsersTable({ onViewDetails, onEditUser }) {
+export function UsersTable({ onViewDetails, onEditUser, addLabel, onAdd }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [joinedFrom, setJoinedFrom] = useState('');
@@ -152,47 +154,53 @@ export function UsersTable({ onViewDetails, onEditUser }) {
 
   return (
     <Box>
-      <InputGroup mb={4} w="full">
-        <InputLeftElement pointerEvents="none"><Icon as={FiSearch} color="gray.500" /></InputLeftElement>
-        <Input placeholder="Search users..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-      </InputGroup>
-      <Flex wrap="wrap" gap={4} mb={6}>
-        <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
-          <option value="all">All Roles</option>
-          <option value="tenant">Tenants</option>
-          <option value="owner">Owners</option>
-          <option value="admin">Admins</option>
-        </Select>
-        <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="suspended">Suspended</option>
-          <option value="inactive">Inactive</option>
-        </Select>
-        <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={lastActiveBucket} onChange={(e) => setLastActiveBucket(e.target.value)}>
-          <option value="all">All Activity</option>
-          <option value="today">Today</option>
-          <option value="week">This Week</option>
-          <option value="month">This Month</option>
-          <option value="inactive">Inactive 1mo+</option>
-        </Select>
-        <Input
-          type="date"
-          aria-label="Joined from"
-          flex="1"
-          minW={{ base: '100%', sm: '150px' }}
-          value={joinedFrom}
-          onChange={(e) => setJoinedFrom(e.target.value)}
-        />
-        <Input
-          type="date"
-          aria-label="Joined to"
-          flex="1"
-          minW={{ base: '100%', sm: '150px' }}
-          value={joinedTo}
-          onChange={(e) => setJoinedTo(e.target.value)}
-        />
-      </Flex>
+      <TableToolbar
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search users..."
+        filtersOpen={filtersOpen}
+        onToggleFilters={() => setFiltersOpen((prev) => !prev)}
+        addLabel={addLabel}
+        onAdd={onAdd}
+      >
+        <Flex wrap="wrap" gap={4}>
+          <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+            <option value="all">All Roles</option>
+            <option value="tenant">Tenants</option>
+            <option value="owner">Owners</option>
+            <option value="admin">Admins</option>
+          </Select>
+          <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="suspended">Suspended</option>
+            <option value="inactive">Inactive</option>
+          </Select>
+          <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={lastActiveBucket} onChange={(e) => setLastActiveBucket(e.target.value)}>
+            <option value="all">All Activity</option>
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+            <option value="inactive">Inactive 1mo+</option>
+          </Select>
+          <Input
+            type="date"
+            aria-label="Joined from"
+            flex="1"
+            minW={{ base: '100%', sm: '150px' }}
+            value={joinedFrom}
+            onChange={(e) => setJoinedFrom(e.target.value)}
+          />
+          <Input
+            type="date"
+            aria-label="Joined to"
+            flex="1"
+            minW={{ base: '100%', sm: '150px' }}
+            value={joinedTo}
+            onChange={(e) => setJoinedTo(e.target.value)}
+          />
+        </Flex>
+      </TableToolbar>
 
       {isLoading ? (
         <TableSkeleton rows={5} columns={6} />

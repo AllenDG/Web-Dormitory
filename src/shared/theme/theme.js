@@ -198,9 +198,10 @@ const theme = extendTheme({
             borderColor: 'gray.200',
             bg: 'gray.50',
             textTransform: 'none',
-            fontWeight: '600',
-            fontSize: 'xs',
-            color: 'gray.600',
+            fontWeight: '700',
+            fontSize: 'sm',
+            color: 'gray.700',
+            py: 4,
           },
           td: {
             borderWidth: '1px',
