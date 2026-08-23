@@ -13,6 +13,7 @@ import { Outlet } from 'react-router-dom';
 import { FiMenu } from 'react-icons/fi';
 import OwnerSidebar from './OwnerSidebar';
 import OwnerHeader from './OwnerHeader';
+import AnnouncementBannerHost from '../../domains/notifications/components/AnnouncementBannerHost';
 
 const CONTENT_MAX_W = { base: '100%', xl: '1400px', '2xl': '1680px' };
 
@@ -65,6 +66,7 @@ const OwnerLayout = () => {
 
         {/* Page Content */}
         <Box flex="1" overflowY="auto">
+          <AnnouncementBannerHost />
           <Container maxW={CONTENT_MAX_W} px={{ base: 4, md: 6, xl: 8 }} py={6}>
             <Outlet />
           </Container>

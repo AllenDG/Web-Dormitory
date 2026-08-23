@@ -429,6 +429,14 @@ export const routes = [
         ],
       },
       {
+        path: 'notifications',
+        element: (
+          <LazyPage>
+            <AdminRoutes.BroadcastPage />
+          </LazyPage>
+        ),
+      },
+      {
         path: 'revenue',
         children: [
           {

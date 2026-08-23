@@ -7,6 +7,7 @@ import {
   FiDollarSign,
   FiFileText,
   FiSettings,
+  FiVolume2,
 } from 'react-icons/fi';
 import { useAuth } from '../../app/providers/AuthProvider';
 import SidebarNavItem from '../components/SidebarNavItem';
@@ -52,6 +53,7 @@ const navItems = [
       { label: 'Payment Reports', path: '/admin/reports/payment-reports' },
     ],
   },
+  { label: 'Announcements', icon: FiVolume2, path: '/admin/notifications' },
   {
     label: 'Revenue',
     icon: FiDollarSign,
