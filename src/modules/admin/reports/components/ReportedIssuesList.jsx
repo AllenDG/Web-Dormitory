@@ -105,7 +105,7 @@ export function ReportedIssuesList({ onEditReport, addLabel, onAdd }) {
       <TableToolbar
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
-        searchPlaceholder="Search reports..."
+        searchPlaceholder="Search by title, reporter, or reported item..."
         filtersOpen={filtersOpen}
         onToggleFilters={() => setFiltersOpen((prev) => !prev)}
         addLabel={addLabel}

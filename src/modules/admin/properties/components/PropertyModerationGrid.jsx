@@ -129,7 +129,7 @@ export function PropertyModerationGrid({ onEditProperty, addLabel, onAdd }) {
       <TableToolbar
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
-        searchPlaceholder="Search properties..."
+        searchPlaceholder="Search by property title..."
         filtersOpen={filtersOpen}
         onToggleFilters={() => setFiltersOpen((prev) => !prev)}
         addLabel={addLabel}

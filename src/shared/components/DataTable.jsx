@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Table, Thead, Tbody, Tr, Th, Td, HStack, Flex, Text, Select, IconButton, Icon } from '@chakra-ui/react';
+import { Box, Table, Thead, Tbody, Tr, Th, Td, HStack, VStack, Flex, Text, Select, IconButton, Icon } from '@chakra-ui/react';
 import { FiChevronUp, FiChevronDown, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { useSort } from '../hooks/useSort';
 import { useContextMenu } from '../hooks/useContextMenu';
@@ -55,7 +55,7 @@ const DataTable = ({
 
   return (
     <Box>
-      <Flex justify="flex-end" align="center" mb={3} gap={2}>
+      <Flex justify="flex-start" align="center" mb={3} gap={2}>
         <Text fontSize="sm" color="gray.600">Show</Text>
         <Select
           size="sm"
@@ -74,7 +74,7 @@ const DataTable = ({
       </Flex>
 
       <Box overflowX="auto" borderRadius="lg" border="1px" borderColor="gray.200">
-        <Table variant="bordered" size="md">
+        <Table variant="bordered" size="sm">
           <Thead>
             <Tr>
               {columns.map((column) => (
@@ -85,10 +85,23 @@ const DataTable = ({
                   userSelect="none"
                   onClick={column.sortable ? () => toggleSort(column.key) : undefined}
                 >
-                  <HStack spacing={1}>
+                  <HStack justify="space-between" w="full" spacing={2}>
                     <Box>{column.label}</Box>
-                    {column.sortable && sortKey === column.key && (
-                      <Icon as={sortDir === 'asc' ? FiChevronUp : FiChevronDown} boxSize={3} />
+                    {column.sortable && (
+                      <VStack spacing={0}>
+                        <Icon
+                          as={FiChevronUp}
+                          boxSize={3}
+                          mb="-3px"
+                          color={sortKey === column.key && sortDir === 'asc' ? 'primary.600' : 'gray.400'}
+                        />
+                        <Icon
+                          as={FiChevronDown}
+                          boxSize={3}
+                          mt="-3px"
+                          color={sortKey === column.key && sortDir === 'desc' ? 'primary.600' : 'gray.400'}
+                        />
+                      </VStack>
                     )}
                   </HStack>
                 </Th>
@@ -99,7 +112,7 @@ const DataTable = ({
             {pageRows.length === 0 ? (
               <Tr>
                 <Td colSpan={columns.length} textAlign="center" py={10} color="gray.600">
-                  {emptyState || 'No records found.'}
+                  {emptyState || 'Nothing here yet — try a different search or clear your filters.'}
                 </Td>
               </Tr>
             ) : (

@@ -1,5 +1,5 @@
 import { Box, Flex, Input, InputGroup, InputLeftElement, Icon } from '@chakra-ui/react';
-import { FiSearch, FiFilter, FiPlus } from 'react-icons/fi';
+import { FiSearch, FiSliders, FiPlus } from 'react-icons/fi';
 import Button from './Button';
 
 /**
@@ -30,11 +30,12 @@ const TableToolbar = ({
         {hasFilters && (
           <Button
             variant={filtersOpen ? 'solid' : 'outline'}
-            leftIcon={<Icon as={FiFilter} />}
+            leftIcon={<Icon as={FiSliders} />}
             onClick={onToggleFilters}
             flexShrink={0}
+            aria-expanded={filtersOpen}
           >
-            Filters
+            {filtersOpen ? 'Hide Filters' : 'Show Filters'}
           </Button>
         )}
 

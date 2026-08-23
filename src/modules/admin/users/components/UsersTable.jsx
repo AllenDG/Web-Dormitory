@@ -157,7 +157,7 @@ export function UsersTable({ onViewDetails, onEditUser, addLabel, onAdd }) {
       <TableToolbar
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
-        searchPlaceholder="Search users..."
+        searchPlaceholder="Search by name or email..."
         filtersOpen={filtersOpen}
         onToggleFilters={() => setFiltersOpen((prev) => !prev)}
         addLabel={addLabel}

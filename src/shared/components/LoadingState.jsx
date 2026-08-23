@@ -123,8 +123,8 @@ export const ListSkeleton = ({ count = 5 }) => {
   );
 };
 
-// Stat card skeleton — mirrors StatCard's shape (icon chip, label, value)
-// so the layout doesn't jump when real content swaps in.
+// Stat card skeleton — mirrors StatCard's shape (label+value left, icon
+// chip right) so the layout doesn't jump when real content swaps in.
 export const StatCardSkeleton = ({ count = 4 }) => {
   return (
     <>
@@ -132,15 +132,18 @@ export const StatCardSkeleton = ({ count = 4 }) => {
         <Box
           key={index}
           bg="white"
-          p={6}
+          p={5}
           borderRadius="lg"
           border="1px"
           borderColor="gray.200"
-          boxShadow="sm"
         >
-          <Skeleton height="48px" width="48px" borderRadius="lg" mb={4} />
-          <Skeleton height="14px" width="60%" mb={2} />
-          <Skeleton height="28px" width="40%" />
+          <Flex justify="space-between" align="flex-start">
+            <Box flex="1">
+              <Skeleton height="12px" width="60%" mb={2} />
+              <Skeleton height="24px" width="40%" />
+            </Box>
+            <Skeleton height="40px" width="40px" borderRadius="lg" ml={3} />
+          </Flex>
         </Box>
       ))}
     </>

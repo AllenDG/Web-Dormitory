@@ -57,9 +57,8 @@ const navItems = [
 const AdminSidebar = ({ onClose }) => {
   return (
     <Box h="100%" display="flex" flexDirection="column">
-      <Box p={6} borderBottom="1px" borderColor="gray.200">
-        <Heading size="lg" color="primary.600" fontWeight="bold">RentMe</Heading>
-        <Text fontSize="sm" color="gray.600" mt={1}>Super Admin</Text>
+      <Box px={6} py={4} borderBottom="1px" borderColor="gray.200">
+        <Heading size="md" color="primary.600" fontWeight="bold">RentMe</Heading>
       </Box>
 
       <VStack spacing={1} align="stretch" p={4} flex="1">
