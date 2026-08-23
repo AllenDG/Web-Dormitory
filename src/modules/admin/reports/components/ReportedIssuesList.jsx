@@ -87,8 +87,7 @@ export function ReportedIssuesList({ status = 'all' }) {
               bg="white"
               p={5}
               borderRadius="lg"
-              border="1px"
-              borderColor="gray.200"
+              boxShadow="sm"
               cursor="context-menu"
               onContextMenu={(e) => handlers.onContextMenu(e, report)}
               onTouchStart={(e) => handlers.onTouchStart(e, report)}
