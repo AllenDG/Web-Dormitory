@@ -18,6 +18,7 @@ const PRIORITY_COLORS = { high: 'red', medium: 'yellow', low: 'green' };
 /** Reported Issues — kebab menu replaced with right-click/long-press context menu. */
 export function ReportedIssuesList({ status = 'all' }) {
   const [typeFilter, setTypeFilter] = useState('all');
+  const [priorityFilter, setPriorityFilter] = useState('all');
   const toast = useAppToast();
   const { user: actor } = useAuth();
   const isLoading = useMinDisplayTime();
@@ -32,7 +33,8 @@ export function ReportedIssuesList({ status = 'all' }) {
   const reports = allReports.filter((report) => {
     const matchesType = typeFilter === 'all' || report.type === typeFilter;
     const matchesStatus = status === 'all' || report.status === status;
-    return matchesType && matchesStatus;
+    const matchesPriority = priorityFilter === 'all' || report.priority === priorityFilter;
+    return matchesType && matchesStatus && matchesPriority;
   });
 
   const handleResolve = (report) => {
@@ -68,12 +70,20 @@ export function ReportedIssuesList({ status = 'all' }) {
 
   return (
     <Box>
-      <Select mb={6} maxW="150px" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
-        <option value="all">All Types</option>
-        <option value="property">Property</option>
-        <option value="user">User</option>
-        <option value="payment">Payment</option>
-      </Select>
+      <HStack spacing={4} mb={6}>
+        <Select maxW="150px" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
+          <option value="all">All Types</option>
+          <option value="property">Property</option>
+          <option value="user">User</option>
+          <option value="payment">Payment</option>
+        </Select>
+        <Select maxW="150px" value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
+          <option value="all">All Priorities</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </Select>
+      </HStack>
 
       {isLoading ? (
         <ListSkeleton count={4} />
