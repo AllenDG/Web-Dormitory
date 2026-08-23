@@ -459,11 +459,48 @@ export const routes = [
       },
       {
         path: 'audit-log',
-        element: (
-          <LazyPage>
-            <AdminRoutes.AuditLogPage />
-          </LazyPage>
-        ),
+        children: [
+          {
+            index: true,
+            element: (
+              <LazyPage>
+                <AdminRoutes.AuditLogPage category="all" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'user-actions',
+            element: (
+              <LazyPage>
+                <AdminRoutes.AuditLogPage category="user-actions" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'property-actions',
+            element: (
+              <LazyPage>
+                <AdminRoutes.AuditLogPage category="property-actions" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'report-actions',
+            element: (
+              <LazyPage>
+                <AdminRoutes.AuditLogPage category="report-actions" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'settings-actions',
+            element: (
+              <LazyPage>
+                <AdminRoutes.AuditLogPage category="settings-actions" />
+              </LazyPage>
+            ),
+          },
+        ],
       },
       {
         path: 'settings',

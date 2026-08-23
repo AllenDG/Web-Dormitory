@@ -62,7 +62,18 @@ const navItems = [
       { label: 'Refunds & Disputes', path: '/admin/revenue/refunds' },
     ],
   },
-  { label: 'Audit Log', icon: FiFileText, path: '/admin/audit-log' },
+  {
+    label: 'Audit Log',
+    icon: FiFileText,
+    path: '/admin/audit-log',
+    children: [
+      { label: 'All Activity', path: '/admin/audit-log', end: true },
+      { label: 'User Actions', path: '/admin/audit-log/user-actions' },
+      { label: 'Property Actions', path: '/admin/audit-log/property-actions' },
+      { label: 'Report Actions', path: '/admin/audit-log/report-actions' },
+      { label: 'Settings & Broadcasts', path: '/admin/audit-log/settings-actions' },
+    ],
+  },
   {
     label: 'Settings',
     icon: FiSettings,
