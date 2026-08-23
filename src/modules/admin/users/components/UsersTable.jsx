@@ -13,9 +13,8 @@ import { confirmAction } from '../../../../shared/utils/confirm';
 const ROLE_COLORS = { owner: 'purple', tenant: 'blue', admin: 'red' };
 const STATUS_COLORS = { active: 'green', suspended: 'red', inactive: 'gray' };
 
-export function UsersTable({ onViewDetails }) {
+export function UsersTable({ role = 'all', onViewDetails }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const toast = useAppToast();
   const { user: actor } = useAuth();
@@ -30,7 +29,7 @@ export function UsersTable({ onViewDetails }) {
       !searchQuery ||
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+    const matchesRole = role === 'all' || user.role === role;
     const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
     return matchesSearch && matchesRole && matchesStatus;
   });
@@ -98,18 +97,12 @@ export function UsersTable({ onViewDetails }) {
   ];
 
   return (
-    <Box bg="white" p={6} borderRadius="lg" border="1px" borderColor="gray.200">
-      <HStack spacing={4} mb={6} flexWrap="wrap">
-        <InputGroup maxW="300px">
-          <InputLeftElement pointerEvents="none"><Icon as={FiSearch} color="gray.400" /></InputLeftElement>
-          <Input placeholder="Search users..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-        </InputGroup>
-        <Select maxW="150px" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
-          <option value="all">All Roles</option>
-          <option value="tenant">Tenants</option>
-          <option value="owner">Owners</option>
-          <option value="admin">Admins</option>
-        </Select>
+    <Box>
+      <InputGroup mb={6} w="full">
+        <InputLeftElement pointerEvents="none"><Icon as={FiSearch} color="gray.400" /></InputLeftElement>
+        <Input placeholder="Search users..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+      </InputGroup>
+      <HStack spacing={4} mb={6}>
         <Select maxW="150px" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
           <option value="all">All Status</option>
           <option value="active">Active</option>

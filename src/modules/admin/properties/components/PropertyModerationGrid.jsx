@@ -21,9 +21,8 @@ const STATUS_COLORS = { approved: 'green', rejected: 'red', pending: 'yellow' };
  * property from inside their own moderation queue (that's what Reported
  * Issues is for). "View Details" wires to the real listing page.
  */
-export function PropertyModerationGrid() {
+export function PropertyModerationGrid({ status = 'all' }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('pending');
   const toast = useAppToast();
   const navigate = useNavigate();
   const { user: actor } = useAuth();
@@ -48,7 +47,7 @@ export function PropertyModerationGrid() {
     }))
     .filter((property) => {
       const matchesSearch = !searchQuery || property.title.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || property.status === statusFilter;
+      const matchesStatus = status === 'all' || property.status === status;
       return matchesSearch && matchesStatus;
     });
 
@@ -80,18 +79,10 @@ export function PropertyModerationGrid() {
 
   return (
     <Box>
-      <HStack spacing={4} mb={6} flexWrap="wrap">
-        <InputGroup maxW="300px">
-          <InputLeftElement pointerEvents="none"><Icon as={FiSearch} color="gray.400" /></InputLeftElement>
-          <Input placeholder="Search properties..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-        </InputGroup>
-        <Select maxW="150px" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-          <option value="all">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
-        </Select>
-      </HStack>
+      <InputGroup mb={6} w="full">
+        <InputLeftElement pointerEvents="none"><Icon as={FiSearch} color="gray.400" /></InputLeftElement>
+        <Input placeholder="Search properties..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+      </InputGroup>
 
       {isLoading ? (
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>

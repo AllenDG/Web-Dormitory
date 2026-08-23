@@ -16,9 +16,8 @@ const STATUS_COLORS = { open: 'red', investigating: 'yellow', resolved: 'green' 
 const PRIORITY_COLORS = { high: 'red', medium: 'yellow', low: 'green' };
 
 /** Reported Issues — kebab menu replaced with right-click/long-press context menu. */
-export function ReportedIssuesList() {
+export function ReportedIssuesList({ status = 'all' }) {
   const [typeFilter, setTypeFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('open');
   const toast = useAppToast();
   const { user: actor } = useAuth();
   const isLoading = useMinDisplayTime();
@@ -32,7 +31,7 @@ export function ReportedIssuesList() {
 
   const reports = allReports.filter((report) => {
     const matchesType = typeFilter === 'all' || report.type === typeFilter;
-    const matchesStatus = statusFilter === 'all' || report.status === statusFilter;
+    const matchesStatus = status === 'all' || report.status === status;
     return matchesType && matchesStatus;
   });
 
@@ -69,20 +68,12 @@ export function ReportedIssuesList() {
 
   return (
     <Box>
-      <HStack spacing={4} mb={6}>
-        <Select maxW="150px" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
-          <option value="all">All Types</option>
-          <option value="property">Property</option>
-          <option value="user">User</option>
-          <option value="payment">Payment</option>
-        </Select>
-        <Select maxW="150px" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-          <option value="all">All Status</option>
-          <option value="open">Open</option>
-          <option value="investigating">Investigating</option>
-          <option value="resolved">Resolved</option>
-        </Select>
-      </HStack>
+      <Select mb={6} maxW="150px" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
+        <option value="all">All Types</option>
+        <option value="property">Property</option>
+        <option value="user">User</option>
+        <option value="payment">Payment</option>
+      </Select>
 
       {isLoading ? (
         <ListSkeleton count={4} />
