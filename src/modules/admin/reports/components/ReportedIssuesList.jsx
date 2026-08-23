@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Box, Flex, Text, Badge, Select } from '@chakra-ui/react';
-import { FiCheckCircle, FiAlertTriangle, FiMessageSquare, FiTrash2, FiEdit } from 'react-icons/fi';
+import { FiEye, FiCheckCircle, FiAlertTriangle, FiMessageSquare, FiTrash2, FiEdit } from 'react-icons/fi';
 import useAdminStore from '../../../../shared/stores/useAdminStore';
 import useAuditLogStore from '../../../../shared/stores/useAuditLogStore';
 import { useAuth } from '../../../../app/providers/AuthProvider';
@@ -16,7 +16,7 @@ const STATUS_COLORS = { open: 'red', investigating: 'yellow', resolved: 'green' 
 const PRIORITY_COLORS = { high: 'red', medium: 'yellow', low: 'green' };
 
 /** Reported Issues — same DataTable/right-click-context-menu standard as every other admin table. */
-export function ReportedIssuesList({ onEditReport, addLabel, onAdd }) {
+export function ReportedIssuesList({ onViewDetails, onEditReport, addLabel, onAdd }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
@@ -85,6 +85,7 @@ export function ReportedIssuesList({ onEditReport, addLabel, onAdd }) {
   ];
 
   const getRowActions = (report) => [
+    { label: 'View Details', icon: FiEye, onClick: () => onViewDetails?.(report) },
     {
       label: 'Contact Reporter',
       icon: FiMessageSquare,

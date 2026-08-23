@@ -6,10 +6,13 @@ import StatCard from '../../../shared/components/StatCard';
 import useAdminStore from '../../../shared/stores/useAdminStore';
 import ReportedIssuesList from './components/ReportedIssuesList';
 import ReportFormPanel from './components/ReportFormPanel';
+import ReportDetailPanel from './components/ReportDetailPanel';
 
 const ReportedIssuesPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isDetailOpen, onOpen: onDetailOpen, onClose: onDetailClose } = useDisclosure();
   const [panel, setPanel] = useState({ mode: 'add', report: null });
+  const [selectedReport, setSelectedReport] = useState(null);
 
   const reports = useAdminStore((state) => state.reports);
   const statusCounts = useMemo(
@@ -23,6 +26,11 @@ const ReportedIssuesPage = () => {
       ),
     [reports]
   );
+
+  const handleViewDetails = (report) => {
+    setSelectedReport(report);
+    onDetailOpen();
+  };
 
   const handleEditReport = (report) => {
     setPanel({ mode: 'edit', report });
@@ -47,8 +55,14 @@ const ReportedIssuesPage = () => {
         <StatCard label="Resolved" value={statusCounts.resolved} icon={FiCheckCircle} color="success" />
       </SimpleGrid>
 
-      <ReportedIssuesList onEditReport={handleEditReport} addLabel="Log Report" onAdd={handleAddReport} />
+      <ReportedIssuesList
+        onViewDetails={handleViewDetails}
+        onEditReport={handleEditReport}
+        addLabel="Log Report"
+        onAdd={handleAddReport}
+      />
       <ReportFormPanel isOpen={isOpen} mode={panel.mode} report={panel.report} onClose={onClose} />
+      <ReportDetailPanel isOpen={isDetailOpen} onClose={onDetailClose} report={selectedReport} />
     </Box>
   );
 };
