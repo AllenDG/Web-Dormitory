@@ -148,7 +148,7 @@ const NotificationItem = ({ notification, onMarkAsRead, onDelete, onClose }) => 
             )}
             <MenuItem
               icon={<Icon as={FiTrash2} />}
-              color="error.500"
+              color="error.600"
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete();

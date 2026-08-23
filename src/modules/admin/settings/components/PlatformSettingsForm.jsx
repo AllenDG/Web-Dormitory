@@ -22,7 +22,7 @@ import { useAuth } from '../../../../app/providers/AuthProvider';
 import { useAppToast } from '../../../../shared/hooks/useAppToast';
 
 const SettingsSection = ({ title, children }) => (
-  <Box bg="white" p={6} borderRadius="lg" boxShadow="sm">
+  <Box bg="white" p={6} borderRadius="lg" border="1px" borderColor="gray.200">
     <Text fontSize="lg" fontWeight="bold" mb={4}>{title}</Text>
     <VStack spacing={4} align="stretch">{children}</VStack>
   </Box>

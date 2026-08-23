@@ -64,7 +64,7 @@ const ProfileMenu = ({ settingsPath }) => {
           Settings
         </MenuItem>
         <MenuDivider />
-        <MenuItem icon={<Icon as={FiLogOut} />} fontSize="sm" color="error.500" onClick={handleLogout}>
+        <MenuItem icon={<Icon as={FiLogOut} />} fontSize="sm" color="error.600" onClick={handleLogout}>
           Logout
         </MenuItem>
       </MenuList>

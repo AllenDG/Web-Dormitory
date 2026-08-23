@@ -217,7 +217,7 @@ const theme = extendTheme({
         color: 'gray.800',
       },
       '*::placeholder': {
-        color: 'gray.400',
+        color: 'gray.500',
       },
     },
   },

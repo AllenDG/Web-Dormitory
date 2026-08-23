@@ -43,7 +43,7 @@ const SidePanel = ({
               {icon && <Icon as={icon} boxSize={5} />}
               <Text>{title}</Text>
               {badge != null && (
-                <Badge colorScheme="primary" borderRadius="full">
+                <Badge colorScheme="primary" variant="solid" borderRadius="full">
                   {badge}
                 </Badge>
               )}

@@ -14,7 +14,7 @@ import { FiMenu } from 'react-icons/fi';
 import OwnerSidebar from './OwnerSidebar';
 import OwnerHeader from './OwnerHeader';
 
-const CONTENT_MAX_W = '1400px';
+const CONTENT_MAX_W = { base: '100%', xl: '1400px', '2xl': '1680px' };
 
 /**
  * Owner Layout
@@ -50,7 +50,7 @@ const OwnerLayout = () => {
       <Flex flex="1" direction="column" overflow="hidden">
         {/* Header */}
         <Box h="64px" bg="white" borderBottom="1px" borderColor="gray.200">
-          <Container maxW={CONTENT_MAX_W} h="full" display="flex" alignItems="center" gap={4} px={{ base: 4, md: 6 }}>
+          <Container maxW={CONTENT_MAX_W} h="full" display="flex" alignItems="center" gap={4} px={{ base: 4, md: 6, xl: 8 }}>
             {/* Mobile Menu Button */}
             <IconButton
               display={{ base: 'flex', lg: 'none' }}
@@ -65,7 +65,7 @@ const OwnerLayout = () => {
 
         {/* Page Content */}
         <Box flex="1" overflowY="auto">
-          <Container maxW={CONTENT_MAX_W} px={{ base: 4, md: 6 }} py={6}>
+          <Container maxW={CONTENT_MAX_W} px={{ base: 4, md: 6, xl: 8 }} py={6}>
             <Outlet />
           </Container>
         </Box>

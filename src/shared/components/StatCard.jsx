@@ -60,12 +60,6 @@ const StatCard = ({
       borderRadius="lg"
       border="1px"
       borderColor="gray.200"
-      boxShadow="sm"
-      transition="all 0.2s"
-      _hover={{
-        boxShadow: 'md',
-        transform: 'translateY(-2px)',
-      }}
     >
       <VStack align="stretch" spacing={4}>
         {/* Header with Icon */}
@@ -102,7 +96,7 @@ const StatCard = ({
             {value}
           </Text>
           {helpText && (
-            <Text fontSize="xs" color="gray.500">
+            <Text fontSize="xs" color="gray.600">
               {helpText}
             </Text>
           )}

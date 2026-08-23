@@ -126,7 +126,7 @@ const NotificationCenter = () => {
                   <MenuItem
                     icon={<Icon as={FiTrash2} />}
                     onClick={handleClearAll}
-                    color="error.500"
+                    color="error.600"
                     isDisabled={notifications.length === 0}
                   >
                     Clear all

@@ -23,9 +23,9 @@ import {
 const PIE_COLORS = [primaryColorHex, successColorHex, '#DD6B20', '#8B5CF6', errorColorHex];
 
 const ChartCard = ({ title, caption, children }) => (
-  <Box bg="white" p={6} borderRadius="lg" boxShadow="sm">
+  <Box bg="white" p={6} borderRadius="lg" border="1px" borderColor="gray.200">
     <Text fontSize="lg" fontWeight="bold" mb={1}>{title}</Text>
-    {caption && <Text fontSize="xs" color="gray.500" mb={4}>{caption}</Text>}
+    {caption && <Text fontSize="xs" color="gray.600" mb={4}>{caption}</Text>}
     {children}
   </Box>
 );
@@ -60,7 +60,7 @@ export function AnalyticsCharts({ users, rentals, bookings, stats }) {
         <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
           <ChartCard title="Users by Role">
             {!hasUsers ? (
-              <Text color="gray.500" textAlign="center" py={16}>Not enough data yet.</Text>
+              <Text color="gray.600" textAlign="center" py={16}>Not enough data yet.</Text>
             ) : (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={usersByRole}>
@@ -76,7 +76,7 @@ export function AnalyticsCharts({ users, rentals, bookings, stats }) {
 
           <ChartCard title="Property Types">
             {!hasProperties ? (
-              <Text color="gray.500" textAlign="center" py={16}>Not enough data yet.</Text>
+              <Text color="gray.600" textAlign="center" py={16}>Not enough data yet.</Text>
             ) : (
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
@@ -109,7 +109,7 @@ export function AnalyticsCharts({ users, rentals, bookings, stats }) {
         <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
           <ChartCard title="Revenue by Month">
             {!hasRevenue ? (
-              <Text color="gray.500" textAlign="center" py={16}>Not enough data yet.</Text>
+              <Text color="gray.600" textAlign="center" py={16}>Not enough data yet.</Text>
             ) : (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={revenueByMonth}>
@@ -128,7 +128,7 @@ export function AnalyticsCharts({ users, rentals, bookings, stats }) {
             caption={stats ? `${stats.totalBookings} total · ${stats.activeBookings} active` : undefined}
           >
             {!hasBookings ? (
-              <Text color="gray.500" textAlign="center" py={16}>Not enough data yet.</Text>
+              <Text color="gray.600" textAlign="center" py={16}>Not enough data yet.</Text>
             ) : (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={bookingStatus}>

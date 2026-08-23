@@ -48,7 +48,7 @@ const DataTable = ({ columns, data, getRowKey, getRowActions, emptyState }) => {
         <Tbody>
           {sorted.length === 0 ? (
             <Tr>
-              <Td colSpan={columns.length} textAlign="center" py={10} color="gray.500">
+              <Td colSpan={columns.length} textAlign="center" py={10} color="gray.600">
                 {emptyState || 'No records found.'}
               </Td>
             </Tr>
@@ -56,7 +56,7 @@ const DataTable = ({ columns, data, getRowKey, getRowActions, emptyState }) => {
             sorted.map((row) => (
               <Tr
                 key={getRowKey(row)}
-                _hover={{ bg: 'gray.50' }}
+                _hover={hasActions ? { bg: 'gray.50' } : undefined}
                 cursor={hasActions ? 'context-menu' : 'default'}
                 onContextMenu={hasActions ? (e) => handlers.onContextMenu(e, row) : undefined}
                 onTouchStart={hasActions ? (e) => handlers.onTouchStart(e, row) : undefined}

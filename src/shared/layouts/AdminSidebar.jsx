@@ -104,7 +104,7 @@ const AdminSidebar = ({ onClose }) => {
       </VStack>
 
       <Box p={4} borderTop="1px" borderColor="gray.200">
-        <Text fontSize="xs" color="gray.500" textAlign="center">RentMe v3.0 © 2026</Text>
+        <Text fontSize="xs" color="gray.600" textAlign="center">RentMe v3.0 © 2026</Text>
       </Box>
     </Box>
   );

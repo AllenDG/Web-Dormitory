@@ -130,7 +130,7 @@ export function PropertyModerationGrid({ status = 'all' }) {
           <PropertyCardSkeleton count={3} />
         </SimpleGrid>
       ) : properties.length === 0 ? (
-        <Text textAlign="center" color="gray.500" py={12}>No properties match this filter.</Text>
+        <Text textAlign="center" color="gray.600" py={12}>No properties match this filter.</Text>
       ) : (
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
           {properties.map((property) => (
@@ -138,10 +138,9 @@ export function PropertyModerationGrid({ status = 'all' }) {
               key={property.id}
               bg="white"
               borderRadius="lg"
-              boxShadow="sm"
+              border="1px"
+              borderColor="gray.200"
               overflow="hidden"
-              transition="all 0.2s"
-              _hover={{ boxShadow: 'md' }}
               cursor="context-menu"
               onContextMenu={(e) => handlers.onContextMenu(e, property)}
               onTouchStart={(e) => handlers.onTouchStart(e, property)}
@@ -152,7 +151,7 @@ export function PropertyModerationGrid({ status = 'all' }) {
               <VStack align="stretch" p={4} spacing={3}>
                 <HStack justify="space-between">
                   <Badge colorScheme={STATUS_COLORS[property.status] || 'gray'} borderRadius="md">{property.status}</Badge>
-                  <Text fontSize="xs" color="gray.500">{property.submitted}</Text>
+                  <Text fontSize="xs" color="gray.600">{property.submitted}</Text>
                 </HStack>
                 <Text fontWeight="bold" fontSize="md" noOfLines={2}>{property.title}</Text>
                 <HStack justify="space-between" fontSize="sm">

@@ -29,7 +29,7 @@ const SearchBar = ({
     <Box as="form" onSubmit={handleSubmit} w="full" {...props}>
       <InputGroup size={size}>
         <InputLeftElement pointerEvents="none" h="full">
-          <Icon as={FiSearch} color="gray.400" />
+          <Icon as={FiSearch} color="gray.500" />
         </InputLeftElement>
         <Input
           placeholder={placeholder}
@@ -46,7 +46,7 @@ const SearchBar = ({
             boxShadow: '0 0 0 1px var(--chakra-colors-primary-500)',
           }}
           _placeholder={{
-            color: 'gray.400',
+            color: 'gray.500',
           }}
         />
       </InputGroup>

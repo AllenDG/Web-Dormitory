@@ -105,7 +105,7 @@ export function UsersTable({ role = 'all', onViewDetails }) {
           <Avatar size="sm" name={u.name} bg="primary.500" />
           <Box>
             <Text fontWeight="semibold" fontSize="sm">{u.name}</Text>
-            <Text fontSize="xs" color="gray.500">{u.email}</Text>
+            <Text fontSize="xs" color="gray.600">{u.email}</Text>
           </Box>
         </HStack>
       ),

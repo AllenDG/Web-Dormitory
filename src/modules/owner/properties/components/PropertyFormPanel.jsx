@@ -330,7 +330,7 @@ const PropertyFormPanel = ({ mode, propertyId, isOpen, onClose }) => {
               <FormControl isInvalid={errors.title}>
                 <FormLabel>Property Title *</FormLabel>
                 <Input {...register('title', { required: 'Title is required' })} placeholder="e.g., Modern Studio Room with City View" />
-                {errors.title && <Text color="error.500" fontSize="sm" mt={1}>{errors.title.message}</Text>}
+                {errors.title && <Text color="error.600" fontSize="sm" mt={1}>{errors.title.message}</Text>}
               </FormControl>
 
               <FormControl isInvalid={errors.bedType}>

@@ -16,7 +16,7 @@ const InfoItem = ({ icon, label, value }) => (
   <HStack spacing={3} align="start">
     <Icon as={icon} boxSize={5} color="primary.500" mt={1} />
     <Box>
-      <Text fontSize="xs" color="gray.500" mb={1}>{label}</Text>
+      <Text fontSize="xs" color="gray.600" mb={1}>{label}</Text>
       <Text fontSize="sm" fontWeight="medium">{value}</Text>
     </Box>
   </HStack>

@@ -33,7 +33,7 @@ const ProfileSettingsForm = () => {
 
   return (
     <VStack spacing={6} align="stretch">
-      <Box bg="white" p={8} borderRadius="lg" boxShadow="sm">
+      <Box bg="white" p={8} borderRadius="lg" border="1px" borderColor="gray.200">
         <VStack spacing={6} align="stretch">
           <HStack spacing={6}>
             <Avatar size="2xl" name={profileData.name} bg="primary.500" />

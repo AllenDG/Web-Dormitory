@@ -8,11 +8,13 @@ const MotionBox = motion(Box);
  */
 const Card = ({
   children,
-  hover = true,
+  hover: hoverProp,
   animate = true,
   padding = 6,
   ...props
 }) => {
+  const isInteractive = Boolean(props.onClick);
+  const hover = hoverProp ?? isInteractive;
   const hoverEffect = hover
     ? {
         transform: 'translateY(-8px)',

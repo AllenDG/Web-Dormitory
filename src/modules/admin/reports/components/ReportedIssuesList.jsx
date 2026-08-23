@@ -88,7 +88,7 @@ export function ReportedIssuesList({ status = 'all' }) {
       {isLoading ? (
         <ListSkeleton count={4} />
       ) : reports.length === 0 ? (
-        <Text textAlign="center" color="gray.500" py={12}>No reports match this filter.</Text>
+        <Text textAlign="center" color="gray.600" py={12}>No reports match this filter.</Text>
       ) : (
         <VStack spacing={4} align="stretch">
           {reports.map((report) => (
@@ -97,7 +97,8 @@ export function ReportedIssuesList({ status = 'all' }) {
               bg="white"
               p={5}
               borderRadius="lg"
-              boxShadow="sm"
+              border="1px"
+              borderColor="gray.200"
               cursor="context-menu"
               onContextMenu={(e) => handlers.onContextMenu(e, report)}
               onTouchStart={(e) => handlers.onTouchStart(e, report)}
@@ -122,7 +123,7 @@ export function ReportedIssuesList({ status = 'all' }) {
                   <Avatar size="xs" name={report.reporter} />
                   <Text color="gray.600">Reported by <strong>{report.reporter}</strong></Text>
                 </HStack>
-                <Text color="gray.500">{report.created}</Text>
+                <Text color="gray.600">{report.created}</Text>
               </HStack>
 
               <HStack mt={2} fontSize="sm">

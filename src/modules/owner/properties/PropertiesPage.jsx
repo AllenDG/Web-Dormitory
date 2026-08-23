@@ -34,8 +34,6 @@ const PropertyCard = ({ property, contextMenuHandlers }) => (
     overflow="hidden"
     border="1px"
     borderColor="gray.200"
-    transition="all 0.2s"
-    _hover={{ boxShadow: 'md' }}
     cursor="context-menu"
     onContextMenu={(e) => contextMenuHandlers.onContextMenu(e, property)}
     onTouchStart={(e) => contextMenuHandlers.onTouchStart(e, property)}
