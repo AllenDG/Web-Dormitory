@@ -1,5 +1,6 @@
-import { Box, SimpleGrid, Badge } from '@chakra-ui/react';
-import { FiDollarSign, FiTrendingUp, FiActivity, FiHash } from 'react-icons/fi';
+import { useState } from 'react';
+import { Box, SimpleGrid, Badge, Input, InputGroup, InputLeftElement, Icon, HStack, VStack, Select } from '@chakra-ui/react';
+import { FiDollarSign, FiTrendingUp, FiActivity, FiHash, FiSearch } from 'react-icons/fi';
 import useBookingStore, { BOOKING_STATUS } from '../../../shared/stores/useBookingStore';
 import PageBanner from '../../../shared/components/PageBanner';
 import StatCard from '../../../shared/components/StatCard';
@@ -23,10 +24,28 @@ const STATUS_COLORS = { paid: 'blue', confirmed: 'green', completed: 'gray' };
  * to every owner instead of just the logged-in one).
  */
 const RevenuePage = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
   const bookings = useBookingStore((state) => state.bookings);
   const isLoading = useMinDisplayTime();
 
-  const revenueBookings = bookings.filter((b) => REVENUE_STATUSES.includes(b.status));
+  const revenueBookings = bookings
+    .filter((b) => REVENUE_STATUSES.includes(b.status))
+    .filter((b) => {
+      const matchesSearch =
+        !searchQuery ||
+        b.propertyTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        b.ownerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        b.guestName.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || b.status === statusFilter;
+      const bookingDate = new Date(b.paidAt || b.paymentVerifiedAt || b.updatedAt);
+      const fromDate = dateFrom ? new Date(dateFrom) : null;
+      const toDate = dateTo ? new Date(dateTo) : null;
+      const matchesDateRange = (!fromDate || bookingDate >= fromDate) && (!toDate || bookingDate <= toDate);
+      return matchesSearch && matchesStatus && matchesDateRange;
+    });
   const totalRevenue = revenueBookings.reduce((sum, b) => sum + (b.totalWithDeposit ?? b.totalAmount ?? 0), 0);
 
   const now = new Date();
@@ -51,6 +70,38 @@ const RevenuePage = () => {
   return (
     <Box>
       <PageBanner title="Revenue" subtitle="Platform-wide transaction overview" />
+
+      <InputGroup mb={6} w="full">
+        <InputLeftElement pointerEvents="none"><Icon as={FiSearch} color="gray.400" /></InputLeftElement>
+        <Input placeholder="Search by property, owner, or tenant..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+      </InputGroup>
+
+      <VStack align="stretch" spacing={4} mb={6}>
+        <HStack spacing={4}>
+          <Select maxW="150px" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+            <option value="all">All Status</option>
+            <option value="paid">Paid</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="completed">Completed</option>
+          </Select>
+        </HStack>
+        <HStack spacing={4}>
+          <Input
+            type="date"
+            placeholder="From"
+            maxW="150px"
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+          />
+          <Input
+            type="date"
+            placeholder="To"
+            maxW="150px"
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+          />
+        </HStack>
+      </VStack>
 
       {isLoading ? (
         <SimpleGrid columns={{ base: 1, md: 4 }} spacing={6} mb={8}>
