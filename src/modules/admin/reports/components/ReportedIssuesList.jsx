@@ -16,7 +16,9 @@ const STATUS_COLORS = { open: 'red', investigating: 'yellow', resolved: 'green' 
 const PRIORITY_COLORS = { high: 'red', medium: 'yellow', low: 'green' };
 
 /** Reported Issues — kebab menu replaced with right-click/long-press context menu. */
-export function ReportedIssuesList({ status = 'all', type = 'all', onEditReport }) {
+export function ReportedIssuesList({ onEditReport }) {
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
   const toast = useAppToast();
   const { user: actor } = useAuth();
@@ -30,8 +32,8 @@ export function ReportedIssuesList({ status = 'all', type = 'all', onEditReport 
   const { isOpen, position, activeItem, close, handlers } = useContextMenu();
 
   const reports = allReports.filter((report) => {
-    const matchesType = type === 'all' || report.type === type;
-    const matchesStatus = status === 'all' || report.status === status;
+    const matchesType = typeFilter === 'all' || report.type === typeFilter;
+    const matchesStatus = statusFilter === 'all' || report.status === statusFilter;
     const matchesPriority = priorityFilter === 'all' || report.priority === priorityFilter;
     return matchesType && matchesStatus && matchesPriority;
   });
@@ -71,6 +73,18 @@ export function ReportedIssuesList({ status = 'all', type = 'all', onEditReport 
   return (
     <Box>
       <Flex wrap="wrap" gap={4} mb={6}>
+        <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <option value="all">All Status</option>
+          <option value="open">Open</option>
+          <option value="investigating">Investigating</option>
+          <option value="resolved">Resolved</option>
+        </Select>
+        <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
+          <option value="all">All Types</option>
+          <option value="property">Property</option>
+          <option value="user">User</option>
+          <option value="payment">Payment</option>
+        </Select>
         <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
           <option value="all">All Priorities</option>
           <option value="high">High</option>

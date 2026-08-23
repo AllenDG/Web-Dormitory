@@ -321,64 +321,11 @@ export const routes = [
       },
       {
         path: 'reports',
-        children: [
-          {
-            index: true,
-            element: (
-              <LazyPage>
-                <AdminRoutes.ReportedIssuesPage status="all" />
-              </LazyPage>
-            ),
-          },
-          {
-            path: 'open',
-            element: (
-              <LazyPage>
-                <AdminRoutes.ReportedIssuesPage status="open" />
-              </LazyPage>
-            ),
-          },
-          {
-            path: 'investigating',
-            element: (
-              <LazyPage>
-                <AdminRoutes.ReportedIssuesPage status="investigating" />
-              </LazyPage>
-            ),
-          },
-          {
-            path: 'resolved',
-            element: (
-              <LazyPage>
-                <AdminRoutes.ReportedIssuesPage status="resolved" />
-              </LazyPage>
-            ),
-          },
-          {
-            path: 'property-reports',
-            element: (
-              <LazyPage>
-                <AdminRoutes.ReportedIssuesPage type="property" />
-              </LazyPage>
-            ),
-          },
-          {
-            path: 'user-reports',
-            element: (
-              <LazyPage>
-                <AdminRoutes.ReportedIssuesPage type="user" />
-              </LazyPage>
-            ),
-          },
-          {
-            path: 'payment-reports',
-            element: (
-              <LazyPage>
-                <AdminRoutes.ReportedIssuesPage type="payment" />
-              </LazyPage>
-            ),
-          },
-        ],
+        element: (
+          <LazyPage>
+            <AdminRoutes.ReportedIssuesPage />
+          </LazyPage>
+        ),
       },
       {
         path: 'notifications',

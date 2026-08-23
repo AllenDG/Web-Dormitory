@@ -17,20 +17,7 @@ const navItems = [
   { label: 'Dashboard', icon: FiHome, path: '/admin/dashboard' },
   { label: 'User Management', icon: FiUsers, path: '/admin/users' },
   { label: 'Property Management', icon: FiGrid, path: '/admin/properties' },
-  {
-    label: 'Reported Issues',
-    icon: FiFlag,
-    path: '/admin/reports',
-    children: [
-      { label: 'All Reports', path: '/admin/reports', end: true },
-      { label: 'Open', path: '/admin/reports/open' },
-      { label: 'Investigating', path: '/admin/reports/investigating' },
-      { label: 'Resolved', path: '/admin/reports/resolved' },
-      { label: 'Property Reports', path: '/admin/reports/property-reports' },
-      { label: 'User Reports', path: '/admin/reports/user-reports' },
-      { label: 'Payment Reports', path: '/admin/reports/payment-reports' },
-    ],
-  },
+  { label: 'Reported Issues', icon: FiFlag, path: '/admin/reports' },
   { label: 'Announcements', icon: FiVolume2, path: '/admin/notifications' },
   {
     label: 'Revenue',

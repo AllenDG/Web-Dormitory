@@ -26,7 +26,7 @@ import {
   AlertIcon,
 } from '@chakra-ui/react';
 import { FiSave, FiMapPin, FiCheck, FiHome } from 'react-icons/fi';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import SidePanel from '../../../../shared/components/SidePanel';
 import geocodingService from '../../../../services/geocoding/geocodingService';
@@ -59,7 +59,8 @@ const AdminPropertyFormPanel = ({ mode, propertyId, isOpen, onClose }) => {
   const rentals = useRentalStore((state) => state.rentals) || [];
   const addRental = useRentalStore((state) => state.addRental);
   const updateRental = useRentalStore((state) => state.updateRental);
-  const owners = useAdminStore((state) => state.users.filter((u) => u.role === 'owner'));
+  const allUsers = useAdminStore((state) => state.users);
+  const owners = useMemo(() => allUsers.filter((u) => u.role === 'owner'), [allUsers]);
   const logAction = useAuditLogStore((state) => state.logAction);
 
   const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm();
