@@ -10,8 +10,9 @@ import {
 import { FiTrendingUp, FiTrendingDown, FiMinus } from 'react-icons/fi';
 
 /**
- * Enhanced Stat Card Component
- * Displays key metrics with trend indicators and progress
+ * Shared Stat Card Component
+ * Displays a key metric with optional trend indicator and progress bar.
+ * Used by both the owner and admin dashboards.
  */
 
 const StatCard = ({

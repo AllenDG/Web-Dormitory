@@ -40,4 +40,15 @@ export {
   CardSkeleton,
   PropertyCardSkeleton,
   ListSkeleton,
+  StatCardSkeleton,
+  TableSkeleton,
 } from './LoadingState';
+
+// Data / Panel / Navigation primitives (owner + admin portal redesign)
+export { default as StatCard } from './StatCard';
+export { default as DataTable } from './DataTable';
+export { default as ContextMenu } from './ContextMenu';
+export { default as SidePanel } from './SidePanel';
+export { default as ProfileMenu } from './ProfileMenu';
+export { default as SidebarNavItem } from './SidebarNavItem';
+export { default as PageBanner } from './PageBanner';

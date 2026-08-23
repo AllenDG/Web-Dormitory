@@ -1,210 +1,108 @@
-import {
-  Box,
-  SimpleGrid,
-  Heading,
-  Text,
-  VStack,
-  Container,
-  useBreakpointValue,
-} from '@chakra-ui/react';
+import { Box, SimpleGrid, Heading, Text, useBreakpointValue } from '@chakra-ui/react';
 import {
   FiHome,
   FiCalendar,
   FiDollarSign,
   FiTrendingUp,
   FiUsers,
-  FiEye,
+  FiClock,
   FiStar,
   FiCheckCircle,
 } from 'react-icons/fi';
-import StatCard from './components/StatCard';
+import StatCard from '../../../shared/components/StatCard';
+import PageBanner from '../../../shared/components/PageBanner';
+import { StatCardSkeleton } from '../../../shared/components/LoadingState';
+import { useMinDisplayTime } from '../../../shared/hooks/useMinDisplayTime';
+import { useAuth } from '../../../app/providers/AuthProvider';
+import useRentalStore from '../../../shared/stores/useRentalStore';
+import useBookingStore from '../../../shared/stores/useBookingStore';
+import useReviewStore from '../../../shared/stores/useReviewStore';
+import GlobalSearch from '../../../domains/search/components/GlobalSearch';
 import RevenueChart from './components/RevenueChart';
 import OccupancyChart from './components/OccupancyChart';
 import BookingsTimeline from './components/BookingsTimeline';
 import PropertyPerformance from './components/PropertyPerformance';
 import QuickActions from './components/QuickActions';
+import { computeOwnerStats } from './utils/ownerAnalytics';
+
+const formatCurrency = (value) =>
+  new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', minimumFractionDigits: 0 }).format(value);
 
 /**
- * Enhanced Owner Dashboard Page
- * Comprehensive overview with charts, metrics, and analytics
- * Week 13 - Owner Portal Enhancement
+ * Owner Dashboard — real data derived from the owner's own properties and
+ * bookings (no hardcoded mock stats). Quick Actions gets its own tinted
+ * section so it doesn't read as another row of metrics.
  */
-
 const DashboardPage = () => {
-  // Responsive grid columns
+  const { user } = useAuth();
   const statsColumns = useBreakpointValue({ base: 1, md: 2, lg: 4 });
-  const chartsColumns = useBreakpointValue({ base: 1, lg: 2 });
+  const isLoading = useMinDisplayTime();
 
-  // Mock data - replace with actual API calls
-  const stats = {
-    totalProperties: {
-      value: 5,
-      trend: 'up',
-      trendValue: '+2',
-      helpText: 'Active listings',
-    },
-    activeBookings: {
-      value: 12,
-      trend: 'up',
-      trendValue: '+15%',
-      helpText: 'This month',
-    },
-    monthlyRevenue: {
-      value: '₱48,000',
-      trend: 'up',
-      trendValue: '+12%',
-      helpText: 'vs. last month',
-    },
-    occupancyRate: {
-      value: '85%',
-      trend: 'up',
-      trendValue: '+5%',
-      helpText: 'All properties',
-      showProgress: true,
-      progressValue: 42,
-      progressMax: 50,
-    },
-    totalTenants: {
-      value: 28,
-      trend: 'neutral',
-      trendValue: '0%',
-      helpText: 'Active tenants',
-    },
-    propertyViews: {
-      value: '1,234',
-      trend: 'up',
-      trendValue: '+23%',
-      helpText: 'This month',
-    },
-    avgRating: {
-      value: '4.7',
-      trend: 'up',
-      trendValue: '+0.2',
-      helpText: 'Based on reviews',
-    },
-    completionRate: {
-      value: '94%',
-      trend: 'up',
-      trendValue: '+3%',
-      helpText: 'Booking completion',
-    },
-  };
+  const rentals = useRentalStore((state) => state.rentals) || [];
+  const getBookingsByOwnerEmail = useBookingStore((state) => state.getBookingsByOwnerEmail);
+  const propertyRatings = useReviewStore((state) => state.propertyRatings);
+
+  const ownerProperties = rentals.filter((r) => r.ownerEmail === user?.email);
+  const ownerBookings = getBookingsByOwnerEmail(user?.email);
+
+  const stats = computeOwnerStats({ ownerProperties, ownerBookings, propertyRatings });
 
   return (
-    <Box bg="gray.50" minH="100vh" pb={8}>
-      <Container maxW="container.xl" py={8}>
-        {/* Page Header */}
-        <VStack align="start" spacing={6} mb={8}>
-          <Box>
-            <Heading size="lg" mb={2}>
-              Dashboard Overview
-            </Heading>
-            <Text color="gray.600">
-              Welcome back! Here's what's happening with your properties today.
-            </Text>
-          </Box>
+    <Box>
+      <PageBanner title={`Welcome back, ${user?.name?.split(' ')[0] || 'Owner'}!`} subtitle="Here's what's happening with your properties today." />
 
-          {/* Quick Actions */}
-          <Box w="full">
-            <QuickActions />
-          </Box>
-        </VStack>
+      {/* Quick Actions — visually distinct band, not another stat row */}
+      <Box bg="primary.50" borderRadius="lg" p={5} mb={8}>
+        <Box mb={4}>
+          <Heading size="sm" mb={1}>Quick Actions</Heading>
+          <Text fontSize="xs" color="gray.600">Jump straight to a task, or search across your properties, bookings, and tenants</Text>
+        </Box>
+        <Box mb={4} maxW="360px">
+          <GlobalSearch />
+        </Box>
+        <QuickActions />
+      </Box>
 
-        {/* Main Stats Grid */}
+      {isLoading ? (
         <SimpleGrid columns={statsColumns} spacing={6} mb={8}>
-          <StatCard
-            label="Total Properties"
-            value={stats.totalProperties.value}
-            icon={FiHome}
-            color="primary"
-            trend={stats.totalProperties.trend}
-            trendValue={stats.totalProperties.trendValue}
-            helpText={stats.totalProperties.helpText}
-          />
-          <StatCard
-            label="Active Bookings"
-            value={stats.activeBookings.value}
-            icon={FiCalendar}
-            color="success"
-            trend={stats.activeBookings.trend}
-            trendValue={stats.activeBookings.trendValue}
-            helpText={stats.activeBookings.helpText}
-          />
-          <StatCard
-            label="Monthly Revenue"
-            value={stats.monthlyRevenue.value}
-            icon={FiDollarSign}
-            color="warning"
-            trend={stats.monthlyRevenue.trend}
-            trendValue={stats.monthlyRevenue.trendValue}
-            helpText={stats.monthlyRevenue.helpText}
-          />
-          <StatCard
-            label="Occupancy Rate"
-            value={stats.occupancyRate.value}
-            icon={FiTrendingUp}
-            color="purple"
-            trend={stats.occupancyRate.trend}
-            trendValue={stats.occupancyRate.trendValue}
-            helpText={stats.occupancyRate.helpText}
-            showProgress={stats.occupancyRate.showProgress}
-            progressValue={stats.occupancyRate.progressValue}
-            progressMax={stats.occupancyRate.progressMax}
-          />
+          <StatCardSkeleton count={8} />
         </SimpleGrid>
+      ) : (
+        <>
+          <SimpleGrid columns={statsColumns} spacing={6} mb={6}>
+            <StatCard label="Total Properties" value={stats.totalProperties} icon={FiHome} color="primary" helpText="Active listings" />
+            <StatCard label="Active Bookings" value={stats.activeBookings} icon={FiCalendar} color="success" helpText="Approved, paid, or confirmed" />
+            <StatCard label="Monthly Revenue" value={formatCurrency(stats.monthlyRevenue)} icon={FiDollarSign} color="warning" helpText="This calendar month" />
+            <StatCard
+              label="Occupancy Rate"
+              value={`${stats.occupancyRate}%`}
+              icon={FiTrendingUp}
+              color="purple"
+              helpText="Of all units"
+              showProgress
+              progressValue={stats.occupancyRate}
+              progressMax={100}
+            />
+          </SimpleGrid>
 
-        {/* Secondary Stats */}
-        <SimpleGrid columns={{ base: 2, md: 4 }} spacing={6} mb={8}>
-          <StatCard
-            label="Total Tenants"
-            value={stats.totalTenants.value}
-            icon={FiUsers}
-            color="info"
-            trend={stats.totalTenants.trend}
-            trendValue={stats.totalTenants.trendValue}
-            helpText={stats.totalTenants.helpText}
-          />
-          <StatCard
-            label="Property Views"
-            value={stats.propertyViews.value}
-            icon={FiEye}
-            color="primary"
-            trend={stats.propertyViews.trend}
-            trendValue={stats.propertyViews.trendValue}
-            helpText={stats.propertyViews.helpText}
-          />
-          <StatCard
-            label="Avg. Rating"
-            value={stats.avgRating.value}
-            icon={FiStar}
-            color="warning"
-            trend={stats.avgRating.trend}
-            trendValue={stats.avgRating.trendValue}
-            helpText={stats.avgRating.helpText}
-          />
-          <StatCard
-            label="Completion Rate"
-            value={stats.completionRate.value}
-            icon={FiCheckCircle}
-            color="success"
-            trend={stats.completionRate.trend}
-            trendValue={stats.completionRate.trendValue}
-            helpText={stats.completionRate.helpText}
-          />
-        </SimpleGrid>
+          <SimpleGrid columns={{ base: 2, md: 4 }} spacing={6} mb={8}>
+            <StatCard label="Total Tenants" value={stats.totalTenants} icon={FiUsers} color="info" helpText="Confirmed or completed leases" />
+            <StatCard label="Pending Requests" value={stats.pendingRequests} icon={FiClock} color="primary" helpText="Awaiting your response" />
+            <StatCard label="Avg. Rating" value={stats.avgRating ?? '—'} icon={FiStar} color="warning" helpText="Based on reviews" />
+            <StatCard label="Completion Rate" value={stats.completionRate != null ? `${stats.completionRate}%` : '—'} icon={FiCheckCircle} color="success" helpText="Bookings completed" />
+          </SimpleGrid>
+        </>
+      )}
 
-        {/* Charts Section */}
-        <SimpleGrid columns={chartsColumns} spacing={6} mb={8}>
-          <RevenueChart />
-          <OccupancyChart />
-        </SimpleGrid>
+      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6} mb={8}>
+        <RevenueChart bookings={ownerBookings} />
+        <OccupancyChart properties={ownerProperties} bookings={ownerBookings} />
+      </SimpleGrid>
 
-        {/* Activity and Performance Section */}
-        <SimpleGrid columns={chartsColumns} spacing={6}>
-          <BookingsTimeline />
-          <PropertyPerformance />
-        </SimpleGrid>
-      </Container>
+      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
+        <BookingsTimeline bookings={ownerBookings} />
+        <PropertyPerformance properties={ownerProperties} bookings={ownerBookings} propertyRatings={propertyRatings} />
+      </SimpleGrid>
     </Box>
   );
 };

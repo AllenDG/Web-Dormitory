@@ -1,5 +1,4 @@
 import { Suspense } from 'react';
-import { Box } from '@chakra-ui/react';
 import ProtectedRoute from './protected-routes';
 import { ROLES } from '../providers/AuthProvider';
 import { PERMISSIONS } from '../config/permissions';
@@ -8,6 +7,7 @@ import { FullPageLoader } from '../../shared/components/LoadingState';
 // Import layouts
 import TenantLayout from '../../shared/layouts/TenantLayout';
 import OwnerLayout from '../../shared/layouts/OwnerLayout';
+import AdminLayout from '../../shared/layouts/AdminLayout';
 
 // Import route modules
 import * as TenantRoutes from './tenant-routes';
@@ -249,28 +249,183 @@ export const routes = [
         allowedRoles={[ROLES.ADMIN]}
         requiredPermission={PERMISSIONS.ACCESS_ADMIN_PANEL}
       >
-        <Box minH="100vh">
-          <LazyPage>
-            <AdminRoutes.AdminDashboardEnhanced />
-          </LazyPage>
-        </Box>
+        <AdminLayout />
       </ProtectedRoute>
     ),
-  },
-  {
-    path: '/admin/dashboard',
-    element: (
-      <ProtectedRoute
-        allowedRoles={[ROLES.ADMIN]}
-        requiredPermission={PERMISSIONS.ACCESS_ADMIN_PANEL}
-      >
-        <Box minH="100vh">
+    children: [
+      {
+        index: true,
+        element: (
           <LazyPage>
-            <AdminRoutes.AdminDashboardEnhanced />
+            <AdminRoutes.AdminDashboardPage />
           </LazyPage>
-        </Box>
-      </ProtectedRoute>
-    ),
+        ),
+      },
+      {
+        path: 'dashboard',
+        element: (
+          <LazyPage>
+            <AdminRoutes.AdminDashboardPage />
+          </LazyPage>
+        ),
+      },
+      {
+        path: 'users',
+        children: [
+          {
+            index: true,
+            element: (
+              <LazyPage>
+                <AdminRoutes.UsersPage role="all" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'tenants',
+            element: (
+              <LazyPage>
+                <AdminRoutes.UsersPage role="tenant" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'owners',
+            element: (
+              <LazyPage>
+                <AdminRoutes.UsersPage role="owner" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'admins',
+            element: (
+              <LazyPage>
+                <AdminRoutes.UsersPage role="admin" />
+              </LazyPage>
+            ),
+          },
+        ],
+      },
+      {
+        path: 'properties',
+        children: [
+          {
+            index: true,
+            element: (
+              <LazyPage>
+                <AdminRoutes.PropertyModerationPage status="all" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'pending',
+            element: (
+              <LazyPage>
+                <AdminRoutes.PropertyModerationPage status="pending" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'approved',
+            element: (
+              <LazyPage>
+                <AdminRoutes.PropertyModerationPage status="approved" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'rejected',
+            element: (
+              <LazyPage>
+                <AdminRoutes.PropertyModerationPage status="rejected" />
+              </LazyPage>
+            ),
+          },
+        ],
+      },
+      {
+        path: 'reports',
+        children: [
+          {
+            index: true,
+            element: (
+              <LazyPage>
+                <AdminRoutes.ReportedIssuesPage status="all" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'open',
+            element: (
+              <LazyPage>
+                <AdminRoutes.ReportedIssuesPage status="open" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'investigating',
+            element: (
+              <LazyPage>
+                <AdminRoutes.ReportedIssuesPage status="investigating" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'resolved',
+            element: (
+              <LazyPage>
+                <AdminRoutes.ReportedIssuesPage status="resolved" />
+              </LazyPage>
+            ),
+          },
+        ],
+      },
+      {
+        path: 'revenue',
+        element: (
+          <LazyPage>
+            <AdminRoutes.RevenuePage />
+          </LazyPage>
+        ),
+      },
+      {
+        path: 'audit-log',
+        element: (
+          <LazyPage>
+            <AdminRoutes.AuditLogPage />
+          </LazyPage>
+        ),
+      },
+      {
+        path: 'settings',
+        children: [
+          {
+            index: true,
+            element: (
+              <LazyPage>
+                <AdminRoutes.ProfileSettingsPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'profile',
+            element: (
+              <LazyPage>
+                <AdminRoutes.ProfileSettingsPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'platform',
+            element: (
+              <LazyPage>
+                <AdminRoutes.PlatformSettingsPage />
+              </LazyPage>
+            ),
+          },
+        ],
+      },
+    ],
   },
 
   // ==========================================
@@ -312,7 +467,7 @@ export const routes = [
         path: 'properties/add',
         element: (
           <LazyPage>
-            <OwnerRoutes.AddPropertyPage />
+            <OwnerRoutes.PropertiesPage />
           </LazyPage>
         ),
       },
@@ -320,7 +475,7 @@ export const routes = [
         path: 'properties/edit/:id',
         element: (
           <LazyPage>
-            <OwnerRoutes.EditPropertyPage />
+            <OwnerRoutes.PropertiesPage />
           </LazyPage>
         ),
       },
@@ -345,14 +500,6 @@ export const routes = [
         element: (
           <LazyPage>
             <OwnerRoutes.TransactionHistoryPage />
-          </LazyPage>
-        ),
-      },
-      {
-        path: 'reports',
-        element: (
-          <LazyPage>
-            <OwnerRoutes.ReportsPage />
           </LazyPage>
         ),
       },

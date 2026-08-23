@@ -11,7 +11,6 @@ import {
   FiCalendar,
   FiUsers,
   FiDollarSign,
-  FiFileText,
   FiSettings,
 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -96,13 +95,6 @@ const QuickActions = () => {
       onClick: () => navigate('/owner/payments'),
     },
     {
-      icon: FiFileText,
-      label: 'Reports',
-      description: 'View analytics',
-      color: 'info',
-      onClick: () => navigate('/owner/reports'),
-    },
-    {
       icon: FiSettings,
       label: 'Settings',
       description: 'Account settings',
@@ -113,7 +105,7 @@ const QuickActions = () => {
 
   return (
     <Box>
-      <SimpleGrid columns={{ base: 2, md: 3, lg: 6 }} spacing={4}>
+      <SimpleGrid columns={{ base: 2, md: 3, lg: 5 }} spacing={4}>
         {actions.map((action, index) => (
           <QuickActionCard key={index} {...action} />
         ))}

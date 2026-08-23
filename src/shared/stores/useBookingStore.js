@@ -320,6 +320,20 @@ const useBookingStore = create(
         },
 
         /**
+         * Get bookings by owner email. Bookings are only ever created with
+         * a real ownerEmail (property.ownerEmail); ownerId falls back to a
+         * placeholder string since no property record sets a real one, so
+         * this is the selector that actually matches real data — mirrors
+         * how Properties/Tenants/Search already filter by owner email.
+         * @param {string} ownerEmail - Owner email
+         * @returns {Array} Array of bookings
+         */
+        getBookingsByOwnerEmail: (ownerEmail) => {
+          const { bookings } = get();
+          return bookings.filter((booking) => booking.ownerEmail === ownerEmail);
+        },
+
+        /**
          * Get bookings by status
          * @param {string} status - Booking status
          * @returns {Array} Array of bookings

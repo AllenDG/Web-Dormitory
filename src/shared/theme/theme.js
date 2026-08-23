@@ -184,6 +184,31 @@ const theme = extendTheme({
         },
       },
     },
+    // "bordered" variant gives tables visible horizontal + vertical grid
+    // lines in one place, instead of every DataTable usage repeating
+    // borderWidth/borderColor props on each Th/Td.
+    Table: {
+      variants: {
+        bordered: {
+          table: {
+            borderCollapse: 'collapse',
+          },
+          th: {
+            borderWidth: '1px',
+            borderColor: 'gray.200',
+            bg: 'gray.50',
+            textTransform: 'none',
+            fontWeight: '600',
+            fontSize: 'xs',
+            color: 'gray.600',
+          },
+          td: {
+            borderWidth: '1px',
+            borderColor: 'gray.200',
+          },
+        },
+      },
+    },
   },
   styles: {
     global: {
@@ -208,5 +233,10 @@ export const heroGradient = 'linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)';
 // Plain hex export of primary.600, for surfaces Chakra's theme can't reach
 // (e.g. SweetAlert2 dialogs, which render outside the React tree).
 export const primaryColorHex = '#1e88e5';
+
+// Plain hex exports of error.500 / success.500, for the same non-Chakra
+// surfaces (e.g. confirmAction()'s destructive confirm color).
+export const errorColorHex = '#E53E3E';
+export const successColorHex = '#38A169';
 
 export default theme;

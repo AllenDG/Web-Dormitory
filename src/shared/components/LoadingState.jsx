@@ -123,6 +123,59 @@ export const ListSkeleton = ({ count = 5 }) => {
   );
 };
 
+// Stat card skeleton — mirrors StatCard's shape (icon chip, label, value)
+// so the layout doesn't jump when real content swaps in.
+export const StatCardSkeleton = ({ count = 4 }) => {
+  return (
+    <>
+      {Array.from({ length: count }).map((_, index) => (
+        <Box
+          key={index}
+          bg="white"
+          p={6}
+          borderRadius="lg"
+          border="1px"
+          borderColor="gray.200"
+          boxShadow="sm"
+        >
+          <Skeleton height="48px" width="48px" borderRadius="lg" mb={4} />
+          <Skeleton height="14px" width="60%" mb={2} />
+          <Skeleton height="28px" width="40%" />
+        </Box>
+      ))}
+    </>
+  );
+};
+
+// Table skeleton — mirrors DataTable's bordered grid-line container so a
+// page can swap directly from this to a real DataTable with no layout jump.
+export const TableSkeleton = ({ rows = 5, columns = 5 }) => {
+  return (
+    <Box borderWidth="1px" borderColor="gray.200" borderRadius="lg" overflow="hidden">
+      <Box bg="gray.50" borderBottomWidth="1px" borderColor="gray.200" p={3}>
+        <Flex gap={4}>
+          {Array.from({ length: columns }).map((_, col) => (
+            <Skeleton key={col} height="12px" flex="1" />
+          ))}
+        </Flex>
+      </Box>
+      {Array.from({ length: rows }).map((_, row) => (
+        <Flex
+          key={row}
+          gap={4}
+          p={3}
+          borderBottomWidth={row === rows - 1 ? 0 : '1px'}
+          borderColor="gray.200"
+        >
+          {Array.from({ length: columns }).map((_, col) => (
+            <Skeleton key={col} height="16px" flex="1" />
+          ))}
+        </Flex>
+      ))}
+    </Box>
+  );
+};
+
 // Default export
 const LoadingState = {
   FullPageLoader,
@@ -130,6 +183,8 @@ const LoadingState = {
   CardSkeleton,
   PropertyCardSkeleton,
   ListSkeleton,
+  StatCardSkeleton,
+  TableSkeleton,
 };
 
 export default LoadingState;

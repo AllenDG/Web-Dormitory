@@ -1,14 +1,25 @@
-import { Box, Flex, useDisclosure, IconButton, Icon } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Container,
+  useDisclosure,
+  IconButton,
+  Icon,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+} from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
 import { FiMenu } from 'react-icons/fi';
 import OwnerSidebar from './OwnerSidebar';
 import OwnerHeader from './OwnerHeader';
-import { Breadcrumbs } from '../components';
+
+const CONTENT_MAX_W = '1400px';
 
 /**
  * Owner Layout
- * Admin-style layout for property owners
- * Includes sidebar navigation and header
+ * Sidebar navigation + header shell for the owner portal.
+ * Header and content share one Container maxW so their edges always align.
  */
 const OwnerLayout = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -24,68 +35,39 @@ const OwnerLayout = () => {
         borderColor="gray.200"
         overflowY="auto"
       >
-        <OwnerSidebar onClose={onClose} />
+        <OwnerSidebar />
       </Box>
 
       {/* Sidebar - Mobile Drawer */}
-      <Box
-        display={{ base: isOpen ? 'block' : 'none', lg: 'none' }}
-        position="fixed"
-        top="0"
-        left="0"
-        w="280px"
-        h="100vh"
-        bg="white"
-        zIndex="overlay"
-        overflowY="auto"
-        boxShadow="xl"
-      >
-        <OwnerSidebar onClose={onClose} />
-      </Box>
-
-      {/* Overlay for mobile */}
-      {isOpen && (
-        <Box
-          display={{ base: 'block', lg: 'none' }}
-          position="fixed"
-          top="0"
-          left="0"
-          w="100vw"
-          h="100vh"
-          bg="blackAlpha.600"
-          zIndex="modal"
-          onClick={onClose}
-        />
-      )}
+      <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="xs">
+        <DrawerOverlay />
+        <DrawerContent>
+          <OwnerSidebar onClose={onClose} />
+        </DrawerContent>
+      </Drawer>
 
       {/* Main Content Area */}
       <Flex flex="1" direction="column" overflow="hidden">
         {/* Header */}
-        <Box
-          h="64px"
-          bg="white"
-          borderBottom="1px"
-          borderColor="gray.200"
-          px={6}
-          display="flex"
-          alignItems="center"
-          gap={4}
-        >
-          {/* Mobile Menu Button */}
-          <IconButton
-            display={{ base: 'flex', lg: 'none' }}
-            icon={<Icon as={FiMenu} />}
-            variant="ghost"
-            onClick={onOpen}
-            aria-label="Open menu"
-          />
-          <OwnerHeader />
+        <Box h="64px" bg="white" borderBottom="1px" borderColor="gray.200">
+          <Container maxW={CONTENT_MAX_W} h="full" display="flex" alignItems="center" gap={4} px={{ base: 4, md: 6 }}>
+            {/* Mobile Menu Button */}
+            <IconButton
+              display={{ base: 'flex', lg: 'none' }}
+              icon={<Icon as={FiMenu} />}
+              variant="ghost"
+              onClick={onOpen}
+              aria-label="Open menu"
+            />
+            <OwnerHeader />
+          </Container>
         </Box>
 
         {/* Page Content */}
-        <Box flex="1" overflowY="auto" p={6}>
-          <Breadcrumbs />
-          <Outlet />
+        <Box flex="1" overflowY="auto">
+          <Container maxW={CONTENT_MAX_W} px={{ base: 4, md: 6 }} py={6}>
+            <Outlet />
+          </Container>
         </Box>
       </Flex>
     </Flex>
