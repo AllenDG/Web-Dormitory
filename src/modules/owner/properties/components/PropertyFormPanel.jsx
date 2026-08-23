@@ -39,21 +39,7 @@ import { useDraftAutosave, readDraft, clearDraft } from '../../../../shared/hook
 import { useAppToast } from '../../../../shared/hooks/useAppToast';
 import ImageUploadField from '../../../../shared/components/ImageUploadField';
 import UnitsManager from '../UnitsManager';
-
-const AMENITIES_LIST = [
-  'Wifi / Internet',
-  'Air Conditioning',
-  'Refrigerator',
-  'Kitchen',
-  'Parking',
-  'Laundry Area',
-  '24/7 Security',
-  'CCTV',
-  'Elevator',
-  'Swimming Pool',
-  'Gym Access',
-  'Balcony',
-];
+import AMENITIES_LIST from '../../../../data/amenities.json';
 
 /**
  * Add/Edit Property side panel — unifies AddPropertyPage + EditPropertyPage

@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Box, SimpleGrid, Image, VStack, HStack, Text, Badge, Button, Input, InputGroup, InputLeftElement, Select, Icon, NumberInput, NumberInputField } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { FiSearch, FiCheckCircle, FiXCircle, FiEye } from 'react-icons/fi';
+import { FiSearch, FiCheckCircle, FiXCircle, FiEye, FiEdit, FiTrash2 } from 'react-icons/fi';
 import useRentalStore from '../../../../shared/stores/useRentalStore';
 import useAuditLogStore from '../../../../shared/stores/useAuditLogStore';
 import { useAuth } from '../../../../app/providers/AuthProvider';
@@ -23,7 +23,7 @@ const getCities = (rentals) => [...new Set(rentals.map((r) => r.city))].sort();
  * property from inside their own moderation queue (that's what Reported
  * Issues is for). "View Details" wires to the real listing page.
  */
-export function PropertyModerationGrid({ status = 'all' }) {
+export function PropertyModerationGrid({ status = 'all', onEditProperty }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [cityFilter, setCityFilter] = useState('all');
   const [priceMin, setPriceMin] = useState('');
@@ -36,6 +36,7 @@ export function PropertyModerationGrid({ status = 'all' }) {
   const rentals = useRentalStore((state) => state.rentals);
   const approveProperty = useRentalStore((state) => state.approveProperty);
   const rejectProperty = useRentalStore((state) => state.rejectProperty);
+  const deleteRental = useRentalStore((state) => state.deleteRental);
   const logAction = useAuditLogStore((state) => state.logAction);
   const { isOpen, position, activeItem, close, handlers } = useContextMenu();
 
@@ -78,14 +79,24 @@ export function PropertyModerationGrid({ status = 'all' }) {
     toast({ title: 'Property Rejected', description: `${property.title} has been rejected.`, status: 'error' });
   };
 
+  const handleDelete = async (property) => {
+    const confirmed = await confirmAction({ title: 'Delete Property', text: `Permanently delete "${property.title}"? This cannot be undone.`, isDestructive: true, confirmButtonText: 'Delete' });
+    if (!confirmed) return;
+    deleteRental(property.id);
+    logAction({ actorEmail: actor?.email, actorName: actor?.name, action: 'property.deleted', target: property.title });
+    toast({ title: 'Property Deleted', description: `${property.title} has been removed.`, status: 'info' });
+  };
+
   const getRowActions = (property) => [
     { label: 'View Details', icon: FiEye, onClick: () => navigate(`/listing/${property.id}`) },
+    { label: 'Edit Property', icon: FiEdit, onClick: () => onEditProperty?.(property.id) },
     ...(property.status === 'pending'
       ? [
           { label: 'Approve', icon: FiCheckCircle, onClick: () => handleApprove(property) },
           { label: 'Reject', icon: FiXCircle, isDestructive: true, onClick: () => handleReject(property) },
         ]
       : []),
+    { label: 'Delete Property', icon: FiTrash2, isDestructive: true, onClick: () => handleDelete(property) },
   ];
 
   return (

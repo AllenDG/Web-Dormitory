@@ -35,6 +35,7 @@ const navItems = [
       { label: 'Pending', path: '/admin/properties/pending' },
       { label: 'Approved', path: '/admin/properties/approved' },
       { label: 'Rejected', path: '/admin/properties/rejected' },
+      { label: 'Add Property', path: '/admin/properties/add' },
     ],
   },
   {

@@ -349,6 +349,22 @@ export const routes = [
               </LazyPage>
             ),
           },
+          {
+            path: 'add',
+            element: (
+              <LazyPage>
+                <AdminRoutes.PropertyModerationPage status="all" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'edit/:id',
+            element: (
+              <LazyPage>
+                <AdminRoutes.PropertyModerationPage status="all" />
+              </LazyPage>
+            ),
+          },
         ],
       },
       {
