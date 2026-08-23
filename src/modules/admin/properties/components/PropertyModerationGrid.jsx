@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Box, SimpleGrid, Image, VStack, HStack, Text, Badge, Button, Input, InputGroup, InputLeftElement, Select, Icon } from '@chakra-ui/react';
+import { useState, useMemo } from 'react';
+import { Box, SimpleGrid, Image, VStack, HStack, Text, Badge, Button, Input, InputGroup, InputLeftElement, Select, Icon, NumberInput, NumberInputField } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiCheckCircle, FiXCircle, FiEye } from 'react-icons/fi';
 import useRentalStore from '../../../../shared/stores/useRentalStore';
@@ -14,6 +14,8 @@ import { confirmAction } from '../../../../shared/utils/confirm';
 
 const STATUS_COLORS = { approved: 'green', rejected: 'red', pending: 'yellow' };
 
+const getCities = (rentals) => [...new Set(rentals.map((r) => r.city))].sort();
+
 /**
  * Property Moderation grid — kebab menu replaced with right-click/long-press
  * context menu. "Report Issue" (previously dead, no onClick) is removed
@@ -23,6 +25,9 @@ const STATUS_COLORS = { approved: 'green', rejected: 'red', pending: 'yellow' };
  */
 export function PropertyModerationGrid({ status = 'all' }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [cityFilter, setCityFilter] = useState('all');
+  const [priceMin, setPriceMin] = useState('');
+  const [priceMax, setPriceMax] = useState('');
   const toast = useAppToast();
   const navigate = useNavigate();
   const { user: actor } = useAuth();
@@ -33,6 +38,8 @@ export function PropertyModerationGrid({ status = 'all' }) {
   const rejectProperty = useRentalStore((state) => state.rejectProperty);
   const logAction = useAuditLogStore((state) => state.logAction);
   const { isOpen, position, activeItem, close, handlers } = useContextMenu();
+
+  const cities = useMemo(() => getCities(rentals), [rentals]);
 
   const properties = rentals
     .map((r) => ({
@@ -48,7 +55,11 @@ export function PropertyModerationGrid({ status = 'all' }) {
     .filter((property) => {
       const matchesSearch = !searchQuery || property.title.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesStatus = status === 'all' || property.status === status;
-      return matchesSearch && matchesStatus;
+      const matchesCity = cityFilter === 'all' || property.location === cityFilter;
+      const minPrice = priceMin ? parseInt(priceMin, 10) : 0;
+      const maxPrice = priceMax ? parseInt(priceMax, 10) : Infinity;
+      const matchesPrice = property.price >= minPrice && property.price <= maxPrice;
+      return matchesSearch && matchesStatus && matchesCity && matchesPrice;
     });
 
   const handleApprove = async (property) => {
@@ -83,6 +94,36 @@ export function PropertyModerationGrid({ status = 'all' }) {
         <InputLeftElement pointerEvents="none"><Icon as={FiSearch} color="gray.400" /></InputLeftElement>
         <Input placeholder="Search properties..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
       </InputGroup>
+      <VStack align="stretch" spacing={4} mb={6}>
+        <HStack spacing={4}>
+          <Select maxW="150px" value={cityFilter} onChange={(e) => setCityFilter(e.target.value)}>
+            <option value="all">All Cities</option>
+            {cities.map((city) => (
+              <option key={city} value={city}>{city}</option>
+            ))}
+          </Select>
+        </HStack>
+        <HStack spacing={4}>
+          <NumberInput
+            maxW="120px"
+            min={0}
+            value={priceMin}
+            onChange={(val) => setPriceMin(val)}
+            placeholder="Min Price"
+          >
+            <NumberInputField placeholder="Min" />
+          </NumberInput>
+          <NumberInput
+            maxW="120px"
+            min={0}
+            value={priceMax}
+            onChange={(val) => setPriceMax(val)}
+            placeholder="Max Price"
+          >
+            <NumberInputField placeholder="Max" />
+          </NumberInput>
+        </HStack>
+      </VStack>
 
       {isLoading ? (
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
