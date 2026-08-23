@@ -80,7 +80,9 @@ const navItems = [
     path: '/admin/settings',
     children: [
       { label: 'My Profile', path: '/admin/settings', end: true },
-      { label: 'Platform Settings', path: '/admin/settings/platform' },
+      { label: 'Business Profile', path: '/admin/settings/business' },
+      { label: 'System Settings', path: '/admin/settings/system' },
+      { label: 'Advanced Settings', path: '/admin/settings/advanced' },
     ],
   },
 ];

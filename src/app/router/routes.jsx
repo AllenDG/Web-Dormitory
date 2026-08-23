@@ -522,10 +522,26 @@ export const routes = [
             ),
           },
           {
-            path: 'platform',
+            path: 'business',
+            element: (
+              <LazyPage>
+                <AdminRoutes.BusinessProfileSettingsPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'system',
             element: (
               <LazyPage>
                 <AdminRoutes.PlatformSettingsPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'advanced',
+            element: (
+              <LazyPage>
+                <AdminRoutes.AdvancedSettingsPage />
               </LazyPage>
             ),
           },

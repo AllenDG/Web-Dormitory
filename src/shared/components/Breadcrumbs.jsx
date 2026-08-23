@@ -38,7 +38,9 @@ const SEGMENT_LABELS = {
   'user-reports': 'User Reports',
   'payment-reports': 'Payment Reports',
   profile: 'My Profile',
-  platform: 'Platform Settings',
+  business: 'Business Profile',
+  system: 'System Settings',
+  advanced: 'Advanced Settings',
 };
 
 const isDynamicSegment = (segment) => /^[0-9a-fA-F-]{8,}$/.test(segment) || /^\d+$/.test(segment);

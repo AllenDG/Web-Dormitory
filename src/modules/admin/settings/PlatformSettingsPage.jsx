@@ -5,7 +5,7 @@ import PlatformSettingsForm from './components/PlatformSettingsForm';
 const PlatformSettingsPage = () => {
   return (
     <Box>
-      <PageBanner title="Platform Settings" subtitle="Configure system-wide settings and features" />
+      <PageBanner title="System Settings" subtitle="Configure system-wide settings and features" />
       <PlatformSettingsForm />
     </Box>
   );

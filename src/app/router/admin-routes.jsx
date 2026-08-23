@@ -9,3 +9,5 @@ export const RevenuePage = lazy(() => import('../../modules/admin/revenue/Revenu
 export const AuditLogPage = lazy(() => import('../../modules/admin/audit-log/AuditLogPage'));
 export const ProfileSettingsPage = lazy(() => import('../../modules/admin/settings/ProfileSettingsPage'));
 export const PlatformSettingsPage = lazy(() => import('../../modules/admin/settings/PlatformSettingsPage'));
+export const BusinessProfileSettingsPage = lazy(() => import('../../modules/admin/settings/BusinessProfilePage'));
+export const AdvancedSettingsPage = lazy(() => import('../../modules/admin/settings/AdvancedSettingsPage'));
