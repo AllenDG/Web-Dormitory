@@ -430,11 +430,32 @@ export const routes = [
       },
       {
         path: 'revenue',
-        element: (
-          <LazyPage>
-            <AdminRoutes.RevenuePage />
-          </LazyPage>
-        ),
+        children: [
+          {
+            index: true,
+            element: (
+              <LazyPage>
+                <AdminRoutes.RevenuePage view="overview" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'transactions',
+            element: (
+              <LazyPage>
+                <AdminRoutes.RevenuePage view="transactions" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'refunds',
+            element: (
+              <LazyPage>
+                <AdminRoutes.RevenuePage view="refunds" />
+              </LazyPage>
+            ),
+          },
+        ],
       },
       {
         path: 'audit-log',

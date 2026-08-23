@@ -52,7 +52,16 @@ const navItems = [
       { label: 'Payment Reports', path: '/admin/reports/payment-reports' },
     ],
   },
-  { label: 'Revenue', icon: FiDollarSign, path: '/admin/revenue' },
+  {
+    label: 'Revenue',
+    icon: FiDollarSign,
+    path: '/admin/revenue',
+    children: [
+      { label: 'Overview', path: '/admin/revenue', end: true },
+      { label: 'Transactions', path: '/admin/revenue/transactions' },
+      { label: 'Refunds & Disputes', path: '/admin/revenue/refunds' },
+    ],
+  },
   { label: 'Audit Log', icon: FiFileText, path: '/admin/audit-log' },
   {
     label: 'Settings',

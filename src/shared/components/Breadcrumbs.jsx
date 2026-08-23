@@ -20,6 +20,8 @@ const SEGMENT_LABELS = {
   owners: 'Owners',
   admins: 'Admins',
   revenue: 'Revenue',
+  transactions: 'Transactions',
+  refunds: 'Refunds & Disputes',
   'audit-log': 'Audit Log',
   reports: 'Reported Issues',
   pending: 'Pending',
