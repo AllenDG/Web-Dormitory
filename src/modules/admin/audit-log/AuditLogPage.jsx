@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Box, Button, HStack, Select, Icon } from '@chakra-ui/react';
-import { FiTrash2 } from 'react-icons/fi';
+import { useState, useMemo } from 'react';
+import { Box, Button, HStack, Select, Icon, Input, InputGroup, InputLeftElement, VStack } from '@chakra-ui/react';
+import { FiTrash2, FiSearch } from 'react-icons/fi';
 import useAuditLogStore from '../../../shared/stores/useAuditLogStore';
 import PageBanner from '../../../shared/components/PageBanner';
 import DataTable from '../../../shared/components/DataTable';
@@ -8,6 +8,8 @@ import { TableSkeleton } from '../../../shared/components/LoadingState';
 import { useMinDisplayTime } from '../../../shared/hooks/useMinDisplayTime';
 import { useAppToast } from '../../../shared/hooks/useAppToast';
 import { confirmAction } from '../../../shared/utils/confirm';
+
+const getActors = (logs) => [...new Set(logs.map((l) => l.actorName || l.actorEmail).filter(Boolean))].sort();
 
 const formatTimestamp = (iso) => new Date(iso).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
 
@@ -17,14 +19,36 @@ const formatTimestamp = (iso) => new Date(iso).toLocaleString('en-US', { dateSty
  * happen from Users/Properties/Reports/Settings action handlers).
  */
 const AuditLogPage = () => {
+  const [searchQuery, setSearchQuery] = useState('');
   const [actionFilter, setActionFilter] = useState('all');
+  const [actorFilter, setActorFilter] = useState('all');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
   const toast = useAppToast();
   const isLoading = useMinDisplayTime();
   const logs = useAuditLogStore((state) => state.logs);
   const clearLogs = useAuditLogStore((state) => state.clearLogs);
 
   const actionTypes = [...new Set(logs.map((l) => l.action))];
-  const filteredLogs = actionFilter === 'all' ? logs : logs.filter((l) => l.action === actionFilter);
+  const actors = useMemo(() => getActors(logs), [logs]);
+
+  const filteredLogs = logs.filter((l) => {
+    const matchesSearch =
+      !searchQuery ||
+      (l.actorName && l.actorName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (l.actorEmail && l.actorEmail.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (l.action && l.action.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (l.target && l.target.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (l.details && l.details.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesAction = actionFilter === 'all' || l.action === actionFilter;
+    const logActor = l.actorName || l.actorEmail;
+    const matchesActor = actorFilter === 'all' || logActor === actorFilter;
+    const logDate = new Date(l.timestamp);
+    const fromDate = dateFrom ? new Date(dateFrom) : null;
+    const toDate = dateTo ? new Date(dateTo) : null;
+    const matchesDateRange = (!fromDate || logDate >= fromDate) && (!toDate || logDate <= toDate);
+    return matchesSearch && matchesAction && matchesActor && matchesDateRange;
+  });
 
   const handleClear = async () => {
     const confirmed = await confirmAction({ title: 'Clear Audit Log', text: 'Delete every recorded entry? This cannot be undone.', isDestructive: true, confirmButtonText: 'Clear Log' });
@@ -53,14 +77,43 @@ const AuditLogPage = () => {
         }
       />
 
-      <HStack mb={6}>
-        <Select maxW="220px" value={actionFilter} onChange={(e) => setActionFilter(e.target.value)}>
-          <option value="all">All Actions</option>
-          {actionTypes.map((type) => (
-            <option key={type} value={type}>{type}</option>
-          ))}
-        </Select>
-      </HStack>
+      <InputGroup mb={6} w="full">
+        <InputLeftElement pointerEvents="none"><Icon as={FiSearch} color="gray.400" /></InputLeftElement>
+        <Input placeholder="Search by actor, action, target, or details..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+      </InputGroup>
+
+      <VStack align="stretch" spacing={4} mb={6}>
+        <HStack spacing={4}>
+          <Select maxW="220px" value={actionFilter} onChange={(e) => setActionFilter(e.target.value)}>
+            <option value="all">All Actions</option>
+            {actionTypes.map((type) => (
+              <option key={type} value={type}>{type}</option>
+            ))}
+          </Select>
+          <Select maxW="220px" value={actorFilter} onChange={(e) => setActorFilter(e.target.value)}>
+            <option value="all">All Actors</option>
+            {actors.map((actor) => (
+              <option key={actor} value={actor}>{actor}</option>
+            ))}
+          </Select>
+        </HStack>
+        <HStack spacing={4}>
+          <Input
+            type="date"
+            placeholder="From"
+            maxW="150px"
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+          />
+          <Input
+            type="date"
+            placeholder="To"
+            maxW="150px"
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+          />
+        </HStack>
+      </VStack>
 
       {isLoading ? (
         <TableSkeleton rows={6} columns={5} />
