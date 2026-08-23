@@ -1,4 +1,5 @@
 import { BOOKING_STATUS } from '../../../../shared/stores/useBookingStore';
+import { isTenantVisible } from '../../../../shared/utils/moderation';
 
 const ACTIVE_STATUSES = [BOOKING_STATUS.APPROVED, BOOKING_STATUS.PAID, BOOKING_STATUS.CONFIRMED];
 const REVENUE_STATUSES = [BOOKING_STATUS.PAID, BOOKING_STATUS.CONFIRMED, BOOKING_STATUS.COMPLETED];
@@ -9,7 +10,7 @@ const monthLabel = (date) => date.toLocaleDateString('en-US', { month: 'short', 
 /** Platform-wide stat tiles — real derivations, no fabricated trend deltas. */
 export function computeAdminStats({ users, rentals, bookings, reports }) {
   const activeProperties = rentals.filter((r) => (r.status || 'active') === 'active');
-  const verifiedProperties = rentals.filter((r) => r.moderationStatus === 'approved');
+  const verifiedProperties = rentals.filter((r) => isTenantVisible(r));
   const pendingApprovals = rentals.filter((r) => r.moderationStatus === 'pending');
   const activeBookings = bookings.filter((b) => ACTIVE_STATUSES.includes(b.status));
   const totalRevenue = bookings

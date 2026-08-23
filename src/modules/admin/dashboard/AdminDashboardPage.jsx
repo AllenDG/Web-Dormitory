@@ -8,6 +8,7 @@ import useRentalStore from '../../../shared/stores/useRentalStore';
 import useBookingStore from '../../../shared/stores/useBookingStore';
 import PlatformStats from './components/PlatformStats';
 import AnalyticsCharts from './components/AnalyticsCharts';
+import RecentAnnouncements from './components/RecentAnnouncements';
 import { computeAdminStats } from './utils/adminAnalytics';
 
 /**
@@ -39,6 +40,10 @@ const AdminDashboardPage = () => {
         ) : (
           <PlatformStats stats={stats} />
         )}
+      </Box>
+
+      <Box mb={8}>
+        <RecentAnnouncements />
       </Box>
 
       <AnalyticsCharts users={users} rentals={rentals} bookings={bookings} stats={stats} />
