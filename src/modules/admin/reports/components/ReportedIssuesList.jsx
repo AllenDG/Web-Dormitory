@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, VStack, HStack, Text, Badge, Button, Avatar, Select, Divider } from '@chakra-ui/react';
+import { Box, VStack, HStack, Flex, Text, Badge, Button, Avatar, Select, Divider } from '@chakra-ui/react';
 import { FiCheckCircle, FiAlertTriangle, FiMessageSquare, FiTrash2, FiEdit } from 'react-icons/fi';
 import useAdminStore from '../../../../shared/stores/useAdminStore';
 import useAuditLogStore from '../../../../shared/stores/useAuditLogStore';
@@ -70,14 +70,14 @@ export function ReportedIssuesList({ status = 'all', type = 'all', onEditReport 
 
   return (
     <Box>
-      <HStack spacing={4} mb={6}>
-        <Select maxW="150px" value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
+      <Flex wrap="wrap" gap={4} mb={6}>
+        <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
           <option value="all">All Priorities</option>
           <option value="high">High</option>
           <option value="medium">Medium</option>
           <option value="low">Low</option>
         </Select>
-      </HStack>
+      </Flex>
 
       {isLoading ? (
         <ListSkeleton count={4} />

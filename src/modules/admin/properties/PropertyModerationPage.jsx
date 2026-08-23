@@ -1,19 +1,33 @@
-import { useEffect, useState } from 'react';
-import { Box, Icon } from '@chakra-ui/react';
+import { useEffect, useMemo, useState } from 'react';
+import { Box, Icon, SimpleGrid } from '@chakra-ui/react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { FiPlus } from 'react-icons/fi';
+import { FiPlus, FiGrid, FiClock, FiCheckCircle, FiXCircle } from 'react-icons/fi';
 import PageBanner from '../../../shared/components/PageBanner';
 import Button from '../../../shared/components/Button';
+import StatCard from '../../../shared/components/StatCard';
+import useRentalStore from '../../../shared/stores/useRentalStore';
 import PropertyModerationGrid from './components/PropertyModerationGrid';
 import AdminPropertyFormPanel from './components/AdminPropertyFormPanel';
 
-const STATUS_TITLES = { all: 'All Listings', pending: 'Pending', approved: 'Approved', rejected: 'Rejected' };
-
-const PropertyModerationPage = ({ status = 'all' }) => {
+const PropertyModerationPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { id: routePropertyId } = useParams();
   const [panel, setPanel] = useState({ isOpen: false, mode: 'add', propertyId: null });
+
+  const rentals = useRentalStore((state) => state.rentals);
+  const statusCounts = useMemo(
+    () =>
+      rentals.reduce(
+        (acc, r) => {
+          const key = r.moderationStatus || 'approved';
+          acc[key] = (acc[key] || 0) + 1;
+          return acc;
+        },
+        { pending: 0, approved: 0, rejected: 0 }
+      ),
+    [rentals]
+  );
 
   // Deep-linking: /admin/properties/add and /admin/properties/edit/:id
   // auto-open the panel in the right mode (matches the owner properties
@@ -39,15 +53,23 @@ const PropertyModerationPage = ({ status = 'all' }) => {
   return (
     <Box>
       <PageBanner
-        title={STATUS_TITLES[status]}
-        subtitle="Review and approve new property listings"
+        title="Property Management"
+        subtitle="Review, approve, and manage every listing on the platform"
         actions={
           <Button leftIcon={<Icon as={FiPlus} />} onClick={() => setPanel({ isOpen: true, mode: 'add', propertyId: null })}>
             Add Property
           </Button>
         }
       />
-      <PropertyModerationGrid status={status} onEditProperty={openEdit} />
+
+      <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={6} mb={8}>
+        <StatCard label="Total Listings" value={rentals.length} icon={FiGrid} color="primary" />
+        <StatCard label="Pending Review" value={statusCounts.pending} icon={FiClock} color="warning" />
+        <StatCard label="Approved" value={statusCounts.approved} icon={FiCheckCircle} color="success" />
+        <StatCard label="Rejected" value={statusCounts.rejected} icon={FiXCircle} color="error" />
+      </SimpleGrid>
+
+      <PropertyModerationGrid onEditProperty={openEdit} />
       <AdminPropertyFormPanel isOpen={panel.isOpen} mode={panel.mode} propertyId={panel.propertyId} onClose={closePanel} />
     </Box>
   );

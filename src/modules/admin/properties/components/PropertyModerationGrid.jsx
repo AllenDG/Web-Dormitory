@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Box, SimpleGrid, Image, VStack, HStack, Text, Badge, Button, Input, InputGroup, InputLeftElement, Select, Icon, NumberInput, NumberInputField } from '@chakra-ui/react';
+import { Box, SimpleGrid, Image, Flex, VStack, HStack, Text, Badge, Button, Input, InputGroup, InputLeftElement, Select, Icon, NumberInput, NumberInputField } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiCheckCircle, FiXCircle, FiEye, FiEdit, FiTrash2 } from 'react-icons/fi';
 import useRentalStore from '../../../../shared/stores/useRentalStore';
@@ -23,8 +23,9 @@ const getCities = (rentals) => [...new Set(rentals.map((r) => r.city))].sort();
  * property from inside their own moderation queue (that's what Reported
  * Issues is for). "View Details" wires to the real listing page.
  */
-export function PropertyModerationGrid({ status = 'all', onEditProperty }) {
+export function PropertyModerationGrid({ onEditProperty }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [cityFilter, setCityFilter] = useState('all');
   const [priceMin, setPriceMin] = useState('');
   const [priceMax, setPriceMax] = useState('');
@@ -55,7 +56,7 @@ export function PropertyModerationGrid({ status = 'all', onEditProperty }) {
     }))
     .filter((property) => {
       const matchesSearch = !searchQuery || property.title.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus = status === 'all' || property.status === status;
+      const matchesStatus = statusFilter === 'all' || property.status === statusFilter;
       const matchesCity = cityFilter === 'all' || property.location === cityFilter;
       const minPrice = priceMin ? parseInt(priceMin, 10) : 0;
       const maxPrice = priceMax ? parseInt(priceMax, 10) : Infinity;
@@ -101,40 +102,30 @@ export function PropertyModerationGrid({ status = 'all', onEditProperty }) {
 
   return (
     <Box>
-      <InputGroup mb={6} w="full">
-        <InputLeftElement pointerEvents="none"><Icon as={FiSearch} color="gray.400" /></InputLeftElement>
+      <InputGroup mb={4} w="full">
+        <InputLeftElement pointerEvents="none"><Icon as={FiSearch} color="gray.500" /></InputLeftElement>
         <Input placeholder="Search properties..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
       </InputGroup>
-      <VStack align="stretch" spacing={4} mb={6}>
-        <HStack spacing={4}>
-          <Select maxW="150px" value={cityFilter} onChange={(e) => setCityFilter(e.target.value)}>
-            <option value="all">All Cities</option>
-            {cities.map((city) => (
-              <option key={city} value={city}>{city}</option>
-            ))}
-          </Select>
-        </HStack>
-        <HStack spacing={4}>
-          <NumberInput
-            maxW="120px"
-            min={0}
-            value={priceMin}
-            onChange={(val) => setPriceMin(val)}
-            placeholder="Min Price"
-          >
-            <NumberInputField placeholder="Min" />
-          </NumberInput>
-          <NumberInput
-            maxW="120px"
-            min={0}
-            value={priceMax}
-            onChange={(val) => setPriceMax(val)}
-            placeholder="Max Price"
-          >
-            <NumberInputField placeholder="Max" />
-          </NumberInput>
-        </HStack>
-      </VStack>
+      <Flex wrap="wrap" gap={4} mb={6}>
+        <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <option value="all">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </Select>
+        <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={cityFilter} onChange={(e) => setCityFilter(e.target.value)}>
+          <option value="all">All Cities</option>
+          {cities.map((city) => (
+            <option key={city} value={city}>{city}</option>
+          ))}
+        </Select>
+        <NumberInput flex="1" minW={{ base: '100%', sm: '140px' }} min={0} value={priceMin} onChange={(val) => setPriceMin(val)}>
+          <NumberInputField placeholder="Min Price" />
+        </NumberInput>
+        <NumberInput flex="1" minW={{ base: '100%', sm: '140px' }} min={0} value={priceMax} onChange={(val) => setPriceMax(val)}>
+          <NumberInputField placeholder="Max Price" />
+        </NumberInput>
+      </Flex>
 
       {isLoading ? (
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>

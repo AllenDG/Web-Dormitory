@@ -297,31 +297,7 @@ export const routes = [
             index: true,
             element: (
               <LazyPage>
-                <AdminRoutes.PropertyModerationPage status="all" />
-              </LazyPage>
-            ),
-          },
-          {
-            path: 'pending',
-            element: (
-              <LazyPage>
-                <AdminRoutes.PropertyModerationPage status="pending" />
-              </LazyPage>
-            ),
-          },
-          {
-            path: 'approved',
-            element: (
-              <LazyPage>
-                <AdminRoutes.PropertyModerationPage status="approved" />
-              </LazyPage>
-            ),
-          },
-          {
-            path: 'rejected',
-            element: (
-              <LazyPage>
-                <AdminRoutes.PropertyModerationPage status="rejected" />
+                <AdminRoutes.PropertyModerationPage />
               </LazyPage>
             ),
           },
@@ -329,7 +305,7 @@ export const routes = [
             path: 'add',
             element: (
               <LazyPage>
-                <AdminRoutes.PropertyModerationPage status="all" />
+                <AdminRoutes.PropertyModerationPage />
               </LazyPage>
             ),
           },
@@ -337,7 +313,7 @@ export const routes = [
             path: 'edit/:id',
             element: (
               <LazyPage>
-                <AdminRoutes.PropertyModerationPage status="all" />
+                <AdminRoutes.PropertyModerationPage />
               </LazyPage>
             ),
           },

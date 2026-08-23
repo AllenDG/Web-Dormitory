@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Box, Button, HStack, Select, Icon, Input, InputGroup, InputLeftElement, VStack, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, HStack, Flex, Select, Icon, Input, InputGroup, InputLeftElement, useDisclosure } from '@chakra-ui/react';
 import { FiTrash2, FiSearch, FiDownload, FiEye } from 'react-icons/fi';
 import useAuditLogStore from '../../../shared/stores/useAuditLogStore';
 import PageBanner from '../../../shared/components/PageBanner';
@@ -125,43 +125,41 @@ const AuditLogPage = ({ category = 'all' }) => {
         }
       />
 
-      <InputGroup mb={6} w="full">
+      <InputGroup mb={4} w="full">
         <InputLeftElement pointerEvents="none"><Icon as={FiSearch} color="gray.500" /></InputLeftElement>
         <Input placeholder="Search by actor, action, target, or details..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
       </InputGroup>
 
-      <VStack align="stretch" spacing={4} mb={6}>
-        <HStack spacing={4}>
-          <Select maxW="220px" value={actionFilter} onChange={(e) => setActionFilter(e.target.value)}>
-            <option value="all">All Actions</option>
-            {actionTypes.map((type) => (
-              <option key={type} value={type}>{type}</option>
-            ))}
-          </Select>
-          <Select maxW="220px" value={actorFilter} onChange={(e) => setActorFilter(e.target.value)}>
-            <option value="all">All Actors</option>
-            {actors.map((actor) => (
-              <option key={actor} value={actor}>{actor}</option>
-            ))}
-          </Select>
-        </HStack>
-        <HStack spacing={4}>
-          <Input
-            type="date"
-            placeholder="From"
-            maxW="150px"
-            value={dateFrom}
-            onChange={(e) => setDateFrom(e.target.value)}
-          />
-          <Input
-            type="date"
-            placeholder="To"
-            maxW="150px"
-            value={dateTo}
-            onChange={(e) => setDateTo(e.target.value)}
-          />
-        </HStack>
-      </VStack>
+      <Flex wrap="wrap" gap={4} mb={6}>
+        <Select flex="1" minW={{ base: '100%', sm: '200px' }} value={actionFilter} onChange={(e) => setActionFilter(e.target.value)}>
+          <option value="all">All Actions</option>
+          {actionTypes.map((type) => (
+            <option key={type} value={type}>{type}</option>
+          ))}
+        </Select>
+        <Select flex="1" minW={{ base: '100%', sm: '200px' }} value={actorFilter} onChange={(e) => setActorFilter(e.target.value)}>
+          <option value="all">All Actors</option>
+          {actors.map((actor) => (
+            <option key={actor} value={actor}>{actor}</option>
+          ))}
+        </Select>
+        <Input
+          type="date"
+          aria-label="From date"
+          flex="1"
+          minW={{ base: '100%', sm: '150px' }}
+          value={dateFrom}
+          onChange={(e) => setDateFrom(e.target.value)}
+        />
+        <Input
+          type="date"
+          aria-label="To date"
+          flex="1"
+          minW={{ base: '100%', sm: '150px' }}
+          value={dateTo}
+          onChange={(e) => setDateTo(e.target.value)}
+        />
+      </Flex>
 
       {isLoading ? (
         <TableSkeleton rows={6} columns={5} />
