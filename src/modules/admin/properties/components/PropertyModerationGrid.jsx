@@ -1,14 +1,13 @@
 import { useState, useMemo } from 'react';
-import { Box, SimpleGrid, Image, Flex, VStack, HStack, Text, Badge, Button, Input, InputGroup, InputLeftElement, Select, Icon, NumberInput, NumberInputField } from '@chakra-ui/react';
+import { Box, Image, Flex, HStack, Text, Badge, Input, InputGroup, InputLeftElement, Select, Icon, NumberInput, NumberInputField } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiCheckCircle, FiXCircle, FiEye, FiEdit, FiTrash2 } from 'react-icons/fi';
 import useRentalStore from '../../../../shared/stores/useRentalStore';
 import useAuditLogStore from '../../../../shared/stores/useAuditLogStore';
 import { useAuth } from '../../../../app/providers/AuthProvider';
-import { useContextMenu } from '../../../../shared/hooks/useContextMenu';
-import ContextMenu from '../../../../shared/components/ContextMenu';
+import DataTable from '../../../../shared/components/DataTable';
+import { TableSkeleton } from '../../../../shared/components/LoadingState';
 import { useMinDisplayTime } from '../../../../shared/hooks/useMinDisplayTime';
-import { PropertyCardSkeleton } from '../../../../shared/components/LoadingState';
 import { useAppToast } from '../../../../shared/hooks/useAppToast';
 import { confirmAction } from '../../../../shared/utils/confirm';
 
@@ -16,12 +15,16 @@ const STATUS_COLORS = { approved: 'green', rejected: 'red', pending: 'yellow' };
 
 const getCities = (rentals) => [...new Set(rentals.map((r) => r.city))].sort();
 
+const formatPrice = (price) =>
+  new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', minimumFractionDigits: 0 }).format(price);
+
 /**
- * Property Moderation grid — kebab menu replaced with right-click/long-press
- * context menu. "Report Issue" (previously dead, no onClick) is removed
- * rather than faked — no coherent workflow exists for an admin to report a
- * property from inside their own moderation queue (that's what Reported
- * Issues is for). "View Details" wires to the real listing page.
+ * Property Management table — same DataTable/right-click-context-menu
+ * idiom as User Management, replacing the earlier card grid. "Report
+ * Issue" is intentionally absent (no coherent workflow exists for an
+ * admin to report a property from inside their own moderation queue —
+ * that's what Reported Issues is for). "View Details" wires to the real
+ * listing page.
  */
 export function PropertyModerationGrid({ onEditProperty }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -39,7 +42,6 @@ export function PropertyModerationGrid({ onEditProperty }) {
   const rejectProperty = useRentalStore((state) => state.rejectProperty);
   const deleteRental = useRentalStore((state) => state.deleteRental);
   const logAction = useAuditLogStore((state) => state.logAction);
-  const { isOpen, position, activeItem, close, handlers } = useContextMenu();
 
   const cities = useMemo(() => getCities(rentals), [rentals]);
 
@@ -51,8 +53,9 @@ export function PropertyModerationGrid({ onEditProperty }) {
       price: r.price,
       location: r.city,
       status: r.moderationStatus || 'approved',
+      submittedAt: r.createdAt ? new Date(r.createdAt).getTime() : 0,
       submitted: r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '—',
-      image: r.imageUrl?.[0] || 'https://via.placeholder.com/300x200',
+      image: r.imageUrl?.[0] || 'https://via.placeholder.com/60x60',
     }))
     .filter((property) => {
       const matchesSearch = !searchQuery || property.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -87,6 +90,25 @@ export function PropertyModerationGrid({ onEditProperty }) {
     logAction({ actorEmail: actor?.email, actorName: actor?.name, action: 'property.deleted', target: property.title });
     toast({ title: 'Property Deleted', description: `${property.title} has been removed.`, status: 'info' });
   };
+
+  const columns = [
+    {
+      key: 'title',
+      label: 'Property',
+      sortable: true,
+      render: (p) => (
+        <HStack>
+          <Image src={p.image} alt={p.title} boxSize="40px" borderRadius="md" objectFit="cover" />
+          <Text fontWeight="semibold" fontSize="sm" noOfLines={1} maxW="240px">{p.title}</Text>
+        </HStack>
+      ),
+    },
+    { key: 'owner', label: 'Owner', sortable: true },
+    { key: 'location', label: 'Location', sortable: true },
+    { key: 'price', label: 'Price', sortable: true, render: (p) => `${formatPrice(p.price)}/mo` },
+    { key: 'status', label: 'Status', sortable: true, render: (p) => <Badge colorScheme={STATUS_COLORS[p.status] || 'gray'} borderRadius="md">{p.status}</Badge> },
+    { key: 'submittedAt', label: 'Submitted', sortable: true, render: (p) => p.submitted },
+  ];
 
   const getRowActions = (property) => [
     { label: 'View Details', icon: FiEye, onClick: () => navigate(`/listing/${property.id}`) },
@@ -128,56 +150,16 @@ export function PropertyModerationGrid({ onEditProperty }) {
       </Flex>
 
       {isLoading ? (
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-          <PropertyCardSkeleton count={3} />
-        </SimpleGrid>
-      ) : properties.length === 0 ? (
-        <Text textAlign="center" color="gray.600" py={12}>No properties match this filter.</Text>
+        <TableSkeleton rows={5} columns={6} />
       ) : (
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-          {properties.map((property) => (
-            <Box
-              key={property.id}
-              bg="white"
-              borderRadius="lg"
-              border="1px"
-              borderColor="gray.200"
-              overflow="hidden"
-              cursor="context-menu"
-              onContextMenu={(e) => handlers.onContextMenu(e, property)}
-              onTouchStart={(e) => handlers.onTouchStart(e, property)}
-              onTouchMove={handlers.onTouchMove}
-              onTouchEnd={handlers.onTouchEnd}
-            >
-              <Image src={property.image} alt={property.title} h="200px" w="100%" objectFit="cover" />
-              <VStack align="stretch" p={4} spacing={3}>
-                <HStack justify="space-between">
-                  <Badge colorScheme={STATUS_COLORS[property.status] || 'gray'} borderRadius="md">{property.status}</Badge>
-                  <Text fontSize="xs" color="gray.600">{property.submitted}</Text>
-                </HStack>
-                <Text fontWeight="bold" fontSize="md" noOfLines={2}>{property.title}</Text>
-                <HStack justify="space-between" fontSize="sm">
-                  <Text color="gray.600">Owner:</Text>
-                  <Text fontWeight="medium">{property.owner}</Text>
-                </HStack>
-                <HStack justify="space-between" fontSize="sm">
-                  <Text color="gray.600">Location:</Text>
-                  <Text fontWeight="medium">{property.location}</Text>
-                </HStack>
-                <Text fontSize="lg" fontWeight="bold" color="primary.600">₱{property.price.toLocaleString()}/month</Text>
-                {property.status === 'pending' && (
-                  <HStack spacing={2}>
-                    <Button size="sm" colorScheme="green" leftIcon={<FiCheckCircle />} flex={1} onClick={() => handleApprove(property)}>Approve</Button>
-                    <Button size="sm" colorScheme="red" leftIcon={<FiXCircle />} flex={1} onClick={() => handleReject(property)}>Reject</Button>
-                  </HStack>
-                )}
-              </VStack>
-            </Box>
-          ))}
-        </SimpleGrid>
+        <DataTable
+          columns={columns}
+          data={properties}
+          getRowKey={(p) => p.id}
+          getRowActions={getRowActions}
+          emptyState="No properties match your search or filters."
+        />
       )}
-
-      <ContextMenu isOpen={isOpen} position={position} items={activeItem ? getRowActions(activeItem) : []} onClose={close} />
     </Box>
   );
 }
