@@ -17,8 +17,6 @@ const SEGMENT_LABELS = {
   admin: 'Admin',
   users: 'User Management',
   new: 'Add User',
-  owners: 'Owners',
-  admins: 'Admins',
   notifications: 'Announcements',
   revenue: 'Revenue',
   transactions: 'Transactions',

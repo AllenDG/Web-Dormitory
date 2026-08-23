@@ -1,22 +1,34 @@
-import { useEffect, useState } from 'react';
-import { Box, Icon, useDisclosure } from '@chakra-ui/react';
+import { useEffect, useMemo, useState } from 'react';
+import { Box, Icon, SimpleGrid, useDisclosure } from '@chakra-ui/react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FiPlus } from 'react-icons/fi';
+import { FiPlus, FiUsers, FiHome, FiShield } from 'react-icons/fi';
 import PageBanner from '../../../shared/components/PageBanner';
 import Button from '../../../shared/components/Button';
+import StatCard from '../../../shared/components/StatCard';
+import useAdminStore from '../../../shared/stores/useAdminStore';
 import UsersTable from './components/UsersTable';
 import UserDetailsPanel from './components/UserDetailsPanel';
 import UserFormPanel from './components/UserFormPanel';
 
-const ROLE_TITLES = { all: 'All Users', tenant: 'Tenants', owner: 'Owners', admin: 'Admins' };
-const ROLE_BASE_PATHS = { all: '/admin/users', tenant: '/admin/users/tenants', owner: '/admin/users/owners', admin: '/admin/users/admins' };
-
-const UsersPage = ({ role = 'all' }) => {
+const UsersPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedUser, setSelectedUser] = useState(null);
   const [formPanel, setFormPanel] = useState({ isOpen: false, mode: 'add', user: null });
+
+  const users = useAdminStore((state) => state.users);
+  const roleCounts = useMemo(
+    () =>
+      users.reduce(
+        (acc, u) => {
+          acc[u.role] = (acc[u.role] || 0) + 1;
+          return acc;
+        },
+        { tenant: 0, owner: 0, admin: 0 }
+      ),
+    [users]
+  );
 
   const handleViewDetails = (user) => {
     setSelectedUser(user);
@@ -38,22 +50,29 @@ const UsersPage = ({ role = 'all' }) => {
   const closeFormPanel = () => {
     setFormPanel((prev) => ({ ...prev, isOpen: false }));
     if (location.pathname.endsWith('/new')) {
-      navigate(ROLE_BASE_PATHS[role], { replace: true });
+      navigate('/admin/users', { replace: true });
     }
   };
 
   return (
     <Box>
       <PageBanner
-        title={ROLE_TITLES[role]}
-        subtitle="Manage platform users"
+        title="User Management"
+        subtitle="Manage every tenant, owner, and admin account on the platform"
         actions={
           <Button leftIcon={<Icon as={FiPlus} />} onClick={() => setFormPanel({ isOpen: true, mode: 'add', user: null })}>
             Add User
           </Button>
         }
       />
-      <UsersTable role={role} onViewDetails={handleViewDetails} onEditUser={handleEditUser} />
+
+      <SimpleGrid columns={{ base: 1, sm: 3 }} spacing={6} mb={8}>
+        <StatCard label="Tenants" value={roleCounts.tenant} icon={FiUsers} color="primary" />
+        <StatCard label="Owners" value={roleCounts.owner} icon={FiHome} color="success" />
+        <StatCard label="Admins" value={roleCounts.admin} icon={FiShield} color="warning" />
+      </SimpleGrid>
+
+      <UsersTable onViewDetails={handleViewDetails} onEditUser={handleEditUser} />
       <UserDetailsPanel isOpen={isOpen} onClose={onClose} user={selectedUser} />
       <UserFormPanel isOpen={formPanel.isOpen} mode={formPanel.mode} user={formPanel.user} onClose={closeFormPanel} />
     </Box>

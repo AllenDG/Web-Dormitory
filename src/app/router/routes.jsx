@@ -276,31 +276,7 @@ export const routes = [
             index: true,
             element: (
               <LazyPage>
-                <AdminRoutes.UsersPage role="all" />
-              </LazyPage>
-            ),
-          },
-          {
-            path: 'tenants',
-            element: (
-              <LazyPage>
-                <AdminRoutes.UsersPage role="tenant" />
-              </LazyPage>
-            ),
-          },
-          {
-            path: 'owners',
-            element: (
-              <LazyPage>
-                <AdminRoutes.UsersPage role="owner" />
-              </LazyPage>
-            ),
-          },
-          {
-            path: 'admins',
-            element: (
-              <LazyPage>
-                <AdminRoutes.UsersPage role="admin" />
+                <AdminRoutes.UsersPage />
               </LazyPage>
             ),
           },
@@ -308,7 +284,7 @@ export const routes = [
             path: 'new',
             element: (
               <LazyPage>
-                <AdminRoutes.UsersPage role="all" />
+                <AdminRoutes.UsersPage />
               </LazyPage>
             ),
           },

@@ -41,8 +41,9 @@ const enrichUsers = (users) =>
     lastActiveBucket: parseLastActiveBucket(user.lastActive),
   }));
 
-export function UsersTable({ role = 'all', onViewDetails, onEditUser }) {
+export function UsersTable({ onViewDetails, onEditUser }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [joinedFrom, setJoinedFrom] = useState('');
   const [joinedTo, setJoinedTo] = useState('');
@@ -63,7 +64,7 @@ export function UsersTable({ role = 'all', onViewDetails, onEditUser }) {
       !searchQuery ||
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesRole = role === 'all' || user.role === role;
+    const matchesRole = roleFilter === 'all' || user.role === roleFilter;
     const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
     const fromTime = joinedFrom ? new Date(joinedFrom).getTime() : 0;
     const toTime = joinedTo ? new Date(joinedTo).getTime() : Infinity;
@@ -157,6 +158,12 @@ export function UsersTable({ role = 'all', onViewDetails, onEditUser }) {
       </InputGroup>
       <VStack align="stretch" spacing={4} mb={6}>
         <HStack spacing={4}>
+          <Select maxW="150px" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+            <option value="all">All Roles</option>
+            <option value="tenant">Tenants</option>
+            <option value="owner">Owners</option>
+            <option value="admin">Admins</option>
+          </Select>
           <Select maxW="150px" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
             <option value="all">All Status</option>
             <option value="active">Active</option>
