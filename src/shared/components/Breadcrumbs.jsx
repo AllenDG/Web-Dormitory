@@ -16,7 +16,7 @@ const SEGMENT_LABELS = {
   settings: 'Settings',
   admin: 'Admin',
   users: 'Users',
-  tenants: 'Tenants',
+  new: 'Add User',
   owners: 'Owners',
   admins: 'Admins',
   revenue: 'Revenue',

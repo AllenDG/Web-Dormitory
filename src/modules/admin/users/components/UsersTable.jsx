@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Box, Avatar, Badge, HStack, Text, Input, InputGroup, InputLeftElement, Select, Icon, VStack } from '@chakra-ui/react';
-import { FiSearch, FiEye, FiEdit, FiUserX, FiUserCheck, FiMail } from 'react-icons/fi';
+import { FiSearch, FiEye, FiEdit, FiUserX, FiUserCheck, FiMail, FiTrash2 } from 'react-icons/fi';
 import useAdminStore from '../../../../shared/stores/useAdminStore';
 import useAuditLogStore from '../../../../shared/stores/useAuditLogStore';
 import { useAuth } from '../../../../app/providers/AuthProvider';
@@ -41,7 +41,7 @@ const enrichUsers = (users) =>
     lastActiveBucket: parseLastActiveBucket(user.lastActive),
   }));
 
-export function UsersTable({ role = 'all', onViewDetails }) {
+export function UsersTable({ role = 'all', onViewDetails, onEditUser }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [joinedFrom, setJoinedFrom] = useState('');
@@ -53,6 +53,7 @@ export function UsersTable({ role = 'all', onViewDetails }) {
 
   const allUsers = useAdminStore((state) => state.users);
   const updateUserStatus = useAdminStore((state) => state.updateUserStatus);
+  const deleteUser = useAdminStore((state) => state.deleteUser);
   const logAction = useAuditLogStore((state) => state.logAction);
 
   const enrichedUsers = useMemo(() => enrichUsers(allUsers), [allUsers]);
@@ -95,6 +96,20 @@ export function UsersTable({ role = 'all', onViewDetails }) {
   const notAvailable = (feature) =>
     toast({ title: 'Not available yet', description: `${feature} isn't supported in this preview.`, status: 'info' });
 
+  const handleDeleteUser = async (user) => {
+    const confirmed = await confirmAction({
+      title: 'Delete User',
+      text: `Permanently delete ${user.name}? This cannot be undone.`,
+      isDestructive: true,
+      confirmButtonText: 'Delete',
+    });
+    if (!confirmed) return;
+
+    deleteUser(user.id);
+    logAction({ actorEmail: actor?.email, actorName: actor?.name, action: 'user.deleted', target: user.name });
+    toast({ title: `${user.name} deleted`, status: 'info' });
+  };
+
   const columns = [
     {
       key: 'name',
@@ -123,7 +138,7 @@ export function UsersTable({ role = 'all', onViewDetails }) {
 
   const getRowActions = (user) => [
     { label: 'View Details', icon: FiEye, onClick: () => onViewDetails?.(user) },
-    { label: 'Edit User', icon: FiEdit, onClick: () => notAvailable('Editing users') },
+    { label: 'Edit User', icon: FiEdit, onClick: () => onEditUser?.(user) },
     { label: 'Send Email', icon: FiMail, onClick: () => notAvailable('Sending email') },
     {
       label: user.status === 'active' ? 'Suspend User' : 'Activate User',
@@ -131,6 +146,7 @@ export function UsersTable({ role = 'all', onViewDetails }) {
       isDestructive: user.status === 'active',
       onClick: () => handleToggleStatus(user),
     },
+    { label: 'Delete User', icon: FiTrash2, isDestructive: true, onClick: () => handleDeleteUser(user) },
   ];
 
   return (

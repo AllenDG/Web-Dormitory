@@ -23,6 +23,7 @@ const navItems = [
       { label: 'Tenants', path: '/admin/users/tenants' },
       { label: 'Owners', path: '/admin/users/owners' },
       { label: 'Admins', path: '/admin/users/admins' },
+      { label: 'Add User', path: '/admin/users/new' },
     ],
   },
   {

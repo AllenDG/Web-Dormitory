@@ -304,6 +304,14 @@ export const routes = [
               </LazyPage>
             ),
           },
+          {
+            path: 'new',
+            element: (
+              <LazyPage>
+                <AdminRoutes.UsersPage role="all" />
+              </LazyPage>
+            ),
+          },
         ],
       },
       {
