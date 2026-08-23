@@ -8,7 +8,7 @@ import UsersTable from './components/UsersTable';
 import UserDetailsPanel from './components/UserDetailsPanel';
 import UserFormPanel from './components/UserFormPanel';
 
-const ROLE_TITLES = { all: 'Users', tenant: 'Tenants', owner: 'Owners', admin: 'Admins' };
+const ROLE_TITLES = { all: 'All Users', tenant: 'Tenants', owner: 'Owners', admin: 'Admins' };
 const ROLE_BASE_PATHS = { all: '/admin/users', tenant: '/admin/users/tenants', owner: '/admin/users/owners', admin: '/admin/users/admins' };
 
 const UsersPage = ({ role = 'all' }) => {

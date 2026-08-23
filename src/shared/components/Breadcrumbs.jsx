@@ -7,7 +7,7 @@ import { Link, useLocation } from 'react-router-dom';
 const SEGMENT_LABELS = {
   owner: 'Dashboard',
   dashboard: 'Dashboard',
-  properties: 'Properties',
+  properties: 'Property Management',
   add: 'Add Property',
   edit: 'Edit Property',
   bookings: 'Bookings',
@@ -15,7 +15,7 @@ const SEGMENT_LABELS = {
   payments: 'Payments',
   settings: 'Settings',
   admin: 'Admin',
-  users: 'Users',
+  users: 'User Management',
   new: 'Add User',
   owners: 'Owners',
   admins: 'Admins',

@@ -16,7 +16,7 @@ import SidebarNavGroup from '../components/SidebarNavGroup';
 const navItems = [
   { label: 'Dashboard', icon: FiHome, path: '/admin/dashboard' },
   {
-    label: 'Users',
+    label: 'User Management',
     icon: FiUsers,
     path: '/admin/users',
     children: [
@@ -28,7 +28,7 @@ const navItems = [
     ],
   },
   {
-    label: 'Properties',
+    label: 'Property Management',
     icon: FiGrid,
     path: '/admin/properties',
     children: [
