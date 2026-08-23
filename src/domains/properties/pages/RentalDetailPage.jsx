@@ -361,8 +361,8 @@ const RentalDetailPage = () => {
                 <VStack spacing={4} align="stretch">
                   <Heading fontSize={TYPOGRAPHY.h3}>Reviews & Ratings</Heading>
                   <ReviewsList
+                    isOwner={canBypassModeration}
                     propertyId={rental.id}
-                    isOwner={false}
                     onWriteReview={() => {
                       // Allow both authenticated and guest users to rate
                       // Guest ratings will use anonymous user data

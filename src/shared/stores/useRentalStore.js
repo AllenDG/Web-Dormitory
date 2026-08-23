@@ -27,10 +27,20 @@ const useRentalStore = create(
         // Actions
         setRentals: (rentals) => set({ rentals }),
 
-        addRental: (rental) =>
-          set((state) => ({
-            rentals: [...state.rentals, { ...rental, id: crypto.randomUUID() }],
-          })),
+        addRental: (rental) => {
+          const newRental = { ...rental, id: crypto.randomUUID() };
+          set((state) => ({ rentals: [...state.rentals, newRental] }));
+
+          if (newRental.ownerEmail) {
+            useNotificationStore.getState().addNotification({
+              recipientEmail: newRental.ownerEmail,
+              type: 'alert',
+              title: 'New Listing Added',
+              message: `${newRental.title} was added to your properties.`,
+              actionUrl: '/owner/properties',
+            });
+          }
+        },
 
         updateRental: (id, updates) =>
           set((state) => ({

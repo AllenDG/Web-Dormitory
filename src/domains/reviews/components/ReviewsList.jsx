@@ -18,6 +18,7 @@ import PropTypes from 'prop-types';
 import ReviewCard from './ReviewCard';
 import RatingStars from './RatingStars';
 import useReviewStore from '../../../shared/stores/useReviewStore';
+import { useAuth } from '../../../app/providers/AuthProvider';
 
 /**
  * Reviews List Component
@@ -31,6 +32,7 @@ import useReviewStore from '../../../shared/stores/useReviewStore';
  */
 const ReviewsList = ({ propertyId, isOwner = false, onWriteReview }) => {
   const toast = useToast();
+  const { user } = useAuth();
   const {
     getReviewsByProperty,
     getPropertyRatings,
@@ -96,7 +98,7 @@ const ReviewsList = ({ propertyId, isOwner = false, onWriteReview }) => {
   };
 
   const handleAddResponse = (reviewId, response) => {
-    addOwnerResponse(reviewId, response, 'current-owner');
+    addOwnerResponse(reviewId, response, user?.email || 'current-owner');
     toast({
       title: 'Response posted',
       status: 'success',
