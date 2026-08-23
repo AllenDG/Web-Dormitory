@@ -1,95 +1,26 @@
-import {
-  Box,
-  Heading,
-  Text,
-  Button,
-  HStack,
-  VStack,
-  SimpleGrid,
-  Image,
-  Badge,
-  Icon,
-} from '@chakra-ui/react';
-import { FiPlus, FiEdit, FiTrash2, FiEye, FiEyeOff } from 'react-icons/fi';
+import { Box, Image, HStack, Text, Badge, Icon, Select } from '@chakra-ui/react';
+import { FiPlus, FiEdit, FiTrash2, FiEye, FiEyeOff, FiFileText } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import useRentalStore from '../../../shared/stores/useRentalStore';
 import { useAuth } from '../../../app/providers/AuthProvider';
 import PageBanner from '../../../shared/components/PageBanner';
-import { useContextMenu } from '../../../shared/hooks/useContextMenu';
-import ContextMenu from '../../../shared/components/ContextMenu';
+import Button from '../../../shared/components/Button';
+import DataTable from '../../../shared/components/DataTable';
+import TableToolbar from '../../../shared/components/TableToolbar';
 import { useMinDisplayTime } from '../../../shared/hooks/useMinDisplayTime';
-import { PropertyCardSkeleton } from '../../../shared/components/LoadingState';
+import { TableSkeleton } from '../../../shared/components/LoadingState';
 import { useAppToast } from '../../../shared/hooks/useAppToast';
 import { confirmAction } from '../../../shared/utils/confirm';
 import PropertyFormPanel from './components/PropertyFormPanel';
+import HouseRulesPanel from './components/HouseRulesPanel';
 
 const formatPrice = (price) =>
   new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', minimumFractionDigits: 0 }).format(price);
 
+const STATUS_COLORS = { active: 'green', inactive: 'gray' };
 const MODERATION_LABELS = { approved: 'Approved', rejected: 'Rejected', pending: 'Pending Review' };
 const MODERATION_COLORS = { approved: 'green', rejected: 'red', pending: 'yellow' };
-
-const PropertyCard = ({ property, contextMenuHandlers }) => {
-  const moderationStatus = property.moderationStatus || 'approved';
-
-  return (
-    <Box
-      bg="white"
-      borderRadius="lg"
-      overflow="hidden"
-      border="1px"
-      borderColor="gray.200"
-      cursor="context-menu"
-      onContextMenu={(e) => contextMenuHandlers.onContextMenu(e, property)}
-      onTouchStart={(e) => contextMenuHandlers.onTouchStart(e, property)}
-      onTouchMove={contextMenuHandlers.onTouchMove}
-      onTouchEnd={contextMenuHandlers.onTouchEnd}
-    >
-      <Box position="relative" h="200px">
-        <Image src={property.imageUrl?.[0]} alt={property.title} w="full" h="full" objectFit="cover" />
-        <Badge
-          position="absolute"
-          top={3}
-          left={3}
-          colorScheme={(property.status || 'active') === 'active' ? 'green' : 'gray'}
-          fontSize="xs"
-          px={2}
-          py={1}
-        >
-          {property.status || 'active'}
-        </Badge>
-        <Badge
-          position="absolute"
-          top={3}
-          right={3}
-          colorScheme={MODERATION_COLORS[moderationStatus]}
-          fontSize="xs"
-          px={2}
-          py={1}
-        >
-          {MODERATION_LABELS[moderationStatus]}
-        </Badge>
-      </Box>
-
-      <VStack align="start" spacing={3} p={5}>
-        <Heading size="sm" noOfLines={1}>{property.title}</Heading>
-        <Text fontSize="sm" color="gray.600" noOfLines={2}>{property.description}</Text>
-        {moderationStatus === 'rejected' && property.rejectionReason && (
-          <Text fontSize="xs" color="error.600">Reason: {property.rejectionReason}</Text>
-        )}
-        <HStack justify="space-between" w="full">
-          <Text fontSize="lg" fontWeight="bold" color="primary.600">{formatPrice(property.price)}/mo</Text>
-          <Badge colorScheme="blue">{property.bedType}</Badge>
-        </HStack>
-        <HStack spacing={4} fontSize="sm" color="gray.600">
-          <Text>📍 {property.city}</Text>
-          <Text>👥 {property.availablePerson}</Text>
-        </HStack>
-      </VStack>
-    </Box>
-  );
-};
 
 const PropertiesPage = () => {
   const navigate = useNavigate();
@@ -102,10 +33,26 @@ const PropertiesPage = () => {
   const updateRental = useRentalStore((state) => state.updateRental);
   const isLoading = useMinDisplayTime();
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [moderationFilter, setModerationFilter] = useState('all');
   const [panel, setPanel] = useState({ isOpen: false, mode: 'add', propertyId: null });
-  const { isOpen: menuOpen, position, activeItem, close: closeMenu, handlers } = useContextMenu();
+  const [rulesPanel, setRulesPanel] = useState({ isOpen: false, propertyId: null, propertyTitle: '' });
 
-  const ownerProperties = rentals.filter((r) => r.ownerEmail === user?.email);
+  const ownerProperties = rentals
+    .filter((r) => r.ownerEmail === user?.email)
+    .map((r) => ({
+      ...r,
+      status: r.status || 'active',
+      moderationStatus: r.moderationStatus || 'approved',
+    }))
+    .filter((property) => {
+      const matchesSearch = !searchQuery || property.title.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || property.status === statusFilter;
+      const matchesModeration = moderationFilter === 'all' || property.moderationStatus === moderationFilter;
+      return matchesSearch && matchesStatus && matchesModeration;
+    });
 
   // Deep-linking: /owner/properties/add and /owner/properties/edit/:id
   // auto-open the panel in the right mode, then normalize the URL back to
@@ -127,6 +74,8 @@ const PropertiesPage = () => {
 
   const openAddPanel = () => setPanel({ isOpen: true, mode: 'add', propertyId: null });
   const openEditPanel = (property) => setPanel({ isOpen: true, mode: 'edit', propertyId: property.id });
+  const openRulesPanel = (property) => setRulesPanel({ isOpen: true, propertyId: property.id, propertyTitle: property.title });
+  const closeRulesPanel = () => setRulesPanel((prev) => ({ ...prev, isOpen: false }));
 
   const handleDelete = async (property) => {
     const confirmed = await confirmAction({
@@ -142,16 +91,47 @@ const PropertiesPage = () => {
   };
 
   const handleToggleStatus = (property) => {
-    const newStatus = (property.status || 'active') === 'active' ? 'inactive' : 'active';
+    const newStatus = property.status === 'active' ? 'inactive' : 'active';
     updateRental(property.id, { status: newStatus });
     toast({ title: 'Status Updated', description: `Property is now ${newStatus}.`, status: 'info' });
   };
 
+  const columns = [
+    {
+      key: 'title',
+      label: 'Property',
+      sortable: true,
+      render: (p) => (
+        <HStack>
+          <Image src={p.imageUrl?.[0]} alt={p.title} boxSize="40px" borderRadius="md" objectFit="cover" />
+          <Text fontWeight="semibold" fontSize="sm" noOfLines={1} maxW="240px">{p.title}</Text>
+        </HStack>
+      ),
+    },
+    { key: 'city', label: 'Location', sortable: true },
+    { key: 'price', label: 'Price', sortable: true, render: (p) => `${formatPrice(p.price)}/mo` },
+    { key: 'status', label: 'Status', sortable: true, render: (p) => <Badge colorScheme={STATUS_COLORS[p.status]} borderRadius="md">{p.status}</Badge> },
+    {
+      key: 'moderationStatus',
+      label: 'Listing Status',
+      sortable: true,
+      render: (p) => (
+        <Box>
+          <Badge colorScheme={MODERATION_COLORS[p.moderationStatus]} borderRadius="md">{MODERATION_LABELS[p.moderationStatus]}</Badge>
+          {p.moderationStatus === 'rejected' && p.rejectionReason && (
+            <Text fontSize="xs" color="error.600" mt={1} noOfLines={1} maxW="200px">{p.rejectionReason}</Text>
+          )}
+        </Box>
+      ),
+    },
+  ];
+
   const getRowActions = (property) => [
     { label: 'View Listing', icon: FiEye, onClick: () => navigate(`/listing/${property.id}`) },
     { label: 'Edit Property', icon: FiEdit, onClick: () => openEditPanel(property) },
+    { label: 'House Rules', icon: FiFileText, onClick: () => openRulesPanel(property) },
     {
-      label: (property.status || 'active') === 'active' ? 'Deactivate' : 'Activate',
+      label: property.status === 'active' ? 'Deactivate' : 'Activate',
       icon: FiEyeOff,
       onClick: () => handleToggleStatus(property),
     },
@@ -160,40 +140,48 @@ const PropertiesPage = () => {
 
   return (
     <Box>
-      <PageBanner
-        title="My Properties"
-        subtitle="Manage your property listings"
-        actions={
-          <Button leftIcon={<Icon as={FiPlus} />} colorScheme="primary" onClick={openAddPanel}>
-            Add Property
-          </Button>
-        }
-      />
+      <PageBanner title="My Properties" subtitle="Manage your property listings" />
+
+      <TableToolbar
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search by property title..."
+        filtersOpen={filtersOpen}
+        onToggleFilters={() => setFiltersOpen((prev) => !prev)}
+        addLabel="Add Property"
+        onAdd={openAddPanel}
+      >
+        <HStack spacing={4} wrap="wrap">
+          <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </Select>
+          <Select flex="1" minW={{ base: '100%', sm: '160px' }} value={moderationFilter} onChange={(e) => setModerationFilter(e.target.value)}>
+            <option value="all">All Listing Status</option>
+            <option value="approved">Approved</option>
+            <option value="pending">Pending Review</option>
+            <option value="rejected">Rejected</option>
+          </Select>
+        </HStack>
+      </TableToolbar>
 
       {isLoading ? (
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-          <PropertyCardSkeleton count={3} />
-        </SimpleGrid>
-      ) : ownerProperties.length > 0 ? (
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-          {ownerProperties.map((property) => (
-            <PropertyCard key={property.id} property={property} contextMenuHandlers={handlers} />
-          ))}
-        </SimpleGrid>
+        <TableSkeleton rows={5} columns={5} />
       ) : (
-        <Box bg="white" p={12} borderRadius="lg" textAlign="center" border="1px" borderColor="gray.200">
-          <VStack spacing={4}>
-            <Text fontSize="4xl">🏠</Text>
-            <Heading size="md">No Properties Yet</Heading>
-            <Text color="gray.600">Start by adding your first property listing</Text>
-            <Button leftIcon={<Icon as={FiPlus} />} colorScheme="primary" onClick={openAddPanel}>
-              Add Property
-            </Button>
-          </VStack>
-        </Box>
+        <DataTable
+          columns={columns}
+          data={ownerProperties}
+          getRowKey={(p) => p.id}
+          getRowActions={getRowActions}
+          emptyState={
+            <Box textAlign="center" py={4}>
+              <Text mb={4} color="gray.600">No properties match your search or filters.</Text>
+              <Button leftIcon={<Icon as={FiPlus} />} onClick={openAddPanel}>Add Property</Button>
+            </Box>
+          }
+        />
       )}
-
-      <ContextMenu isOpen={menuOpen} position={position} items={activeItem ? getRowActions(activeItem) : []} onClose={closeMenu} />
 
       <PropertyFormPanel
         key={`${panel.mode}:${panel.propertyId || 'new'}`}
@@ -201,6 +189,13 @@ const PropertiesPage = () => {
         propertyId={panel.propertyId}
         isOpen={panel.isOpen}
         onClose={closePanel}
+      />
+
+      <HouseRulesPanel
+        isOpen={rulesPanel.isOpen}
+        propertyId={rulesPanel.propertyId}
+        propertyTitle={rulesPanel.propertyTitle}
+        onClose={closeRulesPanel}
       />
     </Box>
   );
