@@ -209,7 +209,7 @@ const useBookingStore = create(
          * @param {string} bookingId - Booking ID
          * @param {string} reason - Cancellation reason
          */
-        cancelBooking: (bookingId, reason) =>
+        cancelBooking: (bookingId, reason) => {
           set((state) => ({
             bookings: state.bookings.map((booking) =>
               booking.id === bookingId
@@ -222,7 +222,19 @@ const useBookingStore = create(
                   }
                 : booking
             ),
-          })),
+          }));
+
+          const booking = get().getBookingById(bookingId);
+          if (booking?.guestEmail) {
+            useNotificationStore.getState().addNotification({
+              recipientEmail: booking.guestEmail,
+              type: 'alert',
+              title: 'Booking Cancelled',
+              message: `Your booking for ${booking.propertyTitle || 'the property'} was cancelled.${reason ? ` Reason: ${reason}` : ''}`,
+              actionUrl: `/bookings/${bookingId}`,
+            });
+          }
+        },
 
         /**
          * Approve a booking (Owner action)

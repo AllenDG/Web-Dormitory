@@ -25,7 +25,7 @@ import {
   AlertDescription,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import { FiPlus, FiEye, FiCheckCircle, FiXCircle, FiDollarSign } from 'react-icons/fi';
+import { FiPlus, FiEye, FiCheckCircle, FiXCircle, FiDollarSign, FiSlash } from 'react-icons/fi';
 import { Card } from '../../../shared/components';
 import useBookingStore, { BOOKING_STATUS } from '../../../shared/stores/useBookingStore';
 import { BookingStatusBadge } from '../../../domains/bookings/components';
@@ -33,6 +33,7 @@ import { useAuth } from '../../../app/providers/AuthProvider';
 import useRentalStore from '../../../shared/stores/useRentalStore';
 import PageBanner from '../../../shared/components/PageBanner';
 import DataTable from '../../../shared/components/DataTable';
+import TableToolbar from '../../../shared/components/TableToolbar';
 import { TableSkeleton } from '../../../shared/components/LoadingState';
 import { useMinDisplayTime } from '../../../shared/hooks/useMinDisplayTime';
 import { useAppToast } from '../../../shared/hooks/useAppToast';
@@ -53,19 +54,28 @@ const BookingRequestsPage = () => {
 
   const { isOpen: isApproveOpen, onOpen: onApproveOpen, onClose: onApproveClose } = useDisclosure();
   const { isOpen: isRejectOpen, onOpen: onRejectOpen, onClose: onRejectClose } = useDisclosure();
+  const { isOpen: isCancelOpen, onOpen: onCancelOpen, onClose: onCancelClose } = useDisclosure();
   const { isOpen: isManualOpen, onOpen: onManualOpen, onClose: onManualClose } = useDisclosure();
   const { isOpen: isDetailOpen, onOpen: onDetailOpen, onClose: onDetailClose } = useDisclosure();
 
-  const { getBookingsByOwnerEmail, approveBooking, rejectBooking, verifyPayment } = useBookingStore();
+  const { getBookingsByOwnerEmail, approveBooking, rejectBooking, verifyPayment, cancelBooking } = useBookingStore();
   const rentals = useRentalStore((state) => state.rentals) || [];
   const ownerProperties = rentals.filter((r) => r.ownerEmail === user?.email);
 
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [ownerNotes, setOwnerNotes] = useState('');
   const [rejectionReason, setRejectionReason] = useState('');
+  const [cancellationReason, setCancellationReason] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const allBookings = user ? getBookingsByOwnerEmail(user.email) : [];
+  const ownerBookings = user ? getBookingsByOwnerEmail(user.email) : [];
+  const allBookings = ownerBookings.filter(
+    (b) =>
+      !searchQuery ||
+      b.propertyTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      b.guestName?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const pendingBookings = allBookings.filter((b) => b.status === BOOKING_STATUS.PENDING);
   const approvedBookings = allBookings.filter((b) => b.status === BOOKING_STATUS.APPROVED);
@@ -76,6 +86,7 @@ const BookingRequestsPage = () => {
 
   const openApprove = (booking) => { setSelectedBooking(booking); onApproveOpen(); };
   const openReject = (booking) => { setSelectedBooking(booking); onRejectOpen(); };
+  const openCancel = (booking) => { setSelectedBooking(booking); onCancelOpen(); };
   const openDetail = (booking) => { setSelectedBooking(booking); onDetailOpen(); };
 
   const handleApprove = async () => {
@@ -103,6 +114,23 @@ const BookingRequestsPage = () => {
       toast({ title: 'Booking Rejected', description: 'The tenant has been notified.', status: 'info' });
       onRejectClose();
       setRejectionReason('');
+      setSelectedBooking(null);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleCancel = async () => {
+    if (!selectedBooking || !cancellationReason.trim()) {
+      toast({ title: 'Reason Required', description: 'Please provide a reason for cancelling this booking', status: 'warning' });
+      return;
+    }
+    setIsProcessing(true);
+    try {
+      cancelBooking(selectedBooking.id, cancellationReason);
+      toast({ title: 'Booking Cancelled', description: 'The tenant has been notified.', status: 'info' });
+      onCancelClose();
+      setCancellationReason('');
       setSelectedBooking(null);
     } finally {
       setIsProcessing(false);
@@ -141,6 +169,9 @@ const BookingRequestsPage = () => {
     if (booking.status === BOOKING_STATUS.PAID) {
       actions.push({ label: 'Verify Payment', icon: FiDollarSign, onClick: () => handleVerifyPayment(booking) });
     }
+    if (booking.status === BOOKING_STATUS.CONFIRMED) {
+      actions.push({ label: 'Cancel Booking', icon: FiSlash, isDestructive: true, onClick: () => openCancel(booking) });
+    }
     return actions;
   };
 
@@ -167,6 +198,13 @@ const BookingRequestsPage = () => {
             Add Manual Booking
           </Button>
         }
+      />
+
+      <TableToolbar
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search by property or tenant name..."
+        hasFilters={false}
       />
 
       <Card borderRadius="lg" overflow="hidden">
@@ -272,6 +310,38 @@ const BookingRequestsPage = () => {
             <HStack spacing={3}>
               <Button variant="outline" onClick={onRejectClose}>Cancel</Button>
               <Button colorScheme="red" onClick={handleReject} isLoading={isProcessing}>Reject Booking</Button>
+            </HStack>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Cancel Modal — has a required reason field, stays a form */}
+      <Modal isOpen={isCancelOpen} onClose={onCancelClose} size="md">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Cancel Booking</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4} align="stretch">
+              <Text fontSize="sm" color="gray.600">This booking is already confirmed. Please provide a reason for cancelling it.</Text>
+              {selectedBooking && (
+                <Box bg="gray.50" p={4} borderRadius="lg">
+                  <VStack align="start" spacing={2}>
+                    <Text fontSize="sm" fontWeight="600">{selectedBooking.propertyTitle}</Text>
+                    <Text fontSize="sm" color="gray.600">Tenant: {selectedBooking.guestName}</Text>
+                  </VStack>
+                </Box>
+              )}
+              <Box>
+                <Text fontSize="sm" fontWeight="500" mb={2}>Reason for Cancellation *</Text>
+                <Textarea value={cancellationReason} onChange={(e) => setCancellationReason(e.target.value)} placeholder="e.g., Property is under maintenance, unforeseen circumstances..." rows={4} />
+              </Box>
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <HStack spacing={3}>
+              <Button variant="outline" onClick={onCancelClose}>Keep Booking</Button>
+              <Button colorScheme="red" onClick={handleCancel} isLoading={isProcessing}>Cancel Booking</Button>
             </HStack>
           </ModalFooter>
         </ModalContent>
