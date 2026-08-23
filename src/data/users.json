@@ -48,5 +48,14 @@
     "joined": "May 12, 2026",
     "lastActive": "1 month ago",
     "bookings": 0
+  },
+  {
+    "id": "6",
+    "name": "RentMe Admin",
+    "email": "admin@rentme.ph",
+    "role": "admin",
+    "status": "active",
+    "joined": "Jan 1, 2026",
+    "lastActive": "Just now"
   }
 ]

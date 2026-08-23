@@ -32,6 +32,23 @@ const DEFAULT_SETTINGS = {
     emailNotifications: true,
     marketingEmails: true,
   },
+  business: {
+    legalName: '',
+    tradeName: 'RentMe',
+    registrationNumber: '',
+    taxId: '',
+    businessAddress: '',
+    supportPhone: '',
+    logoUrl: '',
+  },
+  advanced: {
+    maintenanceMode: false,
+    maintenanceMessage: 'RentMe is undergoing scheduled maintenance. Please check back soon.',
+    fileUploadMaxSizeMb: 10,
+    maxImagesPerListing: 10,
+    sessionTimeoutMinutes: 60,
+    dataExportEnabled: true,
+  },
 };
 
 const useAdminStore = create(
@@ -56,6 +73,26 @@ const useAdminStore = create(
             users: state.users.filter((user) => user.id !== userId),
           })),
 
+        // User bypass tier (direct create/edit, no owner-workflow gate)
+        createUser: (user) =>
+          set((state) => ({
+            users: [
+              {
+                id: crypto.randomUUID(),
+                status: 'active',
+                joined: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                lastActive: 'Just now',
+                ...user,
+              },
+              ...state.users,
+            ],
+          })),
+
+        updateUser: (userId, updates) =>
+          set((state) => ({
+            users: state.users.map((u) => (u.id === userId ? { ...u, ...updates } : u)),
+          })),
+
         // Report moderation
         resolveReport: (reportId) =>
           set((state) => ({
@@ -74,6 +111,20 @@ const useAdminStore = create(
         deleteReport: (reportId) =>
           set((state) => ({
             reports: state.reports.filter((report) => report.id !== reportId),
+          })),
+
+        // Report buildup tier (admin-logged reports, e.g. phone/email support intake)
+        addReport: (report) =>
+          set((state) => ({
+            reports: [
+              { id: crypto.randomUUID(), status: 'open', created: new Date().toLocaleString(), ...report },
+              ...state.reports,
+            ],
+          })),
+
+        updateReport: (reportId, updates) =>
+          set((state) => ({
+            reports: state.reports.map((r) => (r.id === reportId ? { ...r, ...updates } : r)),
           })),
 
         // Settings

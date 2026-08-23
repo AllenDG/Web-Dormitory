@@ -163,6 +163,48 @@ const useBookingStore = create(
         },
 
         /**
+         * Refund a booking (Admin bypass action)
+         * @param {string} bookingId - Booking ID
+         * @param {Object} options - { refundAmount, refundReason }
+         */
+        refundBooking: (bookingId, { refundAmount, refundReason } = {}) => {
+          set((state) => ({
+            bookings: state.bookings.map((booking) =>
+              booking.id === bookingId
+                ? {
+                    ...booking,
+                    paymentStatus: PAYMENT_STATUS.REFUNDED,
+                    refundAmount: refundAmount ?? (booking.totalWithDeposit ?? booking.totalAmount),
+                    refundReason,
+                    refundedAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                  }
+                : booking
+            ),
+          }));
+
+          const booking = get().getBookingById(bookingId);
+          if (booking?.guestEmail) {
+            useNotificationStore.getState().addNotification({
+              recipientEmail: booking.guestEmail,
+              type: 'payment',
+              title: 'Booking Refunded',
+              message: `Your payment for ${booking.propertyTitle || 'the property'} has been refunded.${refundReason ? ` Reason: ${refundReason}` : ''}`,
+              actionUrl: `/bookings/${bookingId}`,
+            });
+          }
+          if (booking?.ownerEmail) {
+            useNotificationStore.getState().addNotification({
+              recipientEmail: booking.ownerEmail,
+              type: 'alert',
+              title: 'Booking Refunded',
+              message: `A refund was issued for ${booking.propertyTitle || 'a property'}'s booking.${refundReason ? ` Reason: ${refundReason}` : ''}`,
+              actionUrl: '/owner/bookings',
+            });
+          }
+        },
+
+        /**
          * Cancel a booking
          * @param {string} bookingId - Booking ID
          * @param {string} reason - Cancellation reason

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import rentalListingData from '../../data/rentalListing.json';
 import useNotificationStore from './useNotificationStore';
+import { isTenantVisible } from '../utils/moderation';
 
 /**
  * Modern Rental Store using Zustand
@@ -169,9 +170,18 @@ const useRentalStore = create(
               matchesPrice &&
               matchesAmenities &&
               matchesBedType &&
-              matchesCity
+              matchesCity &&
+              isTenantVisible(rental)
             );
           });
+        },
+
+        // All tenant-visible rentals, unfiltered by search/price/etc — for
+        // components that read the raw `rentals` array directly instead of
+        // going through getFilteredRentals (e.g. recommendation widgets).
+        getVisibleRentals: () => {
+          const { rentals } = get();
+          return rentals.filter(isTenantVisible);
         },
 
         // Selected rental
