@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import useNotificationStore from './useNotificationStore';
 
 /**
  * Visit Store
@@ -167,6 +168,20 @@ const useVisitStore = create(
             isLoading: false,
           }));
 
+          const visit = get().getVisitById(visitId);
+          if (visit?.tenantEmail && (status === VISIT_STATUS.APPROVED || status === VISIT_STATUS.REJECTED)) {
+            useNotificationStore.getState().addNotification({
+              recipientEmail: visit.tenantEmail,
+              type: 'alert',
+              title: status === VISIT_STATUS.APPROVED ? 'Visit Request Approved' : 'Visit Request Declined',
+              message:
+                status === VISIT_STATUS.APPROVED
+                  ? `Your visit to ${visit.propertyTitle || 'the property'} on ${visit.preferredDate} is confirmed.`
+                  : `Your visit request for ${visit.propertyTitle || 'the property'} was declined.${ownerNotes ? ` Reason: ${ownerNotes}` : ''}`,
+              actionUrl: '/my-visits',
+            });
+          }
+
           return { success: true };
         } catch (error) {
           set({ error: error.message, isLoading: false });
@@ -205,6 +220,17 @@ const useVisitStore = create(
             ),
             isLoading: false,
           }));
+
+          const visit = get().getVisitById(visitId);
+          if (visit?.tenantEmail) {
+            useNotificationStore.getState().addNotification({
+              recipientEmail: visit.tenantEmail,
+              type: 'alert',
+              title: 'New Visit Time Proposed',
+              message: `The owner proposed a new time for your visit to ${visit.propertyTitle || 'the property'}: ${alternativeDate} at ${alternativeTime}.`,
+              actionUrl: '/my-visits',
+            });
+          }
 
           return { success: true };
         } catch (error) {

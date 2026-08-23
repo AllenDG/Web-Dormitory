@@ -5,6 +5,7 @@ import {
   FiCalendar,
   FiUsers,
   FiDollarSign,
+  FiClipboard,
   FiSettings,
 } from 'react-icons/fi';
 import { useAuth } from '../../app/providers/AuthProvider';
@@ -19,6 +20,7 @@ const navItems = [
   { label: 'Dashboard', icon: FiHome, path: '/owner/dashboard' },
   { label: 'Properties', icon: FiGrid, path: '/owner/properties' },
   { label: 'Bookings', icon: FiCalendar, path: '/owner/bookings' },
+  { label: 'Visit Requests', icon: FiClipboard, path: '/owner/visits' },
   { label: 'Tenants', icon: FiUsers, path: '/owner/tenants' },
   { label: 'Payments', icon: FiDollarSign, path: '/owner/payments' },
   { label: 'Settings', icon: FiSettings, path: '/owner/settings' },

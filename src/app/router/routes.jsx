@@ -533,6 +533,14 @@ export const routes = [
         ),
       },
       {
+        path: 'visits',
+        element: (
+          <LazyPage>
+            <OwnerRoutes.VisitRequestsPage />
+          </LazyPage>
+        ),
+      },
+      {
         path: 'settings',
         element: (
           <LazyPage>
