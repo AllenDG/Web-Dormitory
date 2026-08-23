@@ -402,6 +402,30 @@ export const routes = [
               </LazyPage>
             ),
           },
+          {
+            path: 'property-reports',
+            element: (
+              <LazyPage>
+                <AdminRoutes.ReportedIssuesPage type="property" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'user-reports',
+            element: (
+              <LazyPage>
+                <AdminRoutes.ReportedIssuesPage type="user" />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'payment-reports',
+            element: (
+              <LazyPage>
+                <AdminRoutes.ReportedIssuesPage type="payment" />
+              </LazyPage>
+            ),
+          },
         ],
       },
       {

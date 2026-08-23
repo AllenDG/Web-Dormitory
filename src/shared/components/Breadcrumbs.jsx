@@ -28,6 +28,9 @@ const SEGMENT_LABELS = {
   open: 'Open',
   investigating: 'Investigating',
   resolved: 'Resolved',
+  'property-reports': 'Property Reports',
+  'user-reports': 'User Reports',
+  'payment-reports': 'Payment Reports',
   profile: 'My Profile',
   platform: 'Platform Settings',
 };

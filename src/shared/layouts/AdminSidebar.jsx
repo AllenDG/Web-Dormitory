@@ -39,7 +39,7 @@ const navItems = [
     ],
   },
   {
-    label: 'Reports',
+    label: 'Reported Issues',
     icon: FiFlag,
     path: '/admin/reports',
     children: [
@@ -47,6 +47,9 @@ const navItems = [
       { label: 'Open', path: '/admin/reports/open' },
       { label: 'Investigating', path: '/admin/reports/investigating' },
       { label: 'Resolved', path: '/admin/reports/resolved' },
+      { label: 'Property Reports', path: '/admin/reports/property-reports' },
+      { label: 'User Reports', path: '/admin/reports/user-reports' },
+      { label: 'Payment Reports', path: '/admin/reports/payment-reports' },
     ],
   },
   { label: 'Revenue', icon: FiDollarSign, path: '/admin/revenue' },

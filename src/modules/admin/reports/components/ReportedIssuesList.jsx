@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Box, VStack, HStack, Text, Badge, Button, Avatar, Select, Divider } from '@chakra-ui/react';
-import { FiCheckCircle, FiAlertTriangle, FiMessageSquare, FiTrash2 } from 'react-icons/fi';
+import { FiCheckCircle, FiAlertTriangle, FiMessageSquare, FiTrash2, FiEdit } from 'react-icons/fi';
 import useAdminStore from '../../../../shared/stores/useAdminStore';
 import useAuditLogStore from '../../../../shared/stores/useAuditLogStore';
 import { useAuth } from '../../../../app/providers/AuthProvider';
@@ -16,8 +16,7 @@ const STATUS_COLORS = { open: 'red', investigating: 'yellow', resolved: 'green' 
 const PRIORITY_COLORS = { high: 'red', medium: 'yellow', low: 'green' };
 
 /** Reported Issues — kebab menu replaced with right-click/long-press context menu. */
-export function ReportedIssuesList({ status = 'all' }) {
-  const [typeFilter, setTypeFilter] = useState('all');
+export function ReportedIssuesList({ status = 'all', type = 'all', onEditReport }) {
   const [priorityFilter, setPriorityFilter] = useState('all');
   const toast = useAppToast();
   const { user: actor } = useAuth();
@@ -31,7 +30,7 @@ export function ReportedIssuesList({ status = 'all' }) {
   const { isOpen, position, activeItem, close, handlers } = useContextMenu();
 
   const reports = allReports.filter((report) => {
-    const matchesType = typeFilter === 'all' || report.type === typeFilter;
+    const matchesType = type === 'all' || report.type === type;
     const matchesStatus = status === 'all' || report.status === status;
     const matchesPriority = priorityFilter === 'all' || report.priority === priorityFilter;
     return matchesType && matchesStatus && matchesPriority;
@@ -63,6 +62,7 @@ export function ReportedIssuesList({ status = 'all' }) {
       icon: FiMessageSquare,
       onClick: () => toast({ title: 'Not available yet', description: "Direct messaging isn't supported in this preview.", status: 'info' }),
     },
+    { label: 'Edit Report', icon: FiEdit, onClick: () => onEditReport?.(report) },
     { label: 'Mark as Resolved', icon: FiCheckCircle, onClick: () => handleResolve(report) },
     { label: 'Start Investigation', icon: FiAlertTriangle, onClick: () => handleInvestigate(report) },
     { label: 'Delete Report', icon: FiTrash2, isDestructive: true, onClick: () => handleDelete(report) },
@@ -71,12 +71,6 @@ export function ReportedIssuesList({ status = 'all' }) {
   return (
     <Box>
       <HStack spacing={4} mb={6}>
-        <Select maxW="150px" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
-          <option value="all">All Types</option>
-          <option value="property">Property</option>
-          <option value="user">User</option>
-          <option value="payment">Payment</option>
-        </Select>
         <Select maxW="150px" value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
           <option value="all">All Priorities</option>
           <option value="high">High</option>
