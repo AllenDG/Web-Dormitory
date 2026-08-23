@@ -16,7 +16,7 @@ import useRentalStore from '../../../shared/stores/useRentalStore';
  */
 const PopularNearby = ({ limit = 6, showHeader = true }) => {
   const { getPopularNearby, userPreferences } = useRecommendationStore();
-  const { rentals } = useRentalStore();
+  const rentals = useRentalStore((state) => state.getVisibleRentals());
   const [popular, setPopular] = useState([]);
 
   useEffect(() => {

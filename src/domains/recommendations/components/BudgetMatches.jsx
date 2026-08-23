@@ -17,7 +17,7 @@ import useRentalStore from '../../../shared/stores/useRentalStore';
  */
 const BudgetMatches = ({ limit = 6, showHeader = true }) => {
   const { getBudgetMatches, userPreferences } = useRecommendationStore();
-  const { rentals } = useRentalStore();
+  const rentals = useRentalStore((state) => state.getVisibleRentals());
   const [budgetProperties, setBudgetProperties] = useState([]);
 
   useEffect(() => {

@@ -159,7 +159,8 @@ const PropertyCard = ({ property, onToggleFavorite, isFavorite }) => {
 const FeaturedListings = () => {
   const navigate = useNavigate();
   const scrollRef = useRef(null);
-  const { rentals = [], toggleFavorite, isFavorite } = useRentalStore();
+  const { toggleFavorite, isFavorite } = useRentalStore();
+  const rentals = useRentalStore((state) => state.getVisibleRentals());
   const bgColor = useColorModeValue('white', 'gray.800');
 
   // Get first 6 properties as featured

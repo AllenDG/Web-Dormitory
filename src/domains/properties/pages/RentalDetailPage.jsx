@@ -38,6 +38,7 @@ import useRecommendationStore from '../../../shared/stores/useRecommendationStor
 import useHouseRulesStore from '../../../shared/stores/useHouseRulesStore';
 import useCompareStore from '../../../shared/stores/useCompareStore';
 import useGuestRestriction from '../../../shared/hooks/useGuestRestriction';
+import { isTenantVisible } from '../../../shared/utils/moderation';
 import { useAuth } from '../../../app/providers/AuthProvider';
 import { useState, useEffect } from 'react';
 import { useToast } from '@chakra-ui/react';
@@ -170,7 +171,9 @@ const RentalDetailPage = () => {
     }
   };
 
-  if (!rental || !rental.id) {
+  const canBypassModeration = rental?.ownerEmail === user?.email || user?.role === 'admin';
+
+  if (!rental || !rental.id || (!isTenantVisible(rental) && !canBypassModeration)) {
     return (
       <Box py={LAYOUT.sectionSpacing}>
         <PageContainer>

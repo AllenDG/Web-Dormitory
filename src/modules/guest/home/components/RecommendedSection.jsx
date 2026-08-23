@@ -24,7 +24,7 @@ import useRentalStore from '../../../../shared/stores/useRentalStore';
  */
 const RecommendedSection = () => {
   const navigate = useNavigate();
-  const { rentals } = useRentalStore();
+  const rentals = useRentalStore((state) => state.getVisibleRentals());
   const [recommendations, setRecommendations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 

@@ -27,48 +27,69 @@ import PropertyFormPanel from './components/PropertyFormPanel';
 const formatPrice = (price) =>
   new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', minimumFractionDigits: 0 }).format(price);
 
-const PropertyCard = ({ property, contextMenuHandlers }) => (
-  <Box
-    bg="white"
-    borderRadius="lg"
-    overflow="hidden"
-    border="1px"
-    borderColor="gray.200"
-    cursor="context-menu"
-    onContextMenu={(e) => contextMenuHandlers.onContextMenu(e, property)}
-    onTouchStart={(e) => contextMenuHandlers.onTouchStart(e, property)}
-    onTouchMove={contextMenuHandlers.onTouchMove}
-    onTouchEnd={contextMenuHandlers.onTouchEnd}
-  >
-    <Box position="relative" h="200px">
-      <Image src={property.imageUrl?.[0]} alt={property.title} w="full" h="full" objectFit="cover" />
-      <Badge
-        position="absolute"
-        top={3}
-        left={3}
-        colorScheme={(property.status || 'active') === 'active' ? 'green' : 'gray'}
-        fontSize="xs"
-        px={2}
-        py={1}
-      >
-        {property.status || 'active'}
-      </Badge>
-    </Box>
+const MODERATION_LABELS = { approved: 'Approved', rejected: 'Rejected', pending: 'Pending Review' };
+const MODERATION_COLORS = { approved: 'green', rejected: 'red', pending: 'yellow' };
 
-    <VStack align="start" spacing={3} p={5}>
-      <Heading size="sm" noOfLines={1}>{property.title}</Heading>
-      <Text fontSize="sm" color="gray.600" noOfLines={2}>{property.description}</Text>
-      <HStack justify="space-between" w="full">
-        <Text fontSize="lg" fontWeight="bold" color="primary.600">{formatPrice(property.price)}/mo</Text>
-        <Badge colorScheme="blue">{property.bedType}</Badge>
-      </HStack>
-      <HStack spacing={4} fontSize="sm" color="gray.600">
-        <Text>📍 {property.city}</Text>
-        <Text>👥 {property.availablePerson}</Text>
-      </HStack>
-    </VStack>
-  </Box>
-);
+const PropertyCard = ({ property, contextMenuHandlers }) => {
+  const moderationStatus = property.moderationStatus || 'approved';
+
+  return (
+    <Box
+      bg="white"
+      borderRadius="lg"
+      overflow="hidden"
+      border="1px"
+      borderColor="gray.200"
+      cursor="context-menu"
+      onContextMenu={(e) => contextMenuHandlers.onContextMenu(e, property)}
+      onTouchStart={(e) => contextMenuHandlers.onTouchStart(e, property)}
+      onTouchMove={contextMenuHandlers.onTouchMove}
+      onTouchEnd={contextMenuHandlers.onTouchEnd}
+    >
+      <Box position="relative" h="200px">
+        <Image src={property.imageUrl?.[0]} alt={property.title} w="full" h="full" objectFit="cover" />
+        <Badge
+          position="absolute"
+          top={3}
+          left={3}
+          colorScheme={(property.status || 'active') === 'active' ? 'green' : 'gray'}
+          fontSize="xs"
+          px={2}
+          py={1}
+        >
+          {property.status || 'active'}
+        </Badge>
+        <Badge
+          position="absolute"
+          top={3}
+          right={3}
+          colorScheme={MODERATION_COLORS[moderationStatus]}
+          fontSize="xs"
+          px={2}
+          py={1}
+        >
+          {MODERATION_LABELS[moderationStatus]}
+        </Badge>
+      </Box>
+
+      <VStack align="start" spacing={3} p={5}>
+        <Heading size="sm" noOfLines={1}>{property.title}</Heading>
+        <Text fontSize="sm" color="gray.600" noOfLines={2}>{property.description}</Text>
+        {moderationStatus === 'rejected' && property.rejectionReason && (
+          <Text fontSize="xs" color="error.600">Reason: {property.rejectionReason}</Text>
+        )}
+        <HStack justify="space-between" w="full">
+          <Text fontSize="lg" fontWeight="bold" color="primary.600">{formatPrice(property.price)}/mo</Text>
+          <Badge colorScheme="blue">{property.bedType}</Badge>
+        </HStack>
+        <HStack spacing={4} fontSize="sm" color="gray.600">
+          <Text>📍 {property.city}</Text>
+          <Text>👥 {property.availablePerson}</Text>
+        </HStack>
+      </VStack>
+    </Box>
+  );
+};
 
 const PropertiesPage = () => {
   const navigate = useNavigate();

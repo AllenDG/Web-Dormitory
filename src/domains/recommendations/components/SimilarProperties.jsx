@@ -17,7 +17,7 @@ import useRentalStore from '../../../shared/stores/useRentalStore';
  */
 const SimilarProperties = ({ referenceProperty, limit = 6, showHeader = true }) => {
   const { getSimilarProperties, similarProperties } = useRecommendationStore();
-  const { rentals } = useRentalStore();
+  const rentals = useRentalStore((state) => state.getVisibleRentals());
   const [similar, setSimilar] = useState([]);
 
   useEffect(() => {

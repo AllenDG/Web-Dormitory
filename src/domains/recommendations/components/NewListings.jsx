@@ -16,7 +16,7 @@ import useRentalStore from '../../../shared/stores/useRentalStore';
  */
 const NewListings = ({ limit = 6, showHeader = true }) => {
   const { getNewListings } = useRecommendationStore();
-  const { rentals } = useRentalStore();
+  const rentals = useRentalStore((state) => state.getVisibleRentals());
   const [newProperties, setNewProperties] = useState([]);
 
   useEffect(() => {

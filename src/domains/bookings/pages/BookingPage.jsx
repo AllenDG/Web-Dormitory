@@ -43,6 +43,7 @@ import {
 import { Button, Card } from '../../../shared/components';
 import useRentalStore from '../../../shared/stores/useRentalStore';
 import useBookingStore, { DURATION_TYPE } from '../../../shared/stores/useBookingStore';
+import { isTenantVisible } from '../../../shared/utils/moderation';
 import { useAuth } from '../../../app/providers/AuthProvider';
 import { DurationSelector, DepositInfo } from '../components';
 
@@ -198,7 +199,9 @@ const BookingPage = () => {
     return checkIn.toISOString().split('T')[0];
   };
 
-  if (!property) {
+  const canBypassModeration = property?.ownerEmail === user?.email || user?.role === 'admin';
+
+  if (!property || (!isTenantVisible(property) && !canBypassModeration)) {
     return (
       <Box minH="100vh" bg="gray.50" py={8}>
         <Box maxW="1200px" mx="auto" px={4}>

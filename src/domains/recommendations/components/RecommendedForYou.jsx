@@ -19,7 +19,7 @@ import useRentalStore from '../../../shared/stores/useRentalStore';
 const RecommendedForYou = ({ limit = 6, showHeader = true }) => {
   const navigate = useNavigate();
   const { recommendations, generateRecommendations, userPreferences } = useRecommendationStore();
-  const { rentals } = useRentalStore();
+  const rentals = useRentalStore((state) => state.getVisibleRentals());
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
