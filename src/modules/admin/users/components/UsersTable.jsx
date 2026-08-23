@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Box, Avatar, Badge, HStack, Text, Input, InputGroup, InputLeftElement, Select, Icon } from '@chakra-ui/react';
+import { useState, useMemo } from 'react';
+import { Box, Avatar, Badge, HStack, Text, Input, InputGroup, InputLeftElement, Select, Icon, VStack } from '@chakra-ui/react';
 import { FiSearch, FiEye, FiEdit, FiUserX, FiUserCheck, FiMail } from 'react-icons/fi';
 import useAdminStore from '../../../../shared/stores/useAdminStore';
 import useAuditLogStore from '../../../../shared/stores/useAuditLogStore';
@@ -13,9 +13,40 @@ import { confirmAction } from '../../../../shared/utils/confirm';
 const ROLE_COLORS = { owner: 'purple', tenant: 'blue', admin: 'red' };
 const STATUS_COLORS = { active: 'green', suspended: 'red', inactive: 'gray' };
 
+const parseJoinedDate = (joinedStr) => {
+  try {
+    return new Date(joinedStr).getTime();
+  } catch {
+    return 0;
+  }
+};
+
+const parseLastActiveBucket = (lastActiveStr) => {
+  const match = lastActiveStr.match(/(\d+)\s+(\w+)\s+ago/i);
+  if (!match) return 'today';
+  const [, num, unit] = match;
+  const value = parseInt(num, 10);
+  const normalizedUnit = unit.toLowerCase().slice(0, 1);
+  if (normalizedUnit === 'h') return value <= 24 ? 'today' : 'today';
+  if (normalizedUnit === 'd') return value <= 6 ? 'week' : value <= 30 ? 'month' : 'inactive';
+  if (normalizedUnit === 'w') return value <= 4 ? 'month' : 'inactive';
+  if (normalizedUnit === 'm') return 'inactive';
+  return 'today';
+};
+
+const enrichUsers = (users) =>
+  users.map((user) => ({
+    ...user,
+    joinedAt: parseJoinedDate(user.joined),
+    lastActiveBucket: parseLastActiveBucket(user.lastActive),
+  }));
+
 export function UsersTable({ role = 'all', onViewDetails }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [joinedFrom, setJoinedFrom] = useState('');
+  const [joinedTo, setJoinedTo] = useState('');
+  const [lastActiveBucket, setLastActiveBucket] = useState('all');
   const toast = useAppToast();
   const { user: actor } = useAuth();
   const isLoading = useMinDisplayTime();
@@ -24,14 +55,20 @@ export function UsersTable({ role = 'all', onViewDetails }) {
   const updateUserStatus = useAdminStore((state) => state.updateUserStatus);
   const logAction = useAuditLogStore((state) => state.logAction);
 
-  const users = allUsers.filter((user) => {
+  const enrichedUsers = useMemo(() => enrichUsers(allUsers), [allUsers]);
+
+  const users = enrichedUsers.filter((user) => {
     const matchesSearch =
       !searchQuery ||
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesRole = role === 'all' || user.role === role;
     const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
-    return matchesSearch && matchesRole && matchesStatus;
+    const fromTime = joinedFrom ? new Date(joinedFrom).getTime() : 0;
+    const toTime = joinedTo ? new Date(joinedTo).getTime() : Infinity;
+    const matchesDateRange = user.joinedAt >= fromTime && user.joinedAt <= toTime;
+    const matchesLastActive = lastActiveBucket === 'all' || user.lastActiveBucket === lastActiveBucket;
+    return matchesSearch && matchesRole && matchesStatus && matchesDateRange && matchesLastActive;
   });
 
   const handleToggleStatus = async (user) => {
@@ -75,8 +112,8 @@ export function UsersTable({ role = 'all', onViewDetails }) {
     },
     { key: 'role', label: 'Role', sortable: true, render: (u) => <Badge colorScheme={ROLE_COLORS[u.role] || 'gray'} borderRadius="md">{u.role}</Badge> },
     { key: 'status', label: 'Status', sortable: true, render: (u) => <Badge colorScheme={STATUS_COLORS[u.status] || 'gray'} borderRadius="md">{u.status}</Badge> },
-    { key: 'joined', label: 'Joined', sortable: true },
-    { key: 'lastActive', label: 'Last Active', sortable: true },
+    { key: 'joinedAt', label: 'Joined', sortable: true, render: (u) => u.joined },
+    { key: 'lastActiveBucket', label: 'Last Active', sortable: true, render: (u) => u.lastActive },
     {
       key: 'activity',
       label: 'Activity',
@@ -102,14 +139,39 @@ export function UsersTable({ role = 'all', onViewDetails }) {
         <InputLeftElement pointerEvents="none"><Icon as={FiSearch} color="gray.400" /></InputLeftElement>
         <Input placeholder="Search users..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
       </InputGroup>
-      <HStack spacing={4} mb={6}>
-        <Select maxW="150px" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="suspended">Suspended</option>
-          <option value="inactive">Inactive</option>
-        </Select>
-      </HStack>
+      <VStack align="stretch" spacing={4} mb={6}>
+        <HStack spacing={4}>
+          <Select maxW="150px" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="suspended">Suspended</option>
+            <option value="inactive">Inactive</option>
+          </Select>
+          <Select maxW="150px" value={lastActiveBucket} onChange={(e) => setLastActiveBucket(e.target.value)}>
+            <option value="all">All Activity</option>
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+            <option value="inactive">Inactive 1mo+</option>
+          </Select>
+        </HStack>
+        <HStack spacing={4}>
+          <Input
+            type="date"
+            placeholder="From"
+            maxW="150px"
+            value={joinedFrom}
+            onChange={(e) => setJoinedFrom(e.target.value)}
+          />
+          <Input
+            type="date"
+            placeholder="To"
+            maxW="150px"
+            value={joinedTo}
+            onChange={(e) => setJoinedTo(e.target.value)}
+          />
+        </HStack>
+      </VStack>
 
       {isLoading ? (
         <TableSkeleton rows={5} columns={6} />
