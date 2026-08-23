@@ -70,6 +70,13 @@ const useInquiryStore = create(
           }
         },
 
+        closeInquiry: (id) =>
+          set((state) => ({
+            inquiries: state.inquiries.map((inquiry) =>
+              inquiry.id === id ? { ...inquiry, status: 'closed', closedAt: new Date().toISOString() } : inquiry
+            ),
+          })),
+
         getInquiriesByOwner: (ownerEmail) => {
           const { inquiries } = get();
           return inquiries.filter((inquiry) => inquiry.ownerEmail === ownerEmail);

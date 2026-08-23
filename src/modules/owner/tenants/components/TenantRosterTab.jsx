@@ -5,6 +5,7 @@ import { useAuth } from '../../../../app/providers/AuthProvider';
 import useBookingStore, { BOOKING_STATUS } from '../../../../shared/stores/useBookingStore';
 import StatCard from '../../../../shared/components/StatCard';
 import DataTable from '../../../../shared/components/DataTable';
+import TableToolbar from '../../../../shared/components/TableToolbar';
 import { TableSkeleton } from '../../../../shared/components/LoadingState';
 import { useMinDisplayTime } from '../../../../shared/hooks/useMinDisplayTime';
 import TenantDetailPanel from './TenantDetailPanel';
@@ -26,14 +27,21 @@ const TenantRosterTab = () => {
   const getBookingsByOwnerEmail = useBookingStore((state) => state.getBookingsByOwnerEmail);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const tenantBookings = getBookingsByOwnerEmail(user?.email).filter(
+  const allTenantBookings = getBookingsByOwnerEmail(user?.email).filter(
     (b) => b.status === BOOKING_STATUS.CONFIRMED || b.status === BOOKING_STATUS.COMPLETED
   );
+  const tenantBookings = allTenantBookings.filter(
+    (b) =>
+      !searchQuery ||
+      b.guestName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      b.propertyTitle?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const activeCount = tenantBookings.filter((b) => b.status === BOOKING_STATUS.CONFIRMED).length;
-  const pastCount = tenantBookings.filter((b) => b.status === BOOKING_STATUS.COMPLETED).length;
-  const totalCollected = tenantBookings.reduce((sum, b) => sum + (b.totalWithDeposit ?? b.totalAmount ?? 0), 0);
+  const activeCount = allTenantBookings.filter((b) => b.status === BOOKING_STATUS.CONFIRMED).length;
+  const pastCount = allTenantBookings.filter((b) => b.status === BOOKING_STATUS.COMPLETED).length;
+  const totalCollected = allTenantBookings.reduce((sum, b) => sum + (b.totalWithDeposit ?? b.totalAmount ?? 0), 0);
 
   const openDetail = (booking) => { setSelectedBooking(booking); onOpen(); };
 
@@ -66,6 +74,13 @@ const TenantRosterTab = () => {
         <StatCard label="Past Tenants" value={pastCount} icon={FiUserCheck} color="gray" />
         <StatCard label="Total Rent Collected" value={formatPrice(totalCollected)} icon={FiDollarSign} color="primary" />
       </SimpleGrid>
+
+      <TableToolbar
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search by tenant name or property..."
+        hasFilters={false}
+      />
 
       {isLoading ? (
         <TableSkeleton rows={5} columns={5} />
