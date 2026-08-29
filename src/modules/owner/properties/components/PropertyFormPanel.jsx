@@ -78,6 +78,7 @@ const PropertyFormPanel = ({ mode, propertyId, isOpen, onClose }) => {
       if (property) {
         reset({
           title: property.title,
+          propertyType: property.propertyType,
           bedType: property.bedType,
           price: property.price,
           availablePerson: property.availablePerson,
@@ -103,7 +104,7 @@ const PropertyFormPanel = ({ mode, propertyId, isOpen, onClose }) => {
     const draft = readDraft(draftKey);
     if (!draft) return;
 
-    ['title', 'bedType', 'price', 'availablePerson', 'city', 'address', 'description'].forEach((field) => {
+    ['title', 'propertyType', 'bedType', 'price', 'availablePerson', 'city', 'address', 'description'].forEach((field) => {
       if (draft.fields?.[field] !== undefined) setValue(field, draft.fields[field]);
     });
     if (draft.selectedAmenities) setSelectedAmenities(draft.selectedAmenities);
@@ -224,6 +225,7 @@ const PropertyFormPanel = ({ mode, propertyId, isOpen, onClose }) => {
     if (isEdit) {
       updateRental(propertyId, {
         title: data.title,
+        propertyType: data.propertyType,
         bedType: data.bedType,
         price: parseFloat(data.price),
         availablePerson: parseInt(data.availablePerson, 10),
@@ -246,6 +248,7 @@ const PropertyFormPanel = ({ mode, propertyId, isOpen, onClose }) => {
 
     addRental({
       title: data.title,
+      propertyType: data.propertyType,
       description: data.description,
       city: data.city,
       address: location.address || data.address,
@@ -317,6 +320,17 @@ const PropertyFormPanel = ({ mode, propertyId, isOpen, onClose }) => {
                 <FormLabel>Property Title *</FormLabel>
                 <Input {...register('title', { required: 'Title is required' })} placeholder="e.g., Modern Studio Room with City View" />
                 {errors.title && <Text color="error.600" fontSize="sm" mt={1}>{errors.title.message}</Text>}
+              </FormControl>
+
+              <FormControl isInvalid={errors.propertyType}>
+                <FormLabel>Property Type *</FormLabel>
+                <Select {...register('propertyType', { required: 'Property type is required' })} placeholder="Select property type">
+                  <option value="dormitory">Dormitory</option>
+                  <option value="apartment">Apartment</option>
+                  <option value="condo">Condominium</option>
+                  <option value="bedspace">Bed Space</option>
+                </Select>
+                {errors.propertyType && <Text color="error.600" fontSize="sm" mt={1}>{errors.propertyType.message}</Text>}
               </FormControl>
 
               <FormControl isInvalid={errors.bedType}>
