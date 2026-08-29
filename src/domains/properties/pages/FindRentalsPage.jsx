@@ -73,6 +73,7 @@ const FindRentalsPage = () => {
 
   // Initialize from URL params
   useEffect(() => {
+    const search = searchParams.get('search');
     const city = searchParams.get('city');
     const minBudget = searchParams.get('minBudget');
     const maxBudget = searchParams.get('maxBudget');
@@ -80,6 +81,7 @@ const FindRentalsPage = () => {
     const amenity = searchParams.get('amenity');
 
     const newFilters = {};
+    if (search) newFilters.searchQuery = search;
     if (city) newFilters.city = city;
     if (minBudget && maxBudget) {
       newFilters.priceRange = [parseInt(minBudget), parseInt(maxBudget)];

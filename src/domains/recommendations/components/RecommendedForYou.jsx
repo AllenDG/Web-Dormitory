@@ -66,7 +66,7 @@ const RecommendedForYou = ({ limit = 6, showHeader = true }) => {
                 variant="ghost"
                 colorScheme="blue"
                 rightIcon={<FaArrowRight />}
-                onClick={() => navigate('/rentals')}
+                onClick={() => navigate('/find-rentals')}
                 size="sm"
               >
                 View All

@@ -422,20 +422,6 @@ const LoginPage = () => {
                   )}
                 </FormControl>
 
-                <HStack w="full" justify="space-between">
-                  <Text fontSize="sm" color="gray.600" />
-                  <Link to="/forgot-password">
-                    <Text
-                      fontSize="sm"
-                      color="primary.600"
-                      fontWeight="600"
-                      _hover={{ textDecoration: 'underline' }}
-                    >
-                      Forgot Password?
-                    </Text>
-                  </Link>
-                </HStack>
-
                 <Button
                   type="submit"
                   w="full"
