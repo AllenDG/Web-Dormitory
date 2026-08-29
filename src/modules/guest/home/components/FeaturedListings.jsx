@@ -15,9 +15,10 @@ import {
 } from '@chakra-ui/react';
 import { FiMapPin, FiStar, FiHeart, FiArrowRight } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import useRentalStore from '../../../../shared/stores/useRentalStore';
 import useReviewStore from '../../../../shared/stores/useReviewStore';
+import { isTenantVisible } from '../../../../shared/utils/moderation';
 
 /**
  * Featured Listings v3.0
@@ -160,7 +161,8 @@ const FeaturedListings = () => {
   const navigate = useNavigate();
   const scrollRef = useRef(null);
   const { toggleFavorite, isFavorite } = useRentalStore();
-  const rentals = useRentalStore((state) => state.getVisibleRentals());
+  const allRentals = useRentalStore((state) => state.rentals);
+  const rentals = useMemo(() => allRentals.filter(isTenantVisible), [allRentals]);
   const bgColor = useColorModeValue('white', 'gray.800');
 
   // Get first 6 properties as featured

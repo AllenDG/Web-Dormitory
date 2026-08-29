@@ -1,9 +1,10 @@
 import { Box, Heading, Text, SimpleGrid, HStack, Icon, Badge } from '@chakra-ui/react';
 import { FaStar } from 'react-icons/fa';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import PropertyCard from '../../../shared/components/PropertyCard';
 import useRecommendationStore from '../../../shared/stores/useRecommendationStore';
 import useRentalStore from '../../../shared/stores/useRentalStore';
+import { isTenantVisible } from '../../../shared/utils/moderation';
 
 /**
  * New Listings Component
@@ -16,7 +17,8 @@ import useRentalStore from '../../../shared/stores/useRentalStore';
  */
 const NewListings = ({ limit = 6, showHeader = true }) => {
   const { getNewListings } = useRecommendationStore();
-  const rentals = useRentalStore((state) => state.getVisibleRentals());
+  const allRentals = useRentalStore((state) => state.rentals);
+  const rentals = useMemo(() => allRentals.filter(isTenantVisible), [allRentals]);
   const [newProperties, setNewProperties] = useState([]);
 
   useEffect(() => {

@@ -13,10 +13,11 @@ import {
 } from '@chakra-ui/react';
 import { FiMapPin, FiUsers, FiZap } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Card } from '../../../../shared/components';
 import { recommenderService } from '../../../../services/ai';
 import useRentalStore from '../../../../shared/stores/useRentalStore';
+import { isTenantVisible } from '../../../../shared/utils/moderation';
 
 /**
  * Recommended Section
@@ -24,7 +25,8 @@ import useRentalStore from '../../../../shared/stores/useRentalStore';
  */
 const RecommendedSection = () => {
   const navigate = useNavigate();
-  const rentals = useRentalStore((state) => state.getVisibleRentals());
+  const allRentals = useRentalStore((state) => state.rentals);
+  const rentals = useMemo(() => allRentals.filter(isTenantVisible), [allRentals]);
   const [recommendations, setRecommendations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 

@@ -2,10 +2,11 @@ import { Box, Heading, Text, SimpleGrid, Button, HStack, Icon, Spinner, Center }
 import { FaArrowRight } from 'react-icons/fa';
 import { FaWandMagicSparkles } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import PropertyCard from '../../../shared/components/PropertyCard';
 import useRecommendationStore from '../../../shared/stores/useRecommendationStore';
 import useRentalStore from '../../../shared/stores/useRentalStore';
+import { isTenantVisible } from '../../../shared/utils/moderation';
 
 /**
  * Recommended For You Component
@@ -19,7 +20,8 @@ import useRentalStore from '../../../shared/stores/useRentalStore';
 const RecommendedForYou = ({ limit = 6, showHeader = true }) => {
   const navigate = useNavigate();
   const { recommendations, generateRecommendations, userPreferences } = useRecommendationStore();
-  const rentals = useRentalStore((state) => state.getVisibleRentals());
+  const allRentals = useRentalStore((state) => state.rentals);
+  const rentals = useMemo(() => allRentals.filter(isTenantVisible), [allRentals]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

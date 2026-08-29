@@ -1,9 +1,10 @@
 import { Box, Heading, Text, SimpleGrid, HStack, Icon, Badge } from '@chakra-ui/react';
 import { FaMoneyBillWave } from 'react-icons/fa';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import PropertyCard from '../../../shared/components/PropertyCard';
 import useRecommendationStore from '../../../shared/stores/useRecommendationStore';
 import useRentalStore from '../../../shared/stores/useRentalStore';
+import { isTenantVisible } from '../../../shared/utils/moderation';
 
 /**
  * Budget Matches Component v3.0
@@ -17,7 +18,8 @@ import useRentalStore from '../../../shared/stores/useRentalStore';
  */
 const BudgetMatches = ({ limit = 6, showHeader = true }) => {
   const { getBudgetMatches, userPreferences } = useRecommendationStore();
-  const rentals = useRentalStore((state) => state.getVisibleRentals());
+  const allRentals = useRentalStore((state) => state.rentals);
+  const rentals = useMemo(() => allRentals.filter(isTenantVisible), [allRentals]);
   const [budgetProperties, setBudgetProperties] = useState([]);
 
   useEffect(() => {
